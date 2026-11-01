@@ -102,6 +102,9 @@ Pour écouter hors de la boucle locale (`--ecoute 0.0.0.0:8370 --hote
 nom.exemple`), le jeton porteur `GREFFIER_JETON` est exigé ; sans lui, le
 serveur refuse de démarrer.
 
+Ce que chaque version apporte : [NEWS.md](NEWS.md) ; journal du dépôt :
+[CHANGELOG.md](CHANGELOG.md).
+
 Les identifiants viennent d'une application enregistrée sur
 [PISTE](https://piste.gouv.fr) (production et bac à sable — `--bac-a-sable`
 — ont des identifiants distincts) ; ils ne sont jamais écrits ni affichés.

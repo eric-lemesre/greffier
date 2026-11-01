@@ -1,0 +1,64 @@
+# Publication d'une version, déclenchée par le tag et jamais à la main
+# (méthode, ch. 8) : le tag vX.Y.Z doit égaler VERSION ; le binaire est
+# construit depuis la chaîne épinglée (rust-toolchain.toml, Cargo.lock),
+# publié avec son empreinte SHA-256, et la release porte la section de
+# NEWS.md de la version. Actions épinglées par SHA de commit.
+# [impl->req~chaine-de-verification-du-moteur~1]
+name: release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+# Écriture limitée à ce job : créer la release et y joindre le binaire.
+permissions:
+  contents: write
+
+jobs:
+  publier:
+    name: Binaire et release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Le tag égale VERSION
+        run: |
+          version="$(cat VERSION)"
+          [ "${GITHUB_REF_NAME}" = "v${version}" ] || {
+            echo "tag ${GITHUB_REF_NAME} différent de VERSION ${version}" >&2
+            exit 1
+          }
+
+      - name: Construction
+        run: cargo build --release --locked
+
+      - name: Archive et empreinte
+        run: |
+          nom="greffier-${GITHUB_REF_NAME}-x86_64-linux"
+          mkdir "${nom}"
+          cp target/release/greffier LICENSE README.md NEWS.md "${nom}/"
+          tar -czf "${nom}.tar.gz" "${nom}"
+          sha256sum "${nom}.tar.gz" > "${nom}.tar.gz.sha256"
+
+      - name: Notes de version (section de NEWS.md)
+        run: |
+          version="$(cat VERSION)"
+          awk -v v="## [${version}]" '
+            index($0, v) == 1 { dedans = 1; next }
+            /^## \[/ && dedans { exit }
+            dedans { print }
+          ' NEWS.md > notes.md
+          [ -s notes.md ] || { echo "NEWS.md : section [${version}] vide ou absente" >&2; exit 1; }
+
+      - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --verify-tag \
+            --title "Greffier ${GITHUB_REF_NAME}" \
+            --notes-file notes.md \
+            greffier-*.tar.gz greffier-*.tar.gz.sha256
