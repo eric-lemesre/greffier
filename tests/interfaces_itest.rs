@@ -162,6 +162,25 @@ fn l_api_rend_des_elements_ancres_et_sources_et_des_erreurs_en_json() {
 
 // [itest->req~acces-http-protege~1]
 #[test]
+fn une_requete_sous_un_hote_non_admis_est_refusee_meme_en_local() {
+    let savoir = Savoir::new("hote");
+    let (_serveur, base, _) = servir(&savoir.0, None);
+    let adresse = base.trim_start_matches("http://");
+    let mut flux = std::net::TcpStream::connect(adresse).unwrap();
+    write!(
+        flux,
+        "GET /recherche?question=branches HTTP/1.1\r\nHost: piege.exemple:8370\r\nConnection: close\r\n\r\n"
+    )
+    .unwrap();
+    let mut reponse = String::new();
+    flux.read_to_string(&mut reponse).unwrap();
+    assert!(reponse.starts_with("HTTP/1.1 403"), "{reponse}");
+    assert!(!reponse.contains("LEGIARTI"));
+    assert_eq!(get(&format!("{base}/sante"), None).0, 200);
+}
+
+// [itest->req~acces-http-protege~1]
+#[test]
 fn hors_de_la_boucle_locale_sans_jeton_le_serveur_refuse_de_demarrer() {
     let savoir = Savoir::new("refus");
     let sortie = Command::new(env!("CARGO_BIN_EXE_greffier"))

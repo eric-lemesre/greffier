@@ -114,17 +114,18 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Niveau normatif : DOIT
 - Needs: dsn, impl, itest
 - Couvertures réelles (2) :
-  - `impl` — src/http.rs:20
+  - `impl` — src/http.rs:23
   - `impl` — src/service.rs:14
 
 #### `req~acces-http-protege~1`
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest, itest
-- Couvertures réelles (3) :
-  - `impl` — src/http.rs:21
-  - `utest` — src/http.rs:263
-  - `utest` — src/http.rs:275
+- Couvertures réelles (4) :
+  - `impl` — src/http.rs:24
+  - `utest` — src/http.rs:305
+  - `utest` — src/http.rs:317
+  - `utest` — src/http.rs:325
 
 ### Bilan (couvertures réelles)
 

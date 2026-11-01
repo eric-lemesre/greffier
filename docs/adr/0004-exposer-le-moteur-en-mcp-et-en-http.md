@@ -54,7 +54,11 @@ sur un réseau le publie, sauf contrôle d'accès.
 5. **Accès** : écoute par défaut sur `127.0.0.1` sans jeton ; une adresse
    hors boucle locale exige `GREFFIER_JETON` (jeton porteur, comparé à
    temps constant), faute de quoi le serveur refuse de démarrer ; la route
-   de santé reste ouverte ; le jeton ne paraît dans aucune sortie.
+   de santé reste ouverte ; le jeton ne paraît dans aucune sortie. Sur
+   tout le routeur, l'en-tête `Host` doit nommer la boucle locale,
+   l'adresse d'écoute ou un hôte déclaré (`--hote`), sinon 403 : sans ce
+   contrôle, une page web pourrait lire par rattachement DNS le savoir
+   d'un serveur local sans jeton.
 
 ## Alternatives écartées
 

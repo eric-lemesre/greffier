@@ -14,7 +14,10 @@
 //! Accès : sur la boucle locale, sans jeton ; ailleurs, le serveur refuse
 //! de démarrer sans jeton porteur. Un jeton configuré est exigé sur toute
 //! route hors `/sante`, comparé à temps constant, et ne paraît dans aucune
-//! sortie.
+//! sortie. Toute requête dont l'en-tête `Host` ne nomme pas la boucle
+//! locale, l'adresse d'écoute ou un hôte déclaré (`--hote`) est refusée
+//! (403) : une page web ne peut pas, par rattachement DNS, lire le savoir
+//! d'un serveur local sans jeton.
 
 // [impl->dsn~exposition-mcp-http~1]
 // [impl->req~api-http~1]
@@ -80,7 +83,13 @@ pub fn routeur(service: Arc<Service>, reglages: &Reglages) -> Router {
     let mcp: StreamableHttpService<Greffier, LocalSessionManager> = StreamableHttpService::new(
         move || Ok(Greffier::new(Arc::clone(&pour_mcp))),
         Arc::default(),
-        StreamableHttpServerConfig::default().with_allowed_hosts(hotes),
+        StreamableHttpServerConfig::default().with_allowed_hosts(hotes.clone()),
+    );
+    let hotes = Arc::new(
+        hotes
+            .into_iter()
+            .map(|h| h.to_ascii_lowercase())
+            .collect::<Vec<_>>(),
     );
     let jeton = Arc::new(reglages.jeton.clone().filter(|jeton| !jeton.is_empty()));
     Router::new()
@@ -93,6 +102,7 @@ pub fn routeur(service: Arc<Service>, reglages: &Reglages) -> Router {
         .fallback(introuvable)
         .with_state(service)
         .layer(middleware::from_fn_with_state(jeton, controler_jeton))
+        .layer(middleware::from_fn_with_state(hotes, controler_hote))
 }
 
 /// Sert l'API et MCP jusqu'à l'arrêt du processus (Ctrl-C ou SIGTERM).
@@ -137,6 +147,38 @@ async fn arret() {
         () = interruption => {}
         () = terminaison => {}
     }
+}
+
+async fn controler_hote(
+    State(hotes): State<Arc<Vec<String>>>,
+    requete: Request,
+    suite: Next,
+) -> Response {
+    let admis = requete
+        .headers()
+        .get(header::HOST)
+        .and_then(|valeur| valeur.to_str().ok())
+        .map(nom_d_hote)
+        .is_some_and(|nom| hotes.contains(&nom));
+    if admis {
+        suite.run(requete).await
+    } else {
+        erreur(StatusCode::FORBIDDEN, "hôte non admis")
+    }
+}
+
+/// Le nom d'hôte d'un en-tête `Host`, sans le port, en minuscules
+/// (`[::1]:8370` → `::1`, `localhost:8370` → `localhost`).
+fn nom_d_hote(valeur: &str) -> String {
+    let valeur = valeur.trim();
+    let nom = if let Some(reste) = valeur.strip_prefix('[') {
+        reste.split(']').next().unwrap_or_default()
+    } else if valeur.matches(':').count() == 1 {
+        valeur.split(':').next().unwrap_or_default()
+    } else {
+        valeur
+    };
+    nom.to_ascii_lowercase()
 }
 
 async fn controler_jeton(
@@ -278,6 +320,15 @@ mod tests {
         assert!(egal_a_temps_constant(b"jeton-fictif", b"jeton-fictif"));
         assert!(!egal_a_temps_constant(b"jeton-fictif", b"jeton-fictiF"));
         assert!(!egal_a_temps_constant(b"jeton", b"jeton-fictif"));
+    }
+
+    // [utest->req~acces-http-protege~1]
+    #[test]
+    fn le_nom_d_hote_est_lu_sans_son_port() {
+        assert_eq!(nom_d_hote("localhost:8370"), "localhost");
+        assert_eq!(nom_d_hote("127.0.0.1"), "127.0.0.1");
+        assert_eq!(nom_d_hote("[::1]:8370"), "::1");
+        assert_eq!(nom_d_hote("Greffier.Exemple:443"), "greffier.exemple");
     }
 
     #[test]
