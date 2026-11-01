@@ -34,17 +34,25 @@
                        System="yes"
                        Permanent="no" />
         </Component>
-        <Component Id="Documentation">
+        <!-- Un fichier par composant : WiX ne donne un identifiant stable,
+             calculé, qu'à un composant d'un seul fichier. -->
+        <Component Id="Licence">
           <File Id="Licence" Source="$(var.Racine)\LICENSE" Name="LICENSE.txt" KeyPath="yes" />
-          <File Id="Lisezmoi" Source="$(var.Racine)\README.md" Name="README.md" />
-          <File Id="Nouveautes" Source="$(var.Racine)\NEWS.md" Name="NEWS.md" />
+        </Component>
+        <Component Id="Lisezmoi">
+          <File Id="Lisezmoi" Source="$(var.Racine)\README.md" Name="README.md" KeyPath="yes" />
+        </Component>
+        <Component Id="Nouveautes">
+          <File Id="Nouveautes" Source="$(var.Racine)\NEWS.md" Name="NEWS.md" KeyPath="yes" />
         </Component>
       </Directory>
     </StandardDirectory>
 
     <Feature Id="Greffier" Title="Greffier">
       <ComponentRef Id="Binaire" />
-      <ComponentRef Id="Documentation" />
+      <ComponentRef Id="Licence" />
+      <ComponentRef Id="Lisezmoi" />
+      <ComponentRef Id="Nouveautes" />
     </Feature>
   </Package>
 </Wix>
