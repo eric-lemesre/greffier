@@ -8,7 +8,6 @@
 ## Item de conception
 
 `dsn~trois-couches-et-ancrage~1`
-Status: proposed
 
 Le système se compose de trois couches — textes authentiques immuables et
 versionnés, wiki de situations compilé par un agent sous schéma, recherche

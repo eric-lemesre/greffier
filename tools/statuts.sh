@@ -28,7 +28,7 @@
 #   6. une exigence n'est approuvée que dans un domaine actif — c'est ce qui
 #      empêche les deux axes de diverger en silence ;
 #   7. le statut OpenFastTrace (« Status: … ») concorde avec le statut
-#      déclaré : la traçabilité ne retient que les items approuvés (ADR-0020).
+#      déclaré : la traçabilité ne retient que les items approuvés (ADR-0021).
 #
 #   sh tools/statuts.sh
 #
@@ -158,7 +158,7 @@ for f in ${FICHIERS}; do
 
     # Chaque exigence, la ligne de statut qui la suit, et le statut
     # OpenFastTrace (« Status: … » collé sous l'identifiant, seule place où
-    # l'outil le lit) — « approved » quand il est absent (ADR-0020).
+    # l'outil le lit) — « approved » quand il est absent (ADR-0021).
     exigences="$(awk '
         /^`req~[a-z0-9-]+~[0-9]+`[ \t]*$/ {
             id = $0; gsub(/`/, "", id); gsub(/[ \t]/, "", id)
@@ -204,7 +204,7 @@ for f in ${FICHIERS}; do
         fi
 
         # 7. le statut lu par OpenFastTrace suit le statut déclaré. La porte
-        #    de traçabilité ne retient que les items « approved » (ADR-0020) :
+        #    de traçabilité ne retient que les items « approved » (ADR-0021) :
         #    sans cette concordance, une exigence approuvée marquée
         #    « Status: draft » échapperait à la traçabilité en silence.
         if lex_est EXIGENCE_APPROUVEE "${statut}"; then attendu="${OFT_APPROUVE}"

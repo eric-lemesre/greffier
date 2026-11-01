@@ -22,7 +22,7 @@ Status: draft
      OpenFastTrace : draft (brouillon), proposed (proposée), rejected
      (rejetée, dépréciée) ; on la RETIRE à l'approbation. La traçabilité ne
      retient que les items approuvés, et tools/statuts.sh vérifie la
-     concordance (ADR-0020). -->
+     concordance (ADR-0021). -->
 
 {{ Formulation EARS avec niveau normatif DOIT / DEVRAIT / PEUT :
 - Ubiquitaire : Le système DOIT …

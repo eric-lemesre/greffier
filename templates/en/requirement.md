@@ -18,7 +18,7 @@ Status: draft
      The "Status: …" line RIGHT UNDER the identifier is read by
      OpenFastTrace: draft, proposed, rejected (rejected, deprecated); REMOVE
      it on approval. Traceability only keeps approved items, and
-     tools/statuts.sh checks both statuses agree (ADR-0020). -->
+     tools/statuts.sh checks both statuses agree (ADR-0021). -->
 
 {{ EARS phrasing with SHALL / SHOULD / MAY normative level:
 - Ubiquitous: The system SHALL …
