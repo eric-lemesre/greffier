@@ -17,6 +17,7 @@
 
 // [impl->req~citation-ancree~1]
 // [impl->req~textes-authentiques-versionnes~1]
+// [impl->req~source-de-chaque-element~1]
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
@@ -126,6 +127,12 @@ impl Applicabilite {
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Ancres {
     table: BTreeMap<String, Applicabilite>,
+    /// Lien vers la source officielle, par identifiant de version ou de
+    /// décision, tel que conservé à la capture.
+    liens: BTreeMap<String, String>,
+    /// Versions conservées de chaque article, par identifiant
+    /// chronologique : période et identifiant de la version.
+    versions: BTreeMap<String, Vec<(Periode, String)>>,
 }
 
 impl Ancres {
@@ -142,6 +149,48 @@ impl Ancres {
     fn ajouter_decision(&mut self, identifiant: &str) {
         self.table
             .insert(identifiant.to_owned(), Applicabilite::Toujours);
+    }
+
+    fn ajouter_lien(&mut self, identifiant: &str, lien: Option<&str>) {
+        if let Some(lien) = lien.map(str::trim).filter(|l| !l.is_empty()) {
+            self.liens.insert(identifiant.to_owned(), lien.to_owned());
+        }
+    }
+
+    fn ajouter_version(&mut self, cid: &str, periode: Periode, identifiant: &str) {
+        self.versions
+            .entry(cid.to_owned())
+            .or_default()
+            .push((periode, identifiant.to_owned()));
+    }
+
+    /// Lien vers la source officielle d'un identifiant, à une date : pour
+    /// l'identifiant chronologique d'un article, celui de la version en
+    /// vigueur à cette date ; sinon celui conservé pour l'identifiant.
+    pub fn source(&self, identifiant: &str, date: Date) -> Option<&str> {
+        let version = self.versions.get(identifiant).and_then(|versions| {
+            versions
+                .iter()
+                .find(|(periode, _)| periode.couvre(date))
+                .map(|(_, version)| version.as_str())
+        });
+        self.liens
+            .get(version.unwrap_or(identifiant))
+            .map(String::as_str)
+    }
+
+    /// Liens vers la source de chacun de ces identifiants, à une date ; un
+    /// identifiant sans lien conservé n'en a pas.
+    pub fn sources(&self, identifiants: &[String], date: Date) -> Vec<Source> {
+        identifiants
+            .iter()
+            .filter_map(|identifiant| {
+                self.source(identifiant, date).map(|url| Source {
+                    identifiant: identifiant.clone(),
+                    url: url.to_owned(),
+                })
+            })
+            .collect()
     }
 
     /// La couche des textes porte-t-elle cet identifiant ?
@@ -210,10 +259,42 @@ pub struct Trouve {
     pub identifiants: Vec<String>,
     /// Identifiant chronologique d'une version d'article.
     pub cid: Option<String>,
+    /// Lien vers la source officielle de chaque identifiant.
+    pub sources: Vec<Source>,
     /// Score BM25.
     pub score: f64,
     /// Le paragraphe le plus proche de la question.
     pub extrait: String,
+}
+
+/// Un texte de la couche des textes, tel que conservé.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TexteConserve {
+    /// Version d'article ou décision.
+    pub nature: Nature,
+    /// Identifiant de la version ou ECLI.
+    pub identifiant: String,
+    /// Identifiant chronologique d'une version d'article.
+    pub cid: Option<String>,
+    /// Intitulé.
+    pub intitule: String,
+    /// Période de vigueur d'une version d'article.
+    pub en_vigueur: Option<Periode>,
+    /// Lien vers la source officielle.
+    pub source: Option<String>,
+    /// Fichier, relatif au dépôt de savoir.
+    pub chemin: PathBuf,
+    /// Le texte.
+    pub texte: String,
+}
+
+/// Le lien vers la source officielle d'un identifiant.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Source {
+    /// Identifiant officiel.
+    pub identifiant: String,
+    /// Adresse de la source, telle que conservée à la capture.
+    pub url: String,
 }
 
 /// Un élément qui répondait à la question et que la porte de l'ancrage a
@@ -334,6 +415,7 @@ impl Index {
                     nature: element.nature,
                     chemin: element.chemin.clone(),
                     intitule: element.intitule.clone(),
+                    sources: self.ancres.sources(&identifiants, date),
                     identifiants,
                     cid: element.cid.clone(),
                     score,
@@ -346,6 +428,39 @@ impl Index {
             }
         }
         reponse
+    }
+
+    /// Le texte conservé que désigne `identifiant` (version, identifiant
+    /// chronologique ou ECLI) et qui s'applique à `date` : pour un article,
+    /// la version en vigueur à cette date parmi les versions conservées de
+    /// cet article ; pour une décision, la décision elle-même.
+    pub fn lire(&self, identifiant: &str, date: Date) -> Option<TexteConserve> {
+        let designe = |e: &&Element| {
+            !e.mal_forme
+                && e.nature != Nature::Page
+                && (e.identifiants.contains(identifiant) || e.cid.as_deref() == Some(identifiant))
+        };
+        let cids: BTreeSet<&str> = self
+            .elements
+            .iter()
+            .filter(designe)
+            .filter_map(|e| e.cid.as_deref())
+            .collect();
+        let element = self.elements.iter().find(|e| {
+            (designe(e) || e.cid.as_deref().is_some_and(|cid| cids.contains(cid)))
+                && e.periode.is_none_or(|periode| periode.couvre(date))
+        })?;
+        let identifiant = element.identifiants.iter().next()?.clone();
+        Some(TexteConserve {
+            nature: element.nature,
+            source: self.ancres.source(&identifiant, date).map(str::to_owned),
+            identifiant,
+            cid: element.cid.clone(),
+            intitule: element.intitule.clone(),
+            en_vigueur: element.periode,
+            chemin: element.chemin.clone(),
+            texte: element.corps.trim().to_owned(),
+        })
     }
 
     fn juger(&self, element: &Element, date: Date) -> Result<Vec<String>, Motif> {
@@ -386,6 +501,8 @@ fn lire_texte(chemin: PathBuf, contenu: &str, ancres: &mut Ancres) -> Element {
         if let Some(cid) = cid.as_deref().filter(|cid| cid != identifiant) {
             ancres.ajouter_periode(cid, periode);
         }
+        ancres.ajouter_version(cid.as_deref().unwrap_or(identifiant), periode, identifiant);
+        ancres.ajouter_lien(identifiant, valeur(&entete, "source"));
     }
     let mal_forme = identifiant.is_some() && periode.is_none();
     element(
@@ -405,6 +522,7 @@ fn lire_decision(chemin: PathBuf, contenu: &str, ancres: &mut Ancres) -> Element
     let identifiant = non_vide(valeur(&entete, "identifiant"));
     if let Some(identifiant) = &identifiant {
         ancres.ajouter_decision(identifiant);
+        ancres.ajouter_lien(identifiant, valeur(&entete, "source"));
     }
     element(
         Nature::Decision,
@@ -733,6 +851,69 @@ pub(crate) mod tests {
             chemin: ancienne.to_owned(),
             motif: Motif::HorsVigueur(date!(2020 - 05 - 05)),
         }));
+    }
+
+    // [utest->req~source-de-chaque-element~1]
+    #[test]
+    fn une_page_rendue_porte_le_lien_de_la_version_en_vigueur_de_l_article_cite() {
+        let savoir = Savoir::new("source-page");
+        savoir.ecrire(
+            "wiki/textes/article-673.md",
+            "---\ntype: texte\n---\n\n# Article 673\n\nVoir LEGIARTI000000000001 pour les branches.\n",
+        );
+        let reponse = savoir
+            .index()
+            .chercher("article 673 branches", date!(2020 - 05 - 05), 10);
+        let page = reponse
+            .retenus
+            .iter()
+            .find(|t| t.chemin == Path::new("wiki/textes/article-673.md"))
+            .unwrap();
+        assert_eq!(
+            page.sources,
+            vec![Source {
+                identifiant: "LEGIARTI000000000001".to_owned(),
+                url: "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000000000002"
+                    .to_owned(),
+            }]
+        );
+    }
+
+    // [utest->req~source-de-chaque-element~1]
+    #[test]
+    fn une_decision_rendue_porte_le_lien_conserve_a_sa_capture() {
+        let index = Savoir::new("source-decision").index();
+        let reponse = index.chercher("élagage", date!(2026 - 11 - 01), 10);
+        assert_eq!(
+            reponse.retenus.first().map(|t| t.sources.clone()),
+            Some(vec![Source {
+                identifiant: "ECLI:FR:CCASS:2000:C300000".to_owned(),
+                url: "https://www.courdecassation.fr/decision/000000000000000000000abc".to_owned(),
+            }])
+        );
+    }
+
+    #[test]
+    fn lire_un_article_par_son_cid_rend_la_version_en_vigueur_a_la_date() {
+        let index = Savoir::new("lire").index();
+        let avant = index
+            .lire("LEGIARTI000000000001", date!(2010 - 05 - 05))
+            .unwrap();
+        let apres = index
+            .lire("LEGIARTI000000000001", date!(2020 - 05 - 05))
+            .unwrap();
+        let par_version = index
+            .lire("LEGIARTI000000000002", date!(2010 - 05 - 05))
+            .unwrap();
+        assert_eq!(avant.identifiant, "LEGIARTI000000000001");
+        assert_eq!(apres.identifiant, "LEGIARTI000000000002");
+        assert_eq!(par_version.identifiant, "LEGIARTI000000000001");
+        assert!(apres.texte.starts_with("Celui sur la propriété"));
+        assert!(
+            index
+                .lire("LEGIARTI000000000099", date!(2020 - 05 - 05))
+                .is_none()
+        );
     }
 
     #[test]

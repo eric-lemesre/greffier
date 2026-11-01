@@ -68,8 +68,10 @@ par son identifiant officiel, le conserve, immuable et daté, dans le
 dossier `raw/` d'un dépôt de savoir, et constate les changements de
 version ; il vérifie un dépôt de savoir et y cherche dans les deux couches
 (textes et wiki), en ne rendant que des éléments ancrés dans un texte
-conservé et en vigueur à la date demandée ; il mesure la recherche sur le
-banc de questions du savoir.
+conservé et en vigueur à la date demandée, chacun avec le lien vers sa
+source officielle ; il mesure la recherche sur le banc de questions du
+savoir ; il sert tout cela aux agents en serveur MCP et aux outils métier
+en API HTTP.
 
 ```sh
 export GREFFIER_PISTE_CLIENT_ID=…  GREFFIER_PISTE_CLIENT_SECRET=…   # application PISTE
@@ -80,7 +82,25 @@ greffier en-vigueur <cid> --le 2026-01-01 --savoir ../savoir   # hors ligne
 greffier verifier --savoir ../savoir                  # lecture seule, sortie 1 si erreur
 greffier chercher "branches du voisin" --le 2026-01-01 --savoir ../savoir   # écarts sur stderr
 greffier banc --savoir ../savoir                      # rappel, précision, délai ; sortie 1 si non ancré
+greffier mcp --savoir ../savoir                       # serveur MCP sur l'entrée et la sortie standard
+greffier servir --savoir ../savoir                    # API HTTP sur 127.0.0.1:8370, MCP sous /mcp
 ```
+
+Un agent compatible MCP s'y branche en lançant `greffier mcp` ; par
+exemple, dans la configuration d'un client :
+
+```json
+{ "mcpServers": { "greffier": { "command": "greffier", "args": ["mcp", "--savoir", "/chemin/du/savoir"] } } }
+```
+
+Quatre outils, en lecture seule : `chercher` (question, date),
+`lire_texte` (identifiant, date), `verifier_citation` (texte d'agent) et
+`verifier_savoir`. L'API HTTP offre les mêmes opérations
+(`GET /recherche?question=&le=`, `GET /textes/{identifiant}?le=`,
+`POST /citations/verification`, `GET /savoir/verification`, `GET /sante`).
+Pour écouter hors de la boucle locale (`--ecoute 0.0.0.0:8370 --hote
+nom.exemple`), le jeton porteur `GREFFIER_JETON` est exigé ; sans lui, le
+serveur refuse de démarrer.
 
 Les identifiants viennent d'une application enregistrée sur
 [PISTE](https://piste.gouv.fr) (production et bac à sable — `--bac-a-sable`

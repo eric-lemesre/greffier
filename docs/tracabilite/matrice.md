@@ -16,10 +16,10 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
   - `impl` — src/banc.rs:10
   - `utest` — src/banc.rs:254
   - `impl` — src/recherche.rs:18
-  - `utest` — src/recherche.rs:646
-  - `utest` — src/recherche.rs:665
-  - `utest` — src/recherche.rs:684
-  - `utest` — src/recherche.rs:704
+  - `utest` — src/recherche.rs:764
+  - `utest` — src/recherche.rs:783
+  - `utest` — src/recherche.rs:802
+  - `utest` — src/recherche.rs:822
 
 #### `req~textes-authentiques-versionnes~1`
 
@@ -31,7 +31,7 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
   - `utest` — src/couche.rs:314
   - `utest` — src/couche.rs:346
   - `impl` — src/recherche.rs:19
-  - `utest` — src/recherche.rs:722
+  - `utest` — src/recherche.rs:840
 
 #### `req~capture-des-sources-officielles~1`
 
@@ -87,9 +87,49 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Needs: impl, utest
 - Couvertures réelles : — À COUVRIR
 
+### spec/02-exigences/02-interfaces.md
+
+#### `req~source-de-chaque-element~1`
+
+- Niveau normatif : DOIT
+- Needs: impl, utest
+- Couvertures réelles (3) :
+  - `impl` — src/recherche.rs:20
+  - `utest` — src/recherche.rs:856
+  - `utest` — src/recherche.rs:882
+
+#### `req~outils-mcp~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, utest, itest
+- Couvertures réelles (5) :
+  - `impl` — src/mcp.rs:11
+  - `impl` — src/service.rs:13
+  - `utest` — src/service.rs:451
+  - `utest` — src/service.rs:465
+  - `utest` — src/service.rs:488
+
+#### `req~api-http~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, itest
+- Couvertures réelles (2) :
+  - `impl` — src/http.rs:23
+  - `impl` — src/service.rs:14
+
+#### `req~acces-http-protege~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, utest, itest
+- Couvertures réelles (4) :
+  - `impl` — src/http.rs:24
+  - `utest` — src/http.rs:305
+  - `utest` — src/http.rs:317
+  - `utest` — src/http.rs:325
+
 ### Bilan (couvertures réelles)
 
-6/8 exigence(s) testable(s) couverte(s) par au moins une trace réelle (75.0 %) — 2 à couvrir.
+10/12 exigence(s) testable(s) couverte(s) par au moins une trace réelle (83.3 %) — 2 à couvrir.
 
 ## 2. L'inverse — outillage sans exigence
 

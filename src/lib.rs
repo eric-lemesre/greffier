@@ -22,10 +22,13 @@
 pub mod banc;
 pub mod couche;
 pub mod erreur;
+pub mod http;
 pub mod judilibre;
 pub mod legifrance;
+pub mod mcp;
 pub mod periode;
 pub mod piste;
 pub mod recherche;
+pub mod service;
 pub mod verifier;
 pub mod versions;

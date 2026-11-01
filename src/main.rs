@@ -6,22 +6,29 @@
 //! échec ; pour `banc` : un élément rendu sans ancrage) ; 2 usage ; 3
 //! (`versions`) l'article a changé depuis la date donnée.
 
+use std::net::SocketAddr;
 use std::path::PathBuf;
 use std::process::ExitCode;
+use std::sync::Arc;
 use std::time::Duration;
 
 use clap::{Args, Parser, Subcommand};
 use greffier::couche::{Conservation, Couche};
+use greffier::erreur::Erreur;
 use greffier::erreur::Resultat;
+use greffier::http::{ECOUTE_PAR_DEFAUT, Reglages};
 use greffier::periode::{aujourdhui, ecrire_date, lire_date};
 use greffier::piste::{ClientPiste, Environnement, Identifiants};
 use greffier::recherche::Index;
-use greffier::{banc, judilibre, legifrance, verifier, versions};
+use greffier::service::Service;
+use greffier::{banc, http, judilibre, legifrance, mcp, verifier, versions};
 
 /// Variables d'environnement qui remplacent les adresses PISTE (mandataire,
 /// banc d'essai).
 const VAR_URL_JETON: &str = "GREFFIER_PISTE_URL_JETON";
 const VAR_URL_API: &str = "GREFFIER_PISTE_URL_API";
+/// Variable d'environnement du jeton porteur exigé par l'API HTTP.
+const VAR_JETON: &str = "GREFFIER_JETON";
 
 /// Code de sortie de `versions` quand l'article a changé.
 const SORTIE_CHANGE: u8 = 3;
@@ -84,6 +91,27 @@ enum Commande {
         /// Nombre maximal d'éléments rendus par question.
         #[arg(long, default_value_t = MAX_PAR_DEFAUT)]
         max: usize,
+        /// Dossier du dépôt de savoir.
+        #[arg(long)]
+        savoir: PathBuf,
+    },
+    /// Sert le moteur en MCP sur l'entrée et la sortie standard (pour un
+    /// agent local).
+    Mcp {
+        /// Dossier du dépôt de savoir.
+        #[arg(long)]
+        savoir: PathBuf,
+    },
+    /// Sert l'API HTTP, et MCP sous /mcp ; hors de la boucle locale, exige
+    /// le jeton porteur GREFFIER_JETON.
+    Servir {
+        /// Adresse d'écoute.
+        #[arg(long, default_value = ECOUTE_PAR_DEFAUT)]
+        ecoute: SocketAddr,
+        /// Nom d'hôte sous lequel le serveur est joint (répétable), en plus
+        /// de la boucle locale.
+        #[arg(long = "hote")]
+        hotes: Vec<String>,
         /// Dossier du dépôt de savoir.
         #[arg(long)]
         savoir: PathBuf,
@@ -251,11 +279,17 @@ fn executer(commande: Commande) -> Resultat<u8> {
             }
             for (rang, trouve) in reponse.retenus.iter().enumerate() {
                 println!(
-                    "{}\t{:.2}\t{}\t{}\t{}\t{}\t{}",
+                    "{}\t{:.2}\t{}\t{}\t{}\t{}\t{}\t{}",
                     rang + 1,
                     trouve.score,
                     trouve.nature,
                     trouve.identifiants.join(","),
+                    trouve
+                        .sources
+                        .iter()
+                        .map(|source| source.url.as_str())
+                        .collect::<Vec<_>>()
+                        .join(","),
                     trouve.intitule,
                     trouve.chemin.display(),
                     trouve.extrait
@@ -275,7 +309,7 @@ fn executer(commande: Commande) -> Resultat<u8> {
         Commande::Banc { max, savoir } => {
             let chemin = savoir.join(banc::FICHIER_DU_BANC);
             let contenu = std::fs::read_to_string(&chemin)
-                .map_err(|cause| greffier::erreur::Erreur::Fichier { chemin, cause })?;
+                .map_err(|cause| Erreur::Fichier { chemin, cause })?;
             let questions = banc::lire_banc(&contenu)?;
             let mesure = banc::mesurer(&Index::construire(&savoir)?, &questions, max);
             for question in &mesure.questions {
@@ -316,6 +350,29 @@ fn executer(commande: Commande) -> Resultat<u8> {
             );
             Ok(u8::from(mesure.en_echec()))
         }
+        Commande::Mcp { savoir } => {
+            let service = Arc::new(Service::ouvrir(&savoir)?);
+            executeur()?.block_on(mcp::servir_stdio(service))?;
+            Ok(0)
+        }
+        Commande::Servir {
+            ecoute,
+            hotes,
+            savoir,
+        } => {
+            let jeton = std::env::var(VAR_JETON)
+                .ok()
+                .filter(|jeton| !jeton.trim().is_empty());
+            http::controler_ecoute(ecoute, jeton.as_deref())?;
+            let service = Arc::new(Service::ouvrir(&savoir)?);
+            let reglages = Reglages {
+                ecoute,
+                jeton,
+                hotes,
+            };
+            executeur()?.block_on(http::servir(service, reglages))?;
+            Ok(0)
+        }
         Commande::EnVigueur { cid, le, savoir } => {
             let date = lire_date(&le)?;
             let trouvees = Couche::du_savoir(&savoir).en_vigueur_le(&cid, date)?;
@@ -338,6 +395,15 @@ fn executer(commande: Commande) -> Resultat<u8> {
             Ok(0)
         }
     }
+}
+
+/// L'exécuteur asynchrone des interfaces ; la ligne de commande n'en a pas
+/// besoin.
+fn executeur() -> Resultat<tokio::runtime::Runtime> {
+    tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()
+        .map_err(|erreur| Erreur::Serveur(erreur.to_string()))
 }
 
 fn millisecondes(delai: Duration) -> String {
