@@ -1,0 +1,26 @@
+name: Amélioration
+description: Une évolution souhaitée, qui deviendra besoin puis exigences
+title: "[Feature] "
+labels: [amélioration]
+body:
+  - type: textarea
+    id: besoin
+    attributes:
+      label: Besoin
+      description: Le problème ou le résultat attendu, en langage métier, sans solution technique.
+    validations:
+      required: true
+  - type: textarea
+    id: valeur
+    attributes:
+      label: Valeur
+      description: Pourquoi — la justification qui permettra d'arbitrer les cas non prévus.
+    validations:
+      required: true
+  - type: input
+    id: porteur
+    attributes:
+      label: Porteur
+      description: Qui exprimera les arbitrages sur ce besoin.
+    validations:
+      required: true

@@ -1,0 +1,6 @@
+# Révisions éditoriales des journaux
+#
+# SHA de commits qui ont touché une section CLOSE sans en changer le fond :
+# reformatage, faute d orthographe, migration d outil. Un par ligne, avec le
+# motif en commentaire. Toute autre modification d une section publiée est un
+# défaut, pas une exception.

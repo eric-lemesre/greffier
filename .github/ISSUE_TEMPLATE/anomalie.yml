@@ -1,0 +1,39 @@
+# [impl->req~issues-triage-priorites~2]
+# La gravité se constate ici ; la priorité se décide au triage, le
+# formulaire n'en demande aucune.
+name: Anomalie
+description: Un comportement contredit une exigence ou une attente légitime
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: dropdown
+    id: gravite
+    attributes:
+      label: Gravité
+      description: Un fait, pas une priorité — la priorité sera décidée au triage.
+      options:
+        - Critique — pas de contournement, ou données à risque
+        - Gênant — un contournement existe, mais il coûte
+        - Mineur — confort, cosmétique
+    validations:
+      required: true
+  - type: input
+    id: exigence
+    attributes:
+      label: Exigence concernée
+      description: Identifiant req si connu (la traçabilité aide à le trouver), sinon laisser vide.
+      placeholder: req~exemple~1
+  - type: textarea
+    id: constat
+    attributes:
+      label: Constat
+      description: Comportement observé, comportement attendu, pas à pas de reproduction.
+    validations:
+      required: true
+  - type: textarea
+    id: contexte
+    attributes:
+      label: Contexte
+      description: Version (fichier VERSION), environnement, fréquence.
+    validations:
+      required: true

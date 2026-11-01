@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Wrapper mince : le corps du hook (tagué) vit dans tools/hooks/commit-msg.sh.
+exec "$(git rev-parse --show-toplevel)/tools/hooks/commit-msg.sh" "$@"

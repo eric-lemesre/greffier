@@ -1,0 +1,121 @@
+# Façade d'orchestration par défaut — `task --list` affiche les tâches.
+#
+# PURE DÉLÉGATION (ADR-0007) : toute la logique des portes vit dans tools/*.sh
+# (POSIX strict), appelés aussi directement par la CI et les hooks. Cette
+# façade est interchangeable : une variante justfile est fournie dans
+# templates/orchestrators/, et un projet instancié peut n'en garder aucune.
+# Toute recette ajoutée ici doit rester une ligne de délégation — une logique
+# qui apparaît dans une façade est un défaut à corriger en revue.
+version: "3"
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task --list
+
+  trace:
+    desc: Traçabilité complète (échoue si un maillon manque)
+    cmds:
+      - sh tools/oft.sh trace
+
+  report:
+    desc: Rapport HTML de traçabilité dans build/tracabilite.html
+    cmds:
+      - sh tools/oft.sh report
+
+  check:
+    desc: Contrôles de cohérence (ADR, templates, version)
+    cmds:
+      - sh tools/checks.sh
+
+  secrets:
+    desc: Porte anti-secrets (balayage complet du dépôt)
+    cmds:
+      - sh tools/secrets.sh scan
+
+  ci:
+    desc: "Tout ce que la CI exécute (voie constatée) : task ci [-- --complet|--rapide]"
+    cmds:
+      - sh tools/ci.sh {{.CLI_ARGS}}
+
+  liens:
+    desc: Intégrité des liens internes de la documentation
+    cmds:
+      - sh tools/liens.sh
+
+  audit:
+    desc: "Périmètre de l'audit de réalisation : task audit [-- --ecrire|--squelette <domaine>]"
+    cmds:
+      - sh tools/audit.sh {{.CLI_ARGS}}
+
+  derive:
+    desc: Anti-dérive des artefacts générés
+    cmds:
+      - sh tools/derive.sh
+
+  matrice:
+    desc: "Matrice de traçabilité (informative, absente de `task ci`) : docs/tracabilite/matrice.md"
+    cmds:
+      - sh tools/matrice.sh
+
+  regen:
+    desc: Régénère tous les artefacts dérivés (feuille de route, suivi, audit, badges, avancement, matrice)
+    cmds:
+      - sh tools/todo.sh --ecrire
+      - sh tools/revues.sh --ecrire
+      - sh tools/audit.sh --ecrire
+      - sh tools/badges.sh --ecrire
+      - sh tools/avancement.sh --ecrire
+      - sh tools/matrice.sh
+
+  issues:
+    desc: "Conformité des issues au cycle de vie (hors porte : réseau requis)"
+    cmds:
+      - sh tools/issues.sh
+
+  hooks:
+    desc: Installe les hooks git du dépôt
+    cmds:
+      - git config core.hooksPath .githooks
+      - echo "Hooks installés (core.hooksPath = .githooks)."
+
+  clean:
+    desc: "Nettoie les artefacts locaux (chemins déclarés) : task clean [-- --all]"
+    cmds:
+      - sh tools/clean.sh {{.CLI_ARGS}}
+
+  rattachement:
+    desc: Tout fichier de code se rattache à une exigence (étiquette de couverture ou mention)
+    cmds:
+      - sh tools/rattachement.sh
+
+  hygiene:
+    desc: Hygiène des artefacts de compilation (chaîne épinglée, incrémental coupé sur tests et CI)
+    cmds:
+      - sh tools/hygiene-compilation.sh
+
+  bootstrap:
+    desc: "Dépendances, flux consenti : socle + modules projet (tools/bootstrap.d/)"
+    cmds:
+      - sh tools/bootstrap.sh {{.CLI_ARGS}}
+
+  setup:
+    desc: Accueil d'un contributeur qui vient de cloner (bootstrap + hooks + portes)
+    cmds:
+      - sh tools/setup.sh
+
+  init:
+    desc: "Instancie le gabarit (une fois) : task init -- --nom projet --porteur \"Prénom Nom\""
+    cmds:
+      - sh tools/init.sh {{.CLI_ARGS}}
+
+  adr-new:
+    desc: "Crée l'ADR suivant depuis le modèle : task adr-new -- titre-en-kebab"
+    cmds:
+      - sh tools/adr-new.sh {{.CLI_ARGS}}
+
+  bump:
+    desc: "Met à jour VERSION (compléter le CHANGELOG) : task bump -- X.Y.Z"
+    cmds:
+      - sh tools/bump.sh {{.CLI_ARGS}}

@@ -1,0 +1,28 @@
+# [impl->req~detection-secrets~1]
+# Balayage PLANIFIÉ de l'historique complet par la porte anti-secrets — en
+# plus de la porte à chaque poussée : une règle gitleaks ajoutée après coup
+# ne voit que les commits futurs, le balayage hebdomadaire rattrape le passé.
+# Remontée d'un projet instancié. Actions épinglées par SHA de commit.
+name: securite
+
+on:
+  schedule:
+    # Hebdomadaire (lundi 6 h UTC) : attraper toute fuite passée.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  secrets:
+    name: gitleaks — historique complet
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Porte anti-secrets (balayage complet)
+        run: sh tools/secrets.sh scan

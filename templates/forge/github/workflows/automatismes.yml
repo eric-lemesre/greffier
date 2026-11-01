@@ -1,0 +1,55 @@
+# Façade GitHub Actions — DÉCLENCHEURS SEULEMENT.
+# Toute la logique vit dans tools/automatismes.sh (ADR-0007). Non câblé dans
+# le gabarit : copier ce fichier dans .github/workflows/ du projet, après
+# avoir éprouvé chaque automatisme sur son cas d'échec (R3).
+name: automatismes
+
+on:
+  issue_comment:
+    types: [created]
+  issues:
+    types: [edited, labeled]
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 8 * * 1"   # lundi 08:00 UTC — rappel des recettes dormantes
+  workflow_dispatch: {}
+
+# Écriture sur les issues : le strict nécessaire, rien de plus.
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  automatismes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Lecture déclarée (/vu)
+        if: github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/vu')
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: sh tools/automatismes.sh lecture "${{ github.event.issue.number }}" "${{ github.event.comment.user.login }}"
+
+      - name: Retombée des lectures
+        if: github.event_name == 'push'
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: sh tools/automatismes.sh retombee "${{ github.event.before }}" "${{ github.sha }}"
+
+      - name: Liste de vérification complète
+        if: github.event_name == 'issues' && github.event.action == 'edited'
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: sh tools/automatismes.sh a-cloturer "${{ github.event.issue.number }}"
+
+      - name: Recettes dormantes
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: sh tools/automatismes.sh dormantes 15
+
+      - name: Sortie négative
+        if: github.event_name == 'issues' && github.event.action == 'labeled'
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: sh tools/automatismes.sh fermeture "${{ github.event.issue.number }}" "${{ github.event.label.name }}"

@@ -1,0 +1,52 @@
+# Façade GitLab CI — DÉCLENCHEURS SEULEMENT, mêmes appels que la façade
+# GitHub (ADR-0010). Non câblé dans le gabarit.
+#
+# GitLab ne propose pas d'équivalent direct aux déclencheurs « issue_comment »
+# et « issues.labeled » : ces deux automatismes passent par un webhook de
+# projet (Settings → Webhooks → Comments / Issues events) pointant vers un
+# pipeline déclenché, qui transmet les variables ci-dessous. Les trois autres
+# se câblent tels quels.
+#
+# Prérequis : un jeton de projet avec le droit d'écriture sur les issues,
+# exposé en variable protégée GITLAB_TOKEN, et « glab » plus « jq » dans
+# l'image.
+
+.automatismes:
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache git glab jq
+
+automatismes:lecture:
+  extends: .automatismes
+  rules:
+    - if: '$AUTOMATISME == "lecture"'
+  script:
+    - sh tools/automatismes.sh lecture "$ISSUE_IID" "$COMMENT_AUTHOR"
+
+automatismes:retombee:
+  extends: .automatismes
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  script:
+    - sh tools/automatismes.sh retombee "$CI_COMMIT_BEFORE_SHA" "$CI_COMMIT_SHA"
+
+automatismes:a-cloturer:
+  extends: .automatismes
+  rules:
+    - if: '$AUTOMATISME == "a-cloturer"'
+  script:
+    - sh tools/automatismes.sh a-cloturer "$ISSUE_IID"
+
+automatismes:dormantes:
+  extends: .automatismes
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+  script:
+    - sh tools/automatismes.sh dormantes 15
+
+automatismes:fermeture:
+  extends: .automatismes
+  rules:
+    - if: '$AUTOMATISME == "fermeture"'
+  script:
+    - sh tools/automatismes.sh fermeture "$ISSUE_IID" "$LABEL_POSE"

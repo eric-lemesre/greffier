@@ -1,0 +1,7 @@
+# Fins de ligne LF partout, y compris sous Windows : évite les faux positifs
+# des contrôles de formatage et de dérive (leçon reprise d'ergonomia).
+* text=auto eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+*.yml text eol=lf
+*.jar binary

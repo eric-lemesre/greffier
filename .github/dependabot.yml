@@ -1,0 +1,13 @@
+# Relève des épinglages : les actions sont épinglées par SHA de commit
+# (chaîne d'approvisionnement) — sans mécanisme de relève, un épinglage
+# devient un gel. Dependabot propose les nouveaux SHA en une PR groupée,
+# revue comme n'importe quelle contribution. Remontée d'un projet instancié.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]

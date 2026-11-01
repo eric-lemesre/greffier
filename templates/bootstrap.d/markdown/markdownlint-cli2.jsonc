@@ -1,0 +1,32 @@
+// Configuration markdownlint-cli2 — MODÈLE à copier en `.markdownlint-cli2.jsonc`
+// à la racine d'un projet instancié. Adapter les globs à l'arborescence,
+// en phase avec le périmètre de tools/format-tables.mjs.
+// Exécution : `sh tools/markdown.sh lint` (porte) ou `… fix` (normalisation).
+{
+  "config": {
+    "default": true,
+    // Longueur de ligne : la prose est libre — tableaux et liens interdisent
+    // une coupe dure.
+    "MD013": false,
+    // Autoriser le HTML inline ponctuel (badges, <br>, détails).
+    "MD033": false,
+    // Le premier titre n'a pas à être un H1 unique (fichiers inclus/partiels).
+    "MD041": false,
+    // Titres dupliqués tolérés entre sections sœurs (ex. FR/EN d'un même thème).
+    "MD024": { "siblings_only": true },
+    // Style de colonnes de tableau : normalisation des tableaux GFM — pipes
+    // alignés verticalement (y compris la ligne de séparateurs), produite
+    // par tools/format-tables.mjs (même mesure string-width que la règle).
+    "MD060": { "style": "aligned", "aligned_delimiter": true }
+  },
+  "globs": [
+    "docs/**/*.md",
+    "spec/**/*.md",
+    "templates/**/*.md",
+    "*.md"
+  ],
+  "ignores": [
+    "node_modules/**",
+    "build/**"
+  ]
+}

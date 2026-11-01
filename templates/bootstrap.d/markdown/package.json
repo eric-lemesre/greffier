@@ -1,0 +1,14 @@
+{
+  "name": "REMPLACER-nom-du-projet",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Outillage npm du lint Markdown (porte tools/markdown.sh). Fusionner dans le package.json du projet s'il en existe déjà un.",
+  "type": "module",
+  "scripts": {
+    "lint": "markdownlint-cli2"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.23.2",
+    "string-width": "^8.1.0"
+  }
+}

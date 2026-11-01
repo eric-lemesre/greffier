@@ -1,0 +1,20 @@
+name: Question ouverte
+description: Signaler un blocage nécessitant un arbitrage (miroir d'une entrée OQ du registre)
+title: "[OQ] "
+labels: [question-ouverte]
+body:
+  - type: input
+    id: bloque
+    attributes:
+      label: Bloque
+      description: Identifiants d'exigence ou ADR bloqués.
+      placeholder: req~exemple~1
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Contexte, options et recommandation
+      description: Reprendre le format du registre (templates/fr/open-question.md) — une question sans options est une délégation de travail, pas une question.
+    validations:
+      required: true

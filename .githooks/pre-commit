@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Wrapper mince : les fichiers sans extension ne sont pas scannés par
+# OpenFastTrace, le corps du hook (tagué) vit dans tools/hooks/pre-commit.sh.
+exec "$(git rev-parse --show-toplevel)/tools/hooks/pre-commit.sh" "$@"
