@@ -22,8 +22,17 @@ source) qu'il faut prouver par un banc avant de l'exposer.
   attend une application PISTE du porteur (production, avec Légifrance et
   Judilibre souscrites) — confirmer alors la forme des dates (millisecondes
   ou ISO) et l'adresse publique des textes hors code (`loda`).
-- Lot 2 — schéma du curateur et vérification (`vérifier`) d'un dépôt de
-  savoir sans code ; première dizaine de situations de conciliation.
+- Lot 2 — vérification livrée : `greffier verifier` (lecture seule) ; le
+  dépôt de savoir réel passe sans constat. Reste la première dizaine de
+  situations, qui attend deux préalables : la capture des textes cités
+  (application PISTE du porteur) et des référents nommés pour valider les
+  ingestions. Liste candidate, à arbitrer par un référent : arbres et
+  plantations du voisin ; bruit et troubles anormaux de voisinage ; clôture
+  et mitoyenneté ; servitude de passage ; malfaçons d'un artisan ; produit
+  défectueux et garantie légale de conformité ; vente entre particuliers et
+  vices cachés ; dépôt de garantie en fin de bail ; réparations et charges
+  locatives ; petite créance entre particuliers. Puis vérification jouée en
+  intégration continue du dépôt de savoir.
 - Lot 3 — recherche lexicale sur les deux couches, filtre par date en
   vigueur, banc de questions (rappel, précision, délai, zéro élément non
   ancré).

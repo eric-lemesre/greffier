@@ -2,8 +2,8 @@
 // Exigence servie : req~capture-des-sources-officielles~1
 //! Ligne de commande de Greffier.
 //!
-//! Codes de sortie : 0 réussite ; 1 erreur ; 2 usage ; 3 (`versions`)
-//! l'article a changé depuis la date donnée.
+//! Codes de sortie : 0 réussite ; 1 erreur (pour `verifier` : rapport en
+//! échec) ; 2 usage ; 3 (`versions`) l'article a changé depuis la date donnée.
 
 use std::path::PathBuf;
 use std::process::ExitCode;
@@ -13,7 +13,7 @@ use greffier::couche::{Conservation, Couche};
 use greffier::erreur::Resultat;
 use greffier::periode::{aujourdhui, ecrire_date, lire_date};
 use greffier::piste::{ClientPiste, Environnement, Identifiants};
-use greffier::{judilibre, legifrance, versions};
+use greffier::{judilibre, legifrance, verifier, versions};
 
 /// Variables d'environnement qui remplacent les adresses PISTE (mandataire,
 /// banc d'essai).
@@ -49,6 +49,13 @@ enum Commande {
         depuis: String,
         #[command(flatten)]
         piste: OptionsPiste,
+    },
+    /// Vérifie un dépôt de savoir, en lecture seule (sortie 1 si une erreur
+    /// est constatée).
+    Verifier {
+        /// Dossier du dépôt de savoir.
+        #[arg(long)]
+        savoir: PathBuf,
     },
     /// Rend la version conservée d'un article en vigueur à une date (hors
     /// ligne).
@@ -182,6 +189,20 @@ fn executer(commande: Commande) -> Resultat<u8> {
                 println!("inchangé depuis le {}\t{identifiant}", ecrire_date(depuis));
                 Ok(0)
             }
+        }
+        Commande::Verifier { savoir } => {
+            let rapport = verifier::verifier(&savoir)?;
+            for constat in &rapport.constats {
+                println!("{constat}");
+            }
+            let avertissements = rapport.constats.len() - rapport.erreurs();
+            println!(
+                "vérification : {} erreur(s), {avertissements} avertissement(s) — {} page(s), {} source(s) brute(s)",
+                rapport.erreurs(),
+                rapport.pages,
+                rapport.sources
+            );
+            Ok(u8::from(rapport.en_echec()))
         }
         Commande::EnVigueur { cid, le, savoir } => {
             let date = lire_date(&le)?;

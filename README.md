@@ -74,6 +74,7 @@ greffier capturer article LEGIARTI… --toutes-versions --savoir ../savoir
 greffier capturer decision <identifiant Judilibre> --savoir ../savoir
 greffier versions LEGIARTI… --depuis 2026-01-01      # sortie 3 si l'article a changé
 greffier en-vigueur <cid> --le 2026-01-01 --savoir ../savoir   # hors ligne
+greffier verifier --savoir ../savoir                  # lecture seule, sortie 1 si erreur
 ```
 
 Les identifiants viennent d'une application enregistrée sur

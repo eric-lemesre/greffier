@@ -9,9 +9,9 @@
 Verdicts admis : `conforme` · `écart` · `non examiné`.
 
 Domaine actif depuis D-2026-11-04 : les six exigences approuvées entrent au
-périmètre — quatre réalisées au lot 1, deux conçues par l'ADR-0001 et
-approuvées le 2026-11-01 (D-2026-11-05) mais pas encore réalisées, portées
-en écart « à réaliser ». Les exigences encore proposées (péremption,
+périmètre — quatre réalisées au lot 1, la séparation moteur / savoir au
+lot 2 ; la citation ancrée, conçue par l'ADR-0001 et approuvée
+(D-2026-11-05), reste en écart « à réaliser » (lot 3). Les exigences encore proposées (péremption,
 cloisonnement) n'y entreront qu'à leur approbation.
 
 | Exigence | Verdict | Preuve / écart |
@@ -20,7 +20,7 @@ cloisonnement) n'y entreront qu'à leur approbation.
 | `req~capture-des-sources-officielles~1` | écart | réalisé et éprouvé contre un faux serveur PISTE (identifiant validé avant appel, réponse sans identifiant, texte, date ou ECLI refusée, secret absent des sorties : `tests/piste_itest.rs`) ; la recette sur l'API officielle reste due — elle attend une application PISTE du porteur |
 | `req~detection-des-versions~1` | conforme | `src/versions.rs` : nouvelles versions et fin de vigueur postérieures à la date, « inchangé » sinon ; sortie 3 éprouvée par `versions_sort_en_3_quand_l_article_a_change` |
 | `req~citation-ancree~1` | écart | à réaliser : conçue (ADR-0001), aucun code ni test ; listée « à réaliser » par la traçabilité — lot 3 (recherche) |
-| `req~moteur-separe-du-savoir~1` | écart | à réaliser : conçue (ADR-0001) ; la séparation des dépôts existe (dépôt de savoir sans code), la commande `vérifier` qui la contrôle n'existe pas encore — lot 2 |
+| `req~moteur-separe-du-savoir~1` | conforme | `src/verifier.rs`, `greffier verifier` : rapport en lecture seule (test qui compare le dépôt avant et après), page citant un identifiant absent des sources brutes signalée et rapport en échec, programme ou dérivé versionné refusé, dérivé non suivi ignoré (`tests/verifier_itest.rs`) ; liens, orphelines, sur-connexion, index, journal ; dépôt de savoir réel vérifié sans constat le 2026-11-01 |
 | `req~chaine-de-verification-du-moteur~1` | conforme | chaîne épinglée (`rust-toolchain.toml`, porte d'hygiène) ; en-têtes SPDX vérifiés par `tools/spdx.sh`, cas d'échec par `tools/spdx-test.sh` ; format, lints et tests dans la voie complète de `tools/ci.sh` et en CI GitHub |
 
 ## Écarts ouverts
@@ -29,4 +29,3 @@ cloisonnement) n'y entreront qu'à leur approbation.
   (production, Légifrance et Judilibre souscrites) — forme des dates et
   adresse publique des textes hors code à confirmer (ToDo-0001, lot 1).
 - `req~citation-ancree~1` : à réaliser (lot 3, recherche ancrée).
-- `req~moteur-separe-du-savoir~1` : à réaliser (lot 2, `greffier vérifier`).

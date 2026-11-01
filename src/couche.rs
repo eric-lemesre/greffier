@@ -237,7 +237,7 @@ fn sans_capture(document: &str) -> Vec<&str> {
         .collect()
 }
 
-fn lire_entete(document: &str) -> Option<Vec<(&str, &str)>> {
+pub(crate) fn lire_entete(document: &str) -> Option<Vec<(&str, &str)>> {
     let reste = document.strip_prefix("---\n")?;
     let (entete, _) = reste.split_once("\n---\n")?;
     Some(
@@ -248,7 +248,7 @@ fn lire_entete(document: &str) -> Option<Vec<(&str, &str)>> {
     )
 }
 
-fn valeur<'a>(entete: &[(&str, &'a str)], cle: &str) -> Option<&'a str> {
+pub(crate) fn valeur<'a>(entete: &[(&str, &'a str)], cle: &str) -> Option<&'a str> {
     entete
         .iter()
         .find(|(nom, _)| *nom == cle)
