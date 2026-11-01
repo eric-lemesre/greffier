@@ -73,7 +73,10 @@ fn servir(savoir: &Path, jeton: Option<&str>) -> (Processus, String, String) {
         .arg(savoir)
         .stdout(Stdio::null())
         .stderr(Stdio::piped())
-        .env_remove("GREFFIER_JETON");
+        .env_remove("GREFFIER_JETON")
+        .env_remove("GREFFIER_ECOUTE")
+        .env_remove("GREFFIER_HOTES")
+        .env_remove("GREFFIER_SAVOIR");
     if let Some(jeton) = jeton {
         commande.env("GREFFIER_JETON", jeton);
     }
@@ -177,6 +180,53 @@ fn une_requete_sous_un_hote_non_admis_est_refusee_meme_en_local() {
     assert!(reponse.starts_with("HTTP/1.1 403"), "{reponse}");
     assert!(!reponse.contains("LEGIARTI"));
     assert_eq!(get(&format!("{base}/sante"), None).0, 200);
+}
+
+/// Envoie une requête brute sous l'en-tête `Host` donné ; rend la réponse.
+fn get_sous_l_hote(base: &str, chemin: &str, hote: &str) -> String {
+    let adresse = base.trim_start_matches("http://");
+    let mut flux = std::net::TcpStream::connect(adresse).unwrap();
+    write!(
+        flux,
+        "GET {chemin} HTTP/1.1\r\nHost: {hote}\r\nConnection: close\r\n\r\n"
+    )
+    .unwrap();
+    let mut reponse = String::new();
+    flux.read_to_string(&mut reponse).unwrap();
+    reponse
+}
+
+// [itest->req~service-systeme-desactive~1]
+#[test]
+fn servir_se_regle_par_ses_variables_d_environnement() {
+    let savoir = Savoir::new("environnement");
+    let mut enfant = Command::new(env!("CARGO_BIN_EXE_greffier"))
+        .arg("servir")
+        .env("GREFFIER_SAVOIR", &savoir.0)
+        .env("GREFFIER_ECOUTE", "127.0.0.1:0")
+        .env("GREFFIER_HOTES", "greffier.exemple,autre.exemple")
+        .env_remove("GREFFIER_JETON")
+        .stdout(Stdio::null())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let mut ligne = String::new();
+    BufReader::new(enfant.stderr.take().unwrap())
+        .read_line(&mut ligne)
+        .unwrap();
+    let _serveur = Processus(enfant);
+    let base = ligne
+        .split("http://")
+        .nth(1)
+        .and_then(|reste| reste.split('/').next())
+        .map(|adresse| format!("http://{adresse}"))
+        .unwrap_or_else(|| panic!("adresse introuvable : {ligne}"));
+
+    let admis = get_sous_l_hote(&base, "/recherche?question=branches", "autre.exemple:8370");
+    assert!(admis.starts_with("HTTP/1.1 200"), "{admis}");
+    assert!(admis.contains("LEGIARTI000000000002"));
+    let refuse = get_sous_l_hote(&base, "/recherche?question=branches", "piege.exemple");
+    assert!(refuse.starts_with("HTTP/1.1 403"), "{refuse}");
 }
 
 // [itest->req~acces-http-protege~1]

@@ -1,0 +1,9 @@
+#!/bin/sh
+# Avant désinstallation du paquet rpm (%preun) : à la suppression
+# définitive (argument 0, pas une mise à jour), arrête et désactive le
+# service. Le paquet deb le fait par les fragments de cargo-deb.
+# [impl->req~service-systeme-desactive~1]
+if [ "${1:-0}" = 0 ] && [ -d /run/systemd/system ]; then
+    systemctl --no-reload disable --now greffier.service >/dev/null 2>&1 || true
+fi
+exit 0

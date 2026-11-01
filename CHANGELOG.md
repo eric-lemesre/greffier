@@ -5,6 +5,25 @@ versionnement : [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté
+
+- Paquets natifs (ADR-0005, D-2026-11-07, domaine « distribution ») :
+  `.github/workflows/paquets.yml`, réutilisable, construit sur runners
+  natifs le binaire Linux statique (musl) et ses paquets deb (cargo-deb)
+  et rpm (cargo-generate-rpm), le dmg macOS universel
+  (`packaging/macos/construire-dmg.sh`) et le MSI Windows (WiX v5,
+  `packaging/windows/greffier.wxs`), puis installe chaque paquet sur un
+  système de sa famille avant de le livrer ; joué aussi sur les pull
+  requests qui touchent à la construction des paquets. Unité systemd
+  durcie et scripts d'installation dans `packaging/linux/`. Trois
+  exigences nouvelles.
+- OpenFastTrace balaie aussi `packaging/`.
+
+### Modifié
+
+- `release.yml` publie les paquets éprouvés par `paquets.yml` et
+  revérifie leurs empreintes avant de créer la release.
+
 ## [0.1.0] - 2026-11-01
 
 ### Ajouté

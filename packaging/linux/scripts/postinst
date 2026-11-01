@@ -1,0 +1,32 @@
+#!/bin/sh
+# Après installation (deb : postinst ; rpm : %post). Idempotent, quels que
+# soient les arguments du gestionnaire de paquets : crée l'utilisateur
+# système greffier, son dossier, et rend le fichier d'environnement
+# lisible du seul groupe greffier, puisqu'il porte le jeton. Le service
+# reste désactivé (ADR-0005).
+# [impl->req~service-systeme-desactive~1]
+set -e
+
+if ! getent group greffier >/dev/null; then
+    groupadd --system greffier
+fi
+if ! getent passwd greffier >/dev/null; then
+    coquille=/usr/sbin/nologin
+    [ -x "${coquille}" ] || coquille=/bin/false
+    useradd --system --gid greffier --home-dir /var/lib/greffier \
+        --no-create-home --shell "${coquille}" \
+        --comment "Greffier, moteur de recherche juridique" greffier
+fi
+install -d -o greffier -g greffier -m 0750 /var/lib/greffier
+if [ -f /etc/greffier/greffier.env ]; then
+    chown root:greffier /etc/greffier/greffier.env
+    chmod 0640 /etc/greffier/greffier.env
+fi
+if [ -d /run/systemd/system ]; then
+    systemctl daemon-reload >/dev/null 2>&1 || true
+fi
+
+# Fragments ajoutés par cargo-deb (paquet deb) ; simple commentaire dans
+# le paquet rpm.
+#DEBHELPER#
+exit 0

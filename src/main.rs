@@ -102,18 +102,22 @@ enum Commande {
         #[arg(long)]
         savoir: PathBuf,
     },
+    // [impl->req~service-systeme-desactive~1]
     /// Sert l'API HTTP, et MCP sous /mcp ; hors de la boucle locale, exige
-    /// le jeton porteur GREFFIER_JETON.
+    /// le jeton porteur GREFFIER_JETON. Chaque option se règle aussi par sa
+    /// variable d'environnement : c'est ainsi que le service système des
+    /// paquets Linux la reçoit (`/etc/greffier/greffier.env`).
     Servir {
         /// Adresse d'écoute.
-        #[arg(long, default_value = ECOUTE_PAR_DEFAUT)]
+        #[arg(long, env = "GREFFIER_ECOUTE", default_value = ECOUTE_PAR_DEFAUT)]
         ecoute: SocketAddr,
-        /// Nom d'hôte sous lequel le serveur est joint (répétable), en plus
-        /// de la boucle locale.
-        #[arg(long = "hote")]
+        /// Nom d'hôte sous lequel le serveur est joint (répétable, ou liste
+        /// séparée par des virgules dans GREFFIER_HOTES), en plus de la
+        /// boucle locale.
+        #[arg(long = "hote", env = "GREFFIER_HOTES", value_delimiter = ',')]
         hotes: Vec<String>,
         /// Dossier du dépôt de savoir.
-        #[arg(long)]
+        #[arg(long, env = "GREFFIER_SAVOIR")]
         savoir: PathBuf,
     },
     /// Rend la version conservée d'un article en vigueur à une date (hors

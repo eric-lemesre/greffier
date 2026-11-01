@@ -11,7 +11,7 @@ publish = false
 
 [dependencies]
 axum = "0.8"
-clap = { version = "4", features = ["derive"] }
+clap = { version = "4", features = ["derive", "env"] }
 rmcp = { version = "3", features = ["server", "macros", "transport-io", "transport-streamable-http-server"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -19,6 +19,49 @@ thiserror = "2"
 time = { version = "0.3", features = ["formatting", "parsing", "macros"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "signal", "io-std"] }
 ureq = { version = "3", features = ["json"] }
+
+# Paquets natifs (ADR-0005), construits par .github/workflows/paquets.yml
+# depuis le binaire statique (musl) : cargo-deb et cargo-generate-rpm
+# remplacent target/release par le dossier de la cible demandée.
+[package.metadata.deb]
+maintainer = "Eric Lemesre <eric.lemesre@gmail.com>"
+copyright = "2026, Eric Lemesre"
+license-file = ["LICENSE", "0"]
+section = "utils"
+priority = "optional"
+depends = "passwd"
+extended-description = """\
+Greffier cherche, dans le droit français en vigueur à une date, les textes, \
+décisions et pages de savoir qui répondent à une question posée dans les \
+mots de la vie courante, et ne rend rien qui ne soit ancré dans un texte \
+authentique conservé. Ligne de commande, serveur MCP et API HTTP ; le \
+service greffier est posé désactivé."""
+assets = [
+    ["target/release/greffier", "usr/bin/", "755"],
+    ["README.md", "usr/share/doc/greffier/", "644"],
+    ["NEWS.md", "usr/share/doc/greffier/", "644"],
+    ["packaging/linux/greffier.env", "etc/greffier/greffier.env", "640"],
+]
+conf-files = ["/etc/greffier/greffier.env"]
+maintainer-scripts = "packaging/linux/scripts/"
+systemd-units = { unit-name = "greffier", unit-scripts = "packaging/linux/", enable = false, start = false }
+
+[package.metadata.generate-rpm]
+summary = "Moteur de recherche juridique ancré"
+assets = [
+    { source = "target/release/greffier", dest = "/usr/bin/greffier", mode = "755" },
+    { source = "README.md", dest = "/usr/share/doc/greffier/README.md", mode = "644", doc = true },
+    { source = "NEWS.md", dest = "/usr/share/doc/greffier/NEWS.md", mode = "644", doc = true },
+    { source = "LICENSE", dest = "/usr/share/licenses/greffier/LICENSE", mode = "644" },
+    { source = "packaging/linux/greffier.service", dest = "/usr/lib/systemd/system/greffier.service", mode = "644" },
+    { source = "packaging/linux/greffier.env", dest = "/etc/greffier/greffier.env", mode = "640", config = "noreplace" },
+]
+post_install_script = "packaging/linux/scripts/postinst"
+pre_uninstall_script = "packaging/linux/scripts/rpm-preun"
+post_uninstall_script = "packaging/linux/scripts/postrm"
+
+[package.metadata.generate-rpm.requires]
+shadow-utils = "*"
 
 [lints.rust]
 missing_docs = "deny"

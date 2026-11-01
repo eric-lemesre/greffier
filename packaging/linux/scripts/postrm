@@ -1,0 +1,14 @@
+#!/bin/sh
+# Après désinstallation (deb : postrm ; rpm : %postun). L'utilisateur
+# greffier et /var/lib/greffier sont gardés : le savoir qui s'y trouve
+# n'appartient pas au paquet, et un utilisateur retiré laisserait des
+# fichiers sans propriétaire.
+# [impl->req~service-systeme-desactive~1]
+set -e
+
+if [ -d /run/systemd/system ]; then
+    systemctl daemon-reload >/dev/null 2>&1 || true
+fi
+
+#DEBHELPER#
+exit 0

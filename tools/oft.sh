@@ -26,7 +26,8 @@ STATUTS_TRACES="approved"
 # pourquoi. Manque constaté sur un projet instancié.
 # « tests » porte les tests d'intégration d'un projet Rust (tags itest), que
 # cargo range hors de src (constaté sur un projet instancié).
-INPUTS="spec docs examples src tests tools .github .gitlab .gitlab-ci.yml AGENTS.md README.md README.en.md CONTRIBUTING.md CHANGELOG.md Taskfile.yml"
+# « packaging » porte les scripts des paquets natifs (ADR-0005).
+INPUTS="spec docs examples src tests tools packaging .github .gitlab .gitlab-ci.yml AGENTS.md README.md README.en.md CONTRIBUTING.md CHANGELOG.md Taskfile.yml"
 
 scan_inputs() {
     SCAN=""

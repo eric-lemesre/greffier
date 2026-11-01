@@ -55,6 +55,42 @@ suivants). Greffier fournit une **aide documentaire** sourcée et datée ; le
 lecteur humain reste l'auteur de son appréciation. Aucune page, aucune
 réponse ne conclut sur le fond d'un litige concret.
 
+## Installation
+
+Chaque version publie, sur la page des
+[releases](https://github.com/eric-lemesre/greffier/releases), des paquets
+pour chaque système, chacun avec son empreinte SHA-256 (fichier
+`.sha256`). Vérifier l'empreinte avant d'installer :
+`sha256sum -c greffier_….deb.sha256` (sous macOS : `shasum -a 256 -c …`).
+
+| Système | Paquet | Installation |
+| --- | --- | --- |
+| Debian, Ubuntu (x86-64, ARM64) | `greffier_X.Y.Z-1_amd64.deb`, `…_arm64.deb` | `sudo apt install ./greffier_X.Y.Z-1_amd64.deb` |
+| Fedora, RHEL, openSUSE (x86-64, ARM64) | `greffier-X.Y.Z-1.x86_64.rpm`, `….aarch64.rpm` | `sudo dnf install ./greffier-X.Y.Z-1.x86_64.rpm` |
+| macOS (Apple Silicon et Intel) | `greffier-X.Y.Z-universal.dmg` | ouvrir l'image, puis le paquet `.pkg` ; `greffier` est posé dans `/usr/local/bin` |
+| Windows 10 et 11 (x64) | `greffier-X.Y.Z-x64.msi` | ouvrir l'installateur ; `greffier` est ajouté au PATH |
+| Autre Linux | `greffier-vX.Y.Z-x86_64-linux.tar.gz`, `…-aarch64-linux.tar.gz` | binaire statique, sans dépendance, à poser dans le PATH |
+
+Les paquets macOS et Windows ne sont pas encore signés
+([ADR-0005](docs/adr/0005-livrer-le-moteur-en-paquets-natifs.md)) :
+
+- **macOS** refuse d'abord le paquet (« développeur non identifié ») :
+  clic droit sur le `.pkg`, « Ouvrir », puis confirmer ; ou, dans un
+  terminal, `xattr -d com.apple.quarantine greffier-X.Y.Z.pkg` avant de
+  l'ouvrir.
+- **Windows** affiche l'écran SmartScreen : « Informations
+  complémentaires », puis « Exécuter quand même ».
+
+Sur un serveur Linux, les paquets deb et rpm posent aussi le service
+`greffier` (API HTTP et MCP), **désactivé** : déposer le savoir dans
+`/var/lib/greffier/savoir` (lisible par l'utilisateur `greffier`),
+régler `/etc/greffier/greffier.env` (adresse d'écoute, jeton, noms
+d'hôte ; fichier lisible de root et du groupe `greffier` seuls, jamais
+écrasé par une mise à jour), puis `sudo systemctl enable --now greffier`.
+
+Depuis les sources : `cargo install --locked --git
+https://github.com/eric-lemesre/greffier --tag vX.Y.Z`.
+
 ## État
 
 Premier lot (novembre 2026) : les décisions fondatrices sont prises

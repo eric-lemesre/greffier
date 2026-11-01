@@ -1,0 +1,237 @@
+# Paquets natifs de Greffier (ADR-0005) : chaque paquet est construit PUIS
+# installé sur un système de sa famille, et le binaire installé répond.
+# Appelé par release.yml au tag ; joué aussi sur toute pull request qui
+# touche à la construction des paquets, pour qu'un paquet soit prouvé avant
+# d'être publié. Paquets non signés pour l'instant (D-2026-11-07).
+# Actions épinglées par SHA de commit ; outils de construction à version
+# épinglée.
+# [impl->req~paquets-natifs~1]
+# [impl->req~installation-sans-dependance~1]
+# [impl->dsn~paquets-natifs~1]
+name: paquets
+
+on:
+  workflow_call:
+  pull_request:
+    paths:
+      - "packaging/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - ".github/workflows/paquets.yml"
+      - ".github/workflows/release.yml"
+
+concurrency:
+  group: paquets-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  CARGO_DEB_VERSION: "3.7.0"
+  CARGO_GENERATE_RPM_VERSION: "0.21.0"
+  WIX_VERSION: "5.0.2"
+
+jobs:
+  linux:
+    name: Linux ${{ matrix.arch }} (deb, rpm, tar.gz)
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    env:
+      CIBLE: ${{ matrix.arch }}-unknown-linux-musl
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Chaîne et outillage
+        run: |
+          if ! command -v rustup >/dev/null; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain none
+            echo "${HOME}/.cargo/bin" >> "${GITHUB_PATH}"
+            export PATH="${HOME}/.cargo/bin:${PATH}"
+          fi
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq musl-tools
+          rustup target add "${CIBLE}"
+          cargo install --locked cargo-deb --version "${CARGO_DEB_VERSION}"
+          cargo install --locked cargo-generate-rpm --version "${CARGO_GENERATE_RPM_VERSION}"
+
+      - name: Binaire statique
+        run: cargo build --release --locked --target "${CIBLE}"
+
+      # [itest->req~installation-sans-dependance~1]
+      - name: Épreuve — le binaire ne dépend d'aucune bibliothèque partagée
+        run: |
+          binaire="target/${CIBLE}/release/greffier"
+          file "${binaire}"
+          file "${binaire}" | grep -Eq 'statically linked|static-pie linked'
+          "${binaire}" --version
+
+      - name: Paquets et archive
+        run: |
+          version="$(cat VERSION)"
+          mkdir -p dist
+          cargo deb --no-build --target "${CIBLE}" --output dist/
+          cargo generate-rpm --target "${CIBLE}" --output dist/
+          nom="greffier-v${version}-${{ matrix.arch }}-linux"
+          mkdir "${nom}"
+          cp "target/${CIBLE}/release/greffier" LICENSE README.md NEWS.md "${nom}/"
+          tar -czf "dist/${nom}.tar.gz" "${nom}"
+          ls -l dist
+
+      # [itest->req~paquets-natifs~1]
+      # [itest->req~service-systeme-desactive~1]
+      - name: Épreuve — le deb s'installe, pose le service désactivé, se retire
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get install -y ./dist/greffier_*.deb
+          greffier --version
+          getent passwd greffier
+          test "$(sudo stat -c '%a %U %G' /etc/greffier/greffier.env)" = "640 root greffier"
+          test "$(systemctl is-enabled greffier.service || true)" = "disabled"
+          test "$(systemctl is-active greffier.service || true)" = "inactive"
+          systemd-analyze verify /usr/lib/systemd/system/greffier.service
+          echo "GREFFIER_JETON=jeton-de-l-exploitant" | sudo tee -a /etc/greffier/greffier.env >/dev/null
+          sudo apt-get install -y --reinstall ./dist/greffier_*.deb
+          sudo grep -q "jeton-de-l-exploitant" /etc/greffier/greffier.env
+          sudo apt-get remove -y greffier
+          test ! -e /usr/bin/greffier
+
+      # [itest->req~paquets-natifs~1]
+      # [itest->req~service-systeme-desactive~1]
+      - name: Épreuve — le rpm s'installe sur Fedora, fichier d'environnement préservé
+        run: |
+          docker run --rm -v "${PWD}/dist:/dist:ro" fedora:42 sh -euxc '
+            dnf -q install -y /dist/greffier-*.rpm
+            greffier --version
+            getent passwd greffier
+            test "$(stat -c "%a %U %G" /etc/greffier/greffier.env)" = "640 root greffier"
+            rpm -q --qf "[%{FILENAMES} %{FILEFLAGS:fflags}\n]" greffier | grep -qx "/etc/greffier/greffier.env cn"
+            test -f /usr/lib/systemd/system/greffier.service
+            dnf -q remove -y greffier
+            test ! -e /usr/bin/greffier
+          '
+
+      - name: Empreintes
+        working-directory: dist
+        run: for f in *; do sha256sum "${f}" > "${f}.sha256"; done
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: paquets-linux-${{ matrix.arch }}
+          path: dist/*
+          if-no-files-found: error
+
+  macos:
+    name: macOS universel (dmg)
+    runs-on: macos-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Binaires Apple Silicon et Intel
+        run: |
+          rustup target add aarch64-apple-darwin x86_64-apple-darwin
+          cargo build --release --locked --target aarch64-apple-darwin
+          cargo build --release --locked --target x86_64-apple-darwin
+
+      - name: Image disque
+        run: |
+          version="$(cat VERSION)"
+          mkdir -p dist
+          sh packaging/macos/construire-dmg.sh "${version}" \
+            target/aarch64-apple-darwin/release/greffier \
+            target/x86_64-apple-darwin/release/greffier \
+            "dist/greffier-${version}-universal.dmg"
+
+      # [itest->req~paquets-natifs~1]
+      - name: Épreuve — le dmg monte, le paquet installe un binaire universel
+        run: |
+          version="$(cat VERSION)"
+          hdiutil attach "dist/greffier-${version}-universal.dmg" -mountpoint /Volumes/greffier
+          sudo installer -pkg "/Volumes/greffier/greffier-${version}.pkg" -target /
+          hdiutil detach /Volumes/greffier
+          /usr/local/bin/greffier --version
+          archs="$(lipo -archs /usr/local/bin/greffier)"
+          echo "${archs}"
+          case "${archs}" in *arm64*) ;; *) exit 1 ;; esac
+          case "${archs}" in *x86_64*) ;; *) exit 1 ;; esac
+
+      - name: Empreinte
+        working-directory: dist
+        run: for f in *; do shasum -a 256 "${f}" > "${f}.sha256"; done
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: paquets-macos
+          path: dist/*
+          if-no-files-found: error
+
+  windows:
+    name: Windows x64 (MSI)
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Binaire
+        run: cargo build --release --locked --target x86_64-pc-windows-msvc
+
+      - name: Installateur MSI
+        run: |
+          version="$(cat VERSION)"
+          dotnet tool install --global wix --version "${WIX_VERSION}"
+          mkdir -p dist
+          wix build packaging/windows/greffier.wxs -arch x64 \
+            -d "Version=${version}" \
+            -d "Racine=$(cygpath -w "${PWD}")" \
+            -d "Binaire=$(cygpath -w "${PWD}/target/x86_64-pc-windows-msvc/release/greffier.exe")" \
+            -o "dist/greffier-${version}-x64.msi"
+          rm -f dist/*.wixpdb
+
+      # [itest->req~paquets-natifs~1]
+      - name: Épreuve — le MSI installe greffier dans le PATH et se désinstalle
+        shell: pwsh
+        run: |
+          $version = (Get-Content VERSION).Trim()
+          $msi = (Resolve-Path "dist/greffier-$version-x64.msi").Path
+          $installation = Start-Process msiexec.exe -Wait -PassThru -ArgumentList "/i `"$msi`" /qn /l*v installation.log"
+          if ($installation.ExitCode -ne 0) { Get-Content installation.log -Tail 50; exit 1 }
+          $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine')
+          greffier --version
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          $retrait = Start-Process msiexec.exe -Wait -PassThru -ArgumentList "/x `"$msi`" /qn"
+          if ($retrait.ExitCode -ne 0) { exit 1 }
+          if (Test-Path "$env:ProgramFiles\Greffier\greffier.exe") { exit 1 }
+          if ([Environment]::GetEnvironmentVariable('Path', 'Machine') -like "*\Greffier*") { exit 1 }
+
+      - name: Empreinte
+        working-directory: dist
+        run: for f in *; do sha256sum "${f}" > "${f}.sha256"; done
+
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: paquets-windows
+          path: dist/*
+          if-no-files-found: error

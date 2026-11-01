@@ -5,6 +5,25 @@ Ce qui change pour qui utilise ou exploite Greffier. Le journal du dépôt
 
 ## [Non publié]
 
+### Ajouté
+
+- **Paquets pour chaque système** : deb et rpm (Linux x86-64 et ARM64),
+  image disque macOS au binaire universel (Apple Silicon et Intel),
+  installateur MSI pour Windows x64, chacun avec son empreinte SHA-256 ;
+  archives Linux pour les deux architectures. Le binaire Linux est
+  statique : il s'installe sur toute distribution, quelle que soit sa
+  version. Les paquets macOS et Windows ne sont pas encore signés : le
+  README dit comment les ouvrir.
+- **Service système sous Linux** : les paquets deb et rpm posent le
+  service `greffier` (API HTTP et MCP), désactivé, sous un utilisateur
+  `greffier` sans privilège ; il se règle dans
+  `/etc/greffier/greffier.env` (lisible de root et du groupe `greffier`
+  seuls, jamais écrasé par une mise à jour), puis
+  `systemctl enable --now greffier`.
+- `greffier servir` lit aussi ses réglages dans l'environnement :
+  `GREFFIER_SAVOIR`, `GREFFIER_ECOUTE` et `GREFFIER_HOTES` (noms d'hôte
+  séparés par des virgules).
+
 ## [0.1.0] - 2026-11-01
 
 Première version : un moteur de recherche juridique qui ne rend rien sans
