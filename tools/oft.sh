@@ -12,8 +12,8 @@ OFT_URL="https://github.com/itsallcode/openfasttrace/releases/download/${OFT_VER
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 JAR="${ROOT}/.cache/openfasttrace-${OFT_VERSION}.jar"
-# Statuts OpenFastTrace retenus par la porte (ADR-0020) ; exigences
-# approuvées à réaliser tolérées (ADR-0020).
+# Statuts OpenFastTrace retenus par la porte (ADR-0021) ; exigences
+# approuvées à réaliser tolérées (ADR-0021).
 STATUTS_TRACES="approved"
 
 # Périmètre scanné (relatif à la racine). templates/ est exclu : les modèles
@@ -108,7 +108,7 @@ case "${1:-trace}" in
         require_java
         fetch_jar
         # shellcheck disable=SC2086 — la découpe en mots de SCAN est voulue.
-        # Seuls les items approuvés entrent dans la porte (ADR-0020) : un
+        # Seuls les items approuvés entrent dans la porte (ADR-0021) : un
         # besoin ou une exigence non arbitrés portent « Status: draft » (ou
         # proposed) sous leur identifiant, et tools/statuts.sh vérifie que ce
         # statut concorde avec le statut déclaré de l'exigence.
@@ -127,20 +127,44 @@ case "${1:-trace}" in
             printf '%s\n' "${SORTIE}" >&2
             exit "${rc}"
         fi
-        # Exigence approuvée À RÉALISER (ADR-0020) : aucun maillon aval
-        # (« in: 0 / 0 »), lien amont sain (« out: … ✔ »), et pour seul défaut
-        # des types requis non couverts (« (-impl, -utest) »). Dès le premier
-        # tag ou item aval, la couverture complète est exigée.
-        MOTIF_A_REALISER='^not ok \[ in: +0 / +0 +\| out: +[0-9]+ / +[0-9]+ ✔ \] req~[a-z0-9-]+~[0-9]+ \(-[a-z]+(, -[a-z]+)*\)$'
-        BLOQUANTS="$(printf '%s\n' "${DEFAUTS}" | grep -Ev "${MOTIF_A_REALISER}" || true)"
+        # Exigence ou item de conception approuvés À RÉALISER (ADR-0021) :
+        # réalisation non commencée — aucun des types de réalisation (impl,
+        # utest, itest, stest, mtest) n'est couvert, la conception (dsn) peut
+        # l'être —, maillons entrants tous sains (« in: n / n »), lien amont
+        # sain (« out: … ✔ »), et pour seul défaut des types requis non
+        # couverts. Entre parenthèses, OpenFastTrace 4.9.0 liste TOUS les
+        # types requis, préfixés de « - » quand ils manquent :
+        # « (dsn, -impl, -utest) ». Dès le premier tag de code ou de test, la
+        # couverture complète est exigée. Un besoin sans exigence approuvée
+        # n'est jamais toléré.
+        TRIES="$(printf '%s\n' "${DEFAUTS}" | awk '
+            BEGIN { split("impl utest itest stest mtest", r, " "); for (i in r) reel[r[i]] = 1 }
+            {
+                toleree = 0
+                if ($0 ~ /^not ok \[ in: +[0-9]+ \/ +[0-9]+ .*\| out: +[0-9]+ \/ +[0-9]+ ✔ \] (req|dsn)~[a-z0-9-]+~[0-9]+ \([-a-z, ]+\)$/) {
+                    tete = substr($0, 1, index($0, "|") - 1)
+                    sub(/^not ok \[ in: +/, "", tete)
+                    split(tete, c, " ")
+                    entrants = (c[1] == c[3]) && (c[1] == 0 || c[4] == "✔")
+                    liste = $0; sub(/^.*\(/, "", liste); sub(/\)$/, "", liste)
+                    n = split(liste, t, ", "); manque = 0; commencee = 0
+                    for (i = 1; i <= n; i++) {
+                        if (substr(t[i], 1, 1) == "-") manque = 1
+                        else if (t[i] in reel) commencee = 1
+                    }
+                    toleree = entrants && manque && !commencee
+                }
+                print (toleree ? "A" : "B") "\t" $0
+            }')"
+        BLOQUANTS="$(printf '%s\n' "${TRIES}" | sed -n 's/^B	//p')"
         if [ -n "${BLOQUANTS}" ]; then
             printf '%s\n' "${SORTIE}" >&2
             echo "ÉCHEC : traçabilité — défauts bloquants :" >&2
             printf '%s\n' "${BLOQUANTS}" >&2
             exit 1
         fi
-        A_REALISER="$(printf '%s\n' "${DEFAUTS}" | grep -oE 'req~[a-z0-9-]+~[0-9]+')"
-        echo "Traçabilité : OK — $(printf '%s\n' "${A_REALISER}" | wc -l | tr -d ' ') exigence(s) approuvée(s) à réaliser :"
+        A_REALISER="$(printf '%s\n' "${TRIES}" | sed -n 's/^A	//p' | grep -oE '(req|dsn)~[a-z0-9-]+~[0-9]+')"
+        echo "Traçabilité : OK — $(printf '%s\n' "${A_REALISER}" | wc -l | tr -d ' ') élément(s) approuvé(s) à réaliser :"
         printf '%s\n' "${A_REALISER}" | sed 's/^/  /'
         ;;
     doublons)
@@ -155,7 +179,7 @@ case "${1:-trace}" in
         mkdir -p build
         # Le rapport HTML est informatif : généré même en cas de défauts ; le
         # code retour est celui de la porte, exigences à réaliser tolérées
-        # comprises (ADR-0020).
+        # comprises (ADR-0021).
         java -jar "${JAR}" trace -o html -f build/tracabilite.html -w "${STATUTS_TRACES}" ${SCAN} || true
         echo "Rapport : build/tracabilite.html"
         sh "${ROOT}/tools/oft.sh" trace

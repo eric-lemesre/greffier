@@ -7,6 +7,12 @@ versionnement : [SemVer](https://semver.org/lang/fr/).
 
 ### Ajouté
 
+- Adoption de la révision ADR-0021 du gabarit : une exigence ou un item de
+  conception approuvés sans code ni test sont listés « à réaliser », même
+  conçus. « Citation ancrée » et « moteur séparé du savoir » approuvées
+  (D-2026-11-05), à réaliser ; item de conception de l'ADR-0001 et besoin
+  « source pour agents » rentrés dans la traçabilité.
+
 - Adoption de la révision du gabarit alm-forge (ADR-0020 du gabarit) : la
   traçabilité ne retient que les items approuvés, une exigence approuvée
   sans maillon aval est listée « à réaliser », un item non approuvé porte

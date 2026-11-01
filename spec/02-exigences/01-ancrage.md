@@ -7,14 +7,15 @@ authentique. Les domaines suivants (ingestion, wiki, recherche, interfaces)
 viendront avec leurs lots. Chaque exigence déclare d'emblée toute la
 couverture qu'elle attend ; une exigence non approuvée porte son statut
 OpenFastTrace (`Status: proposed`) collé sous son identifiant et reste hors
-de la traçabilité jusqu'à son approbation (ADR-0020 du gabarit alm-forge).
+de la traçabilité jusqu'à son approbation ; une exigence approuvée dont la
+réalisation n'a pas commencé (conçue dans un ADR, sans code ni test) est
+listée « à réaliser » (ADR-0021 du gabarit alm-forge).
 
 ## Tout élément rendu porte l'identifiant d'un texte authentique
 
 `req~citation-ancree~1`
-Status: proposed
 
-**Statut : proposée**
+**Statut : approuvée**
 
 Le système DOIT rendre uniquement des éléments de réponse qui portent
 l'identifiant officiel d'un texte ou d'une décision présent dans la couche
@@ -164,9 +165,8 @@ Needs: dsn, impl, utest
 ## Le moteur et le savoir sont deux dépôts distincts, et le savoir ne contient aucun code
 
 `req~moteur-separe-du-savoir~1`
-Status: proposed
 
-**Statut : proposée**
+**Statut : approuvée**
 
 Le système DOIT lire un dépôt de savoir qui ne contient que du texte
 (sources brutes, pages compilées, schéma du curateur, banc de questions)

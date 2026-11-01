@@ -10,7 +10,7 @@ Status: draft
 
 <!-- « Status: draft » (collé sous l'identifiant) tient le besoin hors de la
      porte de traçabilité ; on le retire quand ses exigences sont approuvées
-     (ADR-0020). -->
+     (ADR-0021). -->
 
 {{ Ce que le porteur veut obtenir, en langage métier, sans solution technique.
 La forme user story (En tant que… je veux… afin de…) est admise ici. }}

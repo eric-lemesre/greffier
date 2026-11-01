@@ -50,7 +50,7 @@ Covers:
 Needs: impl, utest
 EOF
     # Une exigence approuvée SANS aucun maillon aval est « à réaliser » et
-    # passe (ADR-0020) : le maillon manquant se teste sur une réalisation
+    # passe (ADR-0021) : le maillon manquant se teste sur une réalisation
     # commencée. Tag assemblé à l'exécution, pour la même raison qu'en bas.
     printf '# [impl->%s]\necho fait\n' "${id_orphelin}" > "${D}/tools/chose.sh"
     if (cd "${D}" && sh tools/oft.sh trace >/dev/null 2>&1); then

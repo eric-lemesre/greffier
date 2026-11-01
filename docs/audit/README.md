@@ -7,5 +7,5 @@ dans la fiche de chaque domaine ; ce tableau de bord ne fait que les compter.
 
 | Domaine | Exigences | conforme | écart | non examiné |
 | --- | --- | --- | --- | --- |
-| [01-ancrage](01-ancrage.md) | 4 | 3 | 1 | 0 |
-| **total** | **4** | **3** | **1** | **0** |
+| [01-ancrage](01-ancrage.md) | 6 | 3 | 3 | 0 |
+| **total** | **6** | **3** | **3** | **0** |

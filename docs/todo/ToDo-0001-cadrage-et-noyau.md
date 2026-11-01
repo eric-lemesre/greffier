@@ -13,7 +13,8 @@ source) qu'il faut prouver par un banc avant de l'exposer.
 ## Reste à faire
 
 - Lot 0 — cadrage : ADR-0001 à ADR-0003 acceptés ; domaine « ancrage »
-  actif (D-2026-11-04), quatre exigences approuvées, quatre proposées ; licence de contenu du savoir tranchée (fermée, utilisable
+  actif (D-2026-11-04), six exigences approuvées (D-2026-11-05), dont
+  deux à réaliser, deux proposées ; licence de contenu du savoir tranchée (fermée, utilisable
   par Pacilia) ; décisions restantes du porteur : modèle d'ingestion (local
   ou nuage, sources publiques), référents éditoriaux.
 - Lot 1 — connecteur aux textes authentiques : livré sur forme publiée et
@@ -37,5 +38,5 @@ source) qu'il faut prouver par un banc avant de l'exposer.
   req~moteur-separe-du-savoir~1, req~peremption-par-version~1,
   req~cloisonnement-du-savoir~1
 - Décisions : ADR-0001, ADR-0002, ADR-0003, D-2026-11-02, D-2026-11-03,
-  D-2026-11-04
+  D-2026-11-04, D-2026-11-05
 - Issues : —

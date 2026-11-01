@@ -80,9 +80,11 @@ brouillon ──▶ proposée ──▶ approuvée ──▶ implémentée ─�
   concorde pas avec le statut déclaré ([ADR-0020](https://github.com/eric-lemesre/alm-forge/blob/main/docs/adr/0020-tracer-les-seuls-items-approuves.md)).
   Un besoin dont aucune exigence n'est encore approuvée porte lui aussi
   `Status: draft`.
-- Une exigence approuvée sans aucun maillon aval est **à réaliser** : la
-  porte la tolère et la liste. Dès son premier tag ou item aval, sa
-  couverture complète est exigée ([ADR-0020](https://github.com/eric-lemesre/alm-forge/blob/main/docs/adr/0020-tracer-les-seuls-items-approuves.md)).
+- Une exigence ou un item de conception approuvés dont la réalisation n'a
+  pas commencé — aucun tag de code ni de test, la conception (ADR) pouvant
+  exister — sont **à réaliser** : la porte les tolère et les liste. Dès le
+  premier tag de code ou de test, la couverture complète est exigée ; un
+  test se commite donc avec son code ([ADR-0021](https://github.com/eric-lemesre/alm-forge/blob/main/docs/adr/0021-tolerer-la-conception-avant-la-realisation.md)).
 - On ne réalise que l'approuvé : un tag de code vers une exigence non
   approuvée fait échouer la porte (le lien pointe vers un item écarté). Un
   item de conception (ADR) qui motive des exigences encore en proposition
