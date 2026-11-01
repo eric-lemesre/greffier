@@ -6,4 +6,4 @@ Covers vers le besoin, Needs vers la couverture attendue).
 
 | Domaine | Statut | Avancement | Objet |
 | --- | --- | --- | --- |
-| [01-ancrage](01-ancrage.md) | PROPOSITION | — | Rien n'est rendu sans texte authentique ; moteur et savoir séparés |
+| [01-ancrage](01-ancrage.md) | ACTIVE | implémentée | Rien n'est rendu sans texte authentique ; moteur et savoir séparés |

@@ -16,7 +16,7 @@ fail=0
 D="${TMP}/depot"
 
 # --- Traçabilité -------------------------------------------------------------
-echo "socle-test — traçabilité : exigence orpheline, la porte doit échouer"
+echo "socle-test — traçabilité : exigence réalisée sans son test, la porte doit échouer"
 if ! command -v java >/dev/null 2>&1; then
     echo "  (java absent — contrôle de traçabilité ignoré)"
 else
@@ -47,10 +47,14 @@ Le produit DOIT faire quelque chose que rien ne réalise.
 Covers:
 - ${id_besoin}
 
-Needs: impl
+Needs: impl, utest
 EOF
+    # Une exigence approuvée SANS aucun maillon aval est « à réaliser » et
+    # passe (ADR-0020) : le maillon manquant se teste sur une réalisation
+    # commencée. Tag assemblé à l'exécution, pour la même raison qu'en bas.
+    printf '# [impl->%s]\necho fait\n' "${id_orphelin}" > "${D}/tools/chose.sh"
     if (cd "${D}" && sh tools/oft.sh trace >/dev/null 2>&1); then
-        echo "ÉCHEC : la traçabilité accepte une exigence sans couverture" >&2
+        echo "ÉCHEC : la traçabilité accepte une exigence sans son test" >&2
         fail=1
     fi
 
@@ -59,7 +63,7 @@ EOF
     # Le tag est assemblé à l'exécution : écrit en clair, il ferait de CE
     # fichier un item de couverture du dépôt réel, vers une exigence qui n'y
     # existe pas.
-    printf '# [impl->%s]\necho fait\n' "${id_orphelin}" > "${D}/tools/chose.sh"
+    printf '# [utest->%s]\necho teste\n' "${id_orphelin}" > "${D}/tools/chose-test.sh"
     if ! (cd "${D}" && sh tools/oft.sh trace >/dev/null 2>&1); then
         echo "ÉCHEC : la traçabilité refuse une exigence pourtant couverte" >&2
         (cd "${D}" && sh tools/oft.sh trace 2>&1 | sed 's/^/        /') >&2

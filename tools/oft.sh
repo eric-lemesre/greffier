@@ -12,6 +12,9 @@ OFT_URL="https://github.com/itsallcode/openfasttrace/releases/download/${OFT_VER
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 JAR="${ROOT}/.cache/openfasttrace-${OFT_VERSION}.jar"
+# Statuts OpenFastTrace retenus par la porte (ADR-0020) ; exigences
+# approuvées à réaliser tolérées (ADR-0020).
+STATUTS_TRACES="approved"
 
 # Périmètre scanné (relatif à la racine). templates/ est exclu : les modèles
 # contiennent des identifiants d'exemple qui ne doivent pas devenir des items.
@@ -21,8 +24,8 @@ JAR="${ROOT}/.cache/openfasttrace-${OFT_VERSION}.jar"
 # a pas — il ne réalise rien — mais tout projet instancié en aura un, et sans
 # lui au périmètre ses exigences resteraient orphelines sans qu'on sache
 # pourquoi. Manque constaté sur un projet instancié.
-# « tests » porte les tests d'intégration Rust (tags itest), que cargo range
-# hors de src.
+# « tests » porte les tests d'intégration d'un projet Rust (tags itest), que
+# cargo range hors de src (constaté sur un projet instancié).
 INPUTS="spec docs examples src tests tools .github .gitlab .gitlab-ci.yml AGENTS.md README.md README.en.md CONTRIBUTING.md CHANGELOG.md Taskfile.yml"
 
 scan_inputs() {
@@ -30,6 +33,36 @@ scan_inputs() {
     for p in ${INPUTS}; do
         if [ -e "${p}" ]; then SCAN="${SCAN} ${p}"; fi
     done
+}
+
+# Définitions en double. OpenFastTrace tient pour DÉFINITION d'item toute
+# ligne Markdown qui COMMENCE (colonne 0) par un identifiant entre accents
+# graves — « `req~x~1`, et la suite » compris ; indenté ou en milieu de
+# phrase, l'identifiant n'est qu'une citation (vérifié sur OFT 4.9.0). Une
+# citation mal placée dans un CHANGELOG ou une fiche redéfinit donc l'item,
+# et la trace échoue en ne listant que des identifiants, sans dire où est
+# le doublon (constaté sur un projet instancié). Ce contrôle, joué avant la
+# trace, nomme chaque identifiant défini plusieurs fois et ses fichiers.
+doublons() {
+    _md="$(for p in ${SCAN}; do
+        if [ -d "${p}" ]; then find "${p}" -type f -name '*.md'
+        else case "${p}" in *.md) echo "${p}" ;; esac
+        fi
+    done | LC_ALL=C sort)"
+    [ -n "${_md}" ] || return 0
+    # shellcheck disable=SC2086 — la découpe en mots de la liste est voulue.
+    _rapport="$(grep -nE '^`[a-z]+~[^`[:space:]]+~[0-9]+`' ${_md} 2>/dev/null \
+        | sed -E 's/^([^:]+):([0-9]+):`([^`]+)`.*/\3 \1:\2/' \
+        | LC_ALL=C sort \
+        | awk '{ n[$1]++; lieux[$1] = lieux[$1] "\n    " $2 }
+               END { for (i in n) if (n[i] > 1) printf "%s%s\n", i, lieux[i] }' \
+        | LC_ALL=C sort)" || true
+    if [ -n "${_rapport}" ]; then
+        echo "ÉCHEC : identifiant(s) défini(s) plusieurs fois :" >&2
+        printf '%s\n' "${_rapport}" | sed 's/^\([^ ]\)/  \1/' >&2
+        echo "Une ligne qui COMMENCE par un identifiant entre accents graves est une définition OpenFastTrace : pour le citer, l'indenter ou le placer dans la phrase." >&2
+        return 1
+    fi
 }
 
 require_java() {
@@ -70,12 +103,50 @@ fetch_jar() {
 cd "${ROOT}"
 case "${1:-trace}" in
     trace)
+        scan_inputs
+        doublons
         require_java
         fetch_jar
-        scan_inputs
         # shellcheck disable=SC2086 — la découpe en mots de SCAN est voulue.
-        java -jar "${JAR}" trace -v failures ${SCAN}
-        echo "Traçabilité : OK (aucune exigence orpheline)."
+        # Seuls les items approuvés entrent dans la porte (ADR-0020) : un
+        # besoin ou une exigence non arbitrés portent « Status: draft » (ou
+        # proposed) sous leur identifiant, et tools/statuts.sh vérifie que ce
+        # statut concorde avec le statut déclaré de l'exigence.
+        rc=0
+        SORTIE="$(java -jar "${JAR}" trace -c BLACK_AND_WHITE -v direct_failure_summaries \
+                  -w "${STATUTS_TRACES}" ${SCAN} 2>&1)" || rc=$?
+        if [ "${rc}" -eq 0 ]; then
+            echo "Traçabilité : OK (aucune exigence orpheline)."
+            exit 0
+        fi
+        # Défauts DIRECTS seulement : un défaut transitif (un besoin en
+        # échec à cause de son exigence) a toujours sa cause parmi eux.
+        DEFAUTS="$(printf '%s\n' "${SORTIE}" | grep '^not ok \[' || true)"
+        if [ -z "${DEFAUTS}" ]; then
+            # Aucun défaut lisible : erreur de l'outil, jamais un succès.
+            printf '%s\n' "${SORTIE}" >&2
+            exit "${rc}"
+        fi
+        # Exigence approuvée À RÉALISER (ADR-0020) : aucun maillon aval
+        # (« in: 0 / 0 »), lien amont sain (« out: … ✔ »), et pour seul défaut
+        # des types requis non couverts (« (-impl, -utest) »). Dès le premier
+        # tag ou item aval, la couverture complète est exigée.
+        MOTIF_A_REALISER='^not ok \[ in: +0 / +0 +\| out: +[0-9]+ / +[0-9]+ ✔ \] req~[a-z0-9-]+~[0-9]+ \(-[a-z]+(, -[a-z]+)*\)$'
+        BLOQUANTS="$(printf '%s\n' "${DEFAUTS}" | grep -Ev "${MOTIF_A_REALISER}" || true)"
+        if [ -n "${BLOQUANTS}" ]; then
+            printf '%s\n' "${SORTIE}" >&2
+            echo "ÉCHEC : traçabilité — défauts bloquants :" >&2
+            printf '%s\n' "${BLOQUANTS}" >&2
+            exit 1
+        fi
+        A_REALISER="$(printf '%s\n' "${DEFAUTS}" | grep -oE 'req~[a-z0-9-]+~[0-9]+')"
+        echo "Traçabilité : OK — $(printf '%s\n' "${A_REALISER}" | wc -l | tr -d ' ') exigence(s) approuvée(s) à réaliser :"
+        printf '%s\n' "${A_REALISER}" | sed 's/^/  /'
+        ;;
+    doublons)
+        scan_inputs
+        doublons
+        echo "Définitions : aucun identifiant défini deux fois."
         ;;
     report)
         require_java
@@ -83,13 +154,14 @@ case "${1:-trace}" in
         scan_inputs
         mkdir -p build
         # Le rapport HTML est informatif : généré même en cas de défauts ; le
-        # code retour de la porte est porté par le résumé qui suit.
-        java -jar "${JAR}" trace -o html -f build/tracabilite.html ${SCAN} || true
-        java -jar "${JAR}" trace -v summary ${SCAN}
+        # code retour est celui de la porte, exigences à réaliser tolérées
+        # comprises (ADR-0020).
+        java -jar "${JAR}" trace -o html -f build/tracabilite.html -w "${STATUTS_TRACES}" ${SCAN} || true
         echo "Rapport : build/tracabilite.html"
+        sh "${ROOT}/tools/oft.sh" trace
         ;;
     *)
-        echo "Usage : tools/oft.sh [trace|report]" >&2
+        echo "Usage : tools/oft.sh [trace|report|doublons]" >&2
         exit 2
         ;;
 esac

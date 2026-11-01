@@ -71,9 +71,18 @@ lecture)
     corps="$(gh issue view "${num}" --json body --jq .body)"
     jour="$(date +%Y-%m-%d)"
     nouveau="$(printf '%s' "${corps}" | awk -v qui="${auteur}" -v jour="${jour}" '
-        # Coche la seule ligne de case qui nomme ce lecteur, et l’horodate.
-        index($0, qui) > 0 && /^[ \t]*- \[ \]/ {
-            sub(/\[ \]/, "[x]"); print $0 "  — " jour; coche = 1; next
+        # Coche la première ligne de case qui nomme ce lecteur, et l’horodate.
+        # Le login se compare ENTIER : « @eric » ne vaut ni pour « @eric2 »
+        # ni pour « @ericlemesre » (constat de revue, 2026-10-29). Une seule
+        # case par lecture : la première trouvée.
+        !coche && /^[ \t]*- \[ \]/ {
+            reste = $0
+            while (match(reste, /@[A-Za-z0-9_-]+/)) {
+                if (substr(reste, RSTART + 1, RLENGTH - 1) == qui) {
+                    sub(/\[ \]/, "[x]"); print $0 "  — " jour; coche = 1; next
+                }
+                reste = substr(reste, RSTART + RLENGTH)
+            }
         }
         { print }
         END { if (!coche) exit 3 }

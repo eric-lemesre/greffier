@@ -95,8 +95,12 @@ fi
 # absente ou un find de dossier absent arrêterait le groupe et la liste
 # resterait VIDE — porte muette (constaté à la mise en place, cas d'échec
 # du test joué sur un dépôt sans justfile).
+# Le test de cette porte (tools/hygiene-compilation-test.sh) est exclu : ses
+# appels sont des JEUX D'ESSAI écrits dans des dépôts jetables, jamais lancés
+# sur le dépôt ; copié dans un projet instancié, il faisait échouer la porte
+# (constaté sur un projet instancié).
 fichiers="$( { ls justfile Justfile .justfile Taskfile.yml Makefile makefile GNUmakefile .gitlab-ci.yml 2>/dev/null || true
-               find tools scripts -type f -name '*.sh' 2>/dev/null || true
+               find tools scripts -type f -name '*.sh' ! -path tools/hygiene-compilation-test.sh 2>/dev/null || true
                find .github/workflows .gitea/workflows .forgejo/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) 2>/dev/null || true
              } | sort -u )"
 

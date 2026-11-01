@@ -10,13 +10,19 @@
 ## {{ Titre lisible de l'exigence }}
 
 `req~nom-en-kebab~1`
+Status: draft
 
 **Statut : brouillon**
 
 <!-- Déclarés : brouillon · proposée · approuvée · rejetée · dépréciée.
      JAMAIS déclarés : « implémentée » et « vérifiée » — ils se CALCULENT
      depuis la couverture réellement posée, et la porte refuse qu'on les
-     écrive. Une exigence n'est approuvée que dans un domaine actif. -->
+     écrive. Une exigence n'est approuvée que dans un domaine actif.
+     La ligne « Status: … » COLLÉE sous l'identifiant est lue par
+     OpenFastTrace : draft (brouillon), proposed (proposée), rejected
+     (rejetée, dépréciée) ; on la RETIRE à l'approbation. La traçabilité ne
+     retient que les items approuvés, et tools/statuts.sh vérifie la
+     concordance (ADR-0020). -->
 
 {{ Formulation EARS avec niveau normatif DOIT / DEVRAIT / PEUT :
 - Ubiquitaire : Le système DOIT …

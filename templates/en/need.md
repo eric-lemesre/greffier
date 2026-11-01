@@ -6,6 +6,11 @@
 ## {{ Need title }}
 
 `feat~kebab-name~1`
+Status: draft
+
+<!-- "Status: draft" (right under the identifier) keeps the need out of the
+     traceability gate; remove it once its requirements are approved
+     (ADR-0020). -->
 
 {{ What the owner wants to obtain, in business language, without technical
 solution. The user-story form (As a… I want… so that…) is accepted here. }}

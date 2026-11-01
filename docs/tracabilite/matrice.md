@@ -11,7 +11,7 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 #### `req~citation-ancree~1`
 
 - Niveau normatif : DOIT
-- Needs: dsn
+- Needs: dsn, impl, utest
 - Couvertures réelles : — À COUVRIR
 
 #### `req~textes-authentiques-versionnes~1`
@@ -57,19 +57,19 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 #### `req~moteur-separe-du-savoir~1`
 
 - Niveau normatif : DOIT
-- Needs: dsn
+- Needs: dsn, impl, utest
 - Couvertures réelles : — À COUVRIR
 
 #### `req~peremption-par-version~1`
 
 - Niveau normatif : DOIT
-- Needs : (absent)
+- Needs: impl, utest
 - Couvertures réelles : — À COUVRIR
 
 #### `req~cloisonnement-du-savoir~1`
 
 - Niveau normatif : DOIT
-- Needs : (absent)
+- Needs: impl, utest
 - Couvertures réelles : — À COUVRIR
 
 ### Bilan (couvertures réelles)
@@ -102,10 +102,11 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `.github/workflows/ci.yml`
 - `.github/workflows/security.yml`
 
-### `tools` (45)
+### `tools` (49)
 
 - `tools/adr-new.sh`
 - `tools/audit.sh`
+- `tools/automatismes-test.sh`
 - `tools/badges.sh`
 - `tools/bootstrap-test.sh`
 - `tools/bootstrap.sh`
@@ -133,6 +134,8 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `tools/liens-test.sh`
 - `tools/liens.sh`
 - `tools/locale-test.sh`
+- `tools/oft-doublons-test.sh`
+- `tools/oft-test.sh`
 - `tools/oft.sh`
 - `tools/paralleles-test.sh`
 - `tools/paralleles.sh`
@@ -148,6 +151,7 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `tools/setup-test.sh`
 - `tools/setup.sh`
 - `tools/socle-test.sh`
+- `tools/statuts-test.sh`
 - `tools/todo.sh`
 
 ### `tools/bootstrap.d` (2)
@@ -160,5 +164,5 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `tools/hooks/commit-msg.sh`
 - `tools/hooks/pre-commit.sh`
 
-**Total : 59/67 fichier(s) d'outillage sans trace de traçabilité.**
+**Total : 63/71 fichier(s) d'outillage sans trace de traçabilité.**
 

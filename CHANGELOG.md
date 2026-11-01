@@ -7,6 +7,17 @@ versionnement : [SemVer](https://semver.org/lang/fr/).
 
 ### Ajouté
 
+- Adoption de la révision du gabarit alm-forge (ADR-0020 du gabarit) : la
+  traçabilité ne retient que les items approuvés, une exigence approuvée
+  sans maillon aval est listée « à réaliser », un item non approuvé porte
+  `Status:` collé sous son identifiant (concordance vérifiée par
+  `tools/statuts.sh`). Domaine « ancrage » actif (D-2026-11-04) : quatre
+  exigences approuvées, quatre proposées avec leur `Needs:` complet ; item
+  de conception de l'ADR-0001 en `Status: proposed`. Outillage reporté :
+  définitions en double nommées avant la trace, porte d'hygiène qui ignore
+  le matériel du gabarit, tests `oft-test`, `statuts-test`,
+  `oft-doublons-test`, `automatismes-test` ; verdicts d'audit du domaine.
+
 - Cadrage fondateur : ADR-0001 (trois couches, ancrage, séparation moteur /
   savoir), ADR-0002 (EUPL 1.2) ; besoin « recherche juridique » et domaine
   d'exigences « ancrage » en proposition ; fiche ToDo-0001 ; licence EUPL 1.2,

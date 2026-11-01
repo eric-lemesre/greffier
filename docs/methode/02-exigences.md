@@ -71,9 +71,22 @@ brouillon ──▶ proposée ──▶ approuvée ──▶ implémentée ─�
 
 - Le statut se lit dans la traçabilité, pas dans une colonne tenue à la main :
   une exigence est *implémentée* quand ses tags impl existent, *vérifiée* quand
-  ses tests tagués passent. Les états amont (brouillon, proposée, approuvée)
-  utilisent le mot-clé Status d'OpenFastTrace quand il faut exclure une
-  exigence du dénominateur.
+  ses tests tagués passent. Les états amont se reportent dans le mot-clé
+  `Status:` d'OpenFastTrace, **sur la ligne qui suit immédiatement
+  l'identifiant** (seule place où l'outil le lit) : `draft` pour brouillon,
+  `proposed` pour proposée, `rejected` pour rejetée ou dépréciée ; une
+  exigence approuvée n'en porte pas. La porte de traçabilité ne retient que
+  les items approuvés, et `tools/statuts.sh` refuse un `Status:` qui ne
+  concorde pas avec le statut déclaré ([ADR-0020](https://github.com/eric-lemesre/alm-forge/blob/main/docs/adr/0020-tracer-les-seuls-items-approuves.md)).
+  Un besoin dont aucune exigence n'est encore approuvée porte lui aussi
+  `Status: draft`.
+- Une exigence approuvée sans aucun maillon aval est **à réaliser** : la
+  porte la tolère et la liste. Dès son premier tag ou item aval, sa
+  couverture complète est exigée ([ADR-0020](https://github.com/eric-lemesre/alm-forge/blob/main/docs/adr/0020-tracer-les-seuls-items-approuves.md)).
+- On ne réalise que l'approuvé : un tag de code vers une exigence non
+  approuvée fait échouer la porte (le lien pointe vers un item écarté). Un
+  item de conception (ADR) qui motive des exigences encore en proposition
+  porte le même `Status:` qu'elles, et le perd avec elles.
 - **Toute modification du texte normatif incrémente la révision** de
   l'identifiant (par exemple rev 1 → rev 2). Les couvertures pointant l'ancienne
   révision deviennent des défauts de traçabilité : c'est voulu, chaque site

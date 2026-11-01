@@ -45,6 +45,7 @@ Needs: req
 ## Servir de source documentaire à un agent logiciel
 
 `feat~source-pour-agents~1`
+Status: draft
 
 En tant qu'intégrateur d'un outil métier ou d'un assistant, je veux
 brancher mon agent sur une source juridique qu'il interroge comme un outil

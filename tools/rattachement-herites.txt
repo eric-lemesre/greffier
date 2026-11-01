@@ -11,6 +11,7 @@ templates/bootstrap.d/rust/rust.sh
 templates/forge/tools/automatismes.sh
 tools/adr-new.sh
 tools/audit.sh
+tools/automatismes-test.sh
 tools/avancement.sh
 tools/badges.sh
 tools/bootstrap-test.sh
@@ -43,6 +44,8 @@ tools/liens-test.sh
 tools/liens.sh
 tools/locale-test.sh
 tools/matrice.sh
+tools/oft-doublons-test.sh
+tools/oft-test.sh
 tools/oft.sh
 tools/paralleles-test.sh
 tools/paralleles.sh
@@ -58,5 +61,6 @@ tools/secrets.sh
 tools/setup-test.sh
 tools/setup.sh
 tools/socle-test.sh
+tools/statuts-test.sh
 tools/statuts.sh
 tools/todo.sh
