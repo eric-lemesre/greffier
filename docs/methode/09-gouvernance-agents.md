@@ -2,7 +2,7 @@
 
 Comment le dépôt reste gouvernable quand le travail est produit par des agents
 IA — quel que soit l'agent. Décision fondatrice :
-[ADR-0006](../adr/0006-contrat-agents-unique-avec-adaptateurs.md).
+[ADR-0006](https://github.com/eric-lemesre/alm-forge/blob/main/docs/adr/0006-contrat-agents-unique-avec-adaptateurs.md).
 
 ## Le contrat unique
 

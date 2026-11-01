@@ -1,4 +1,3 @@
-# [impl->req~onboarding-outille~2]
 # Module bootstrap — curl : téléchargements épinglés de l'outillage ALM
 # (jar OpenFastTrace, binaire gitleaks — ADR-0002, ADR-0012).
 # Contrat : sourcé par tools/bootstrap.sh, PHASE=annonce puis PHASE=verifie

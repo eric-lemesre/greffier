@@ -83,10 +83,6 @@ bootstrap:
 setup:
     sh tools/setup.sh
 
-# Instancie le gabarit (une fois) : just init --nom projet --porteur "Prénom Nom"
-init *args:
-    sh tools/init.sh {{args}}
-
 # Crée l'ADR suivant depuis le modèle : just adr-new titre-en-kebab
 adr-new titre:
     sh tools/adr-new.sh {{titre}}

@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~tracabilite-outillee~1]
 # Point unique d'exécution d'OpenFastTrace : la CI, les hooks et les façades
 # d'orchestration (Taskfile, justfile…) passent tous par ce script, avec le
 # même périmètre de fichiers (R2, ADR-0002, ADR-0007).

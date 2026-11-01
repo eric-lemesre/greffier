@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~hygiene-artefacts-compilation~1]
 # Hygiène des artefacts de compilation. Dans un projet instancié qui compile
 # du Rust, la porte vérifie les deux réglages sans lesquels le cache de
 # compilation grossit sans limite — constats : 500 Go de target/ sur

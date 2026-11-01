@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~porte-ci~2]
 # Lanceur parallèle des étapes indépendantes de tools/ci.sh : les tests
 # d'outillage, qui travaillent chacun dans leur propre dossier jetable
 # (mktemp). Joués l'un après l'autre, ils faisaient la plus longue part de

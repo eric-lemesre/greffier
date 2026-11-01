@@ -1,6 +1,5 @@
 # 10. Sécurité continue
 
-<!-- [impl->req~securite-continue~1] -->
 
 La sécurité qui repose sur la vigilance échoue ; celle qui vit dans les
 artefacts et les portes tient. Ce chapitre intègre trois pratiques du domaine

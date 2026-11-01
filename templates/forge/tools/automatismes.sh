@@ -1,6 +1,5 @@
 #!/bin/sh
 # Automatismes de coordination des issues — logique unique, façades par forge.
-# Exigence servie : req~automatismes-forge~1.
 #
 # MATÉRIEL PRÊT À CÂBLER, non actif dans le gabarit (R7 ; voir
 # templates/forge/README.md). Copier dans le tools/ du projet, créer les

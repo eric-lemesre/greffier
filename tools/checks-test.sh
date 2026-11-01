@@ -1,10 +1,4 @@
 #!/bin/sh
-# [utest->req~adr-verification~1]
-# [utest->req~bilinguisme-templates~1]
-# [utest->req~versionnement-release~1]
-# [utest->req~registre-adr~1]
-# [utest->req~portabilite-forges~1]
-# [utest->req~lexique-outille~1]
 # Test des contrôles de cohérence, chacun sur son cas d'échec.
 #
 # Ces trois contrôles existaient sans test depuis la fondation du gabarit :
@@ -66,7 +60,6 @@ if ! porte; then
     fail=1
 fi
 
-# [impl->req~coherence-choix-instanciation~1]
 # Contrôle CONDITIONNEL : un dépôt instancié dans une seule langue n'a qu'un
 # jeu de modèles, et l'instanciation retire alors le bloc correspondant.
 # Le test constate donc sa présence avant de l'éprouver — sans quoi il exige

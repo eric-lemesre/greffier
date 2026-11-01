@@ -1,6 +1,5 @@
 # Exemple — chaîne complète multi-langages
 
-<!-- [impl->req~exemple-multilangage~1] -->
 
 Démonstration minimale mais réelle de la méthode, du besoin jusqu'aux tests
 mécanisés, avec la même exigence implémentée en **Python, Rust et shell** : la

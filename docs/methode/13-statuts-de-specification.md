@@ -1,6 +1,5 @@
 # 13. Statuts : deux axes, deux questions
 
-<!-- [impl->req~statut-specification~1] -->
 
 Un statut n'est pas une décoration : il commande le dénominateur des taux
 d'audit (ch. 14) et de classification (ch. 2). Le dépôt en porte **deux**, et
@@ -15,7 +14,7 @@ Ce ne sont pas deux systèmes d'état concurrents sur un même objet — ce que 
 chapitre 11 proscrit — mais deux objets distincts. Un domaine actif contient
 des exigences approuvées mais non réalisées et d'autres livrées et prouvées :
 les compter ensemble revient à ne plus rien pouvoir dire de l'avancement
-(décision : [ADR-0018](../adr/0018-statut-de-cycle-de-vie-porte-par-l-exigence.md)).
+(décision : [ADR-0018](https://github.com/eric-lemesre/alm-forge/blob/main/docs/adr/0018-statut-de-cycle-de-vie-porte-par-l-exigence.md)).
 
 ## Axe 1 — le domaine
 

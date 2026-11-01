@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~integrite-liens~1]
 # Intégrité des liens internes de la documentation : chaque lien Markdown
 # relatif DOIT atteindre un fichier suivi par git, et son ancre — quand il en
 # porte une — un titre qui existe réellement dans le fichier visé.

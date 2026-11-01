@@ -1,6 +1,5 @@
 # 12. Feuille de route
 
-<!-- [impl->req~feuille-de-route-outillee~1] -->
 
 La feuille de route dit **ce qui est en cours, ce qui vient, ce qui est
 soldé** — à l'échelle du chantier, pas de l'issue. Les issues coordonnent le

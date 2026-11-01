@@ -1,6 +1,4 @@
 #!/bin/sh
-# [utest->req~onboarding-outille~2]
-# [utest->req~accueil-informatif~1]
 # Test mécanisé du parcours d'accueil : exécute setup.sh sur une copie
 # temporaire et vérifie ses critères d'acceptation : hooks installés, état des
 # portes RAPPORTÉ sans faire échouer l'accueil, idempotence, et échec du

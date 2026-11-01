@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~perimetre-constate~1]
 # Périmètre de la porte, CONSTATÉ et jamais déclaré. Imprime sur la sortie
 # standard la voie que `tools/ci.sh` doit emprunter : « docs » ou « complet ».
 #

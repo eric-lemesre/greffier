@@ -1,6 +1,5 @@
 # 1. Expression du besoin
 
-<!-- [impl->req~expression-du-besoin~1] -->
 
 Tout commence par un besoin exprimé — ou par une intention de besoin, quand
 l'expression est incomplète. Ce chapitre définit comment le capturer avant

@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~lexique-outille~1]
 # Lexique du vocabulaire OUTILLÉ — le seul endroit où vivent les mots que les
 # portes reconnaissent (statuts, niveaux normatifs, verdicts, étiquettes de
 # forge, commandes de consultation).

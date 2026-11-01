@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~releves-de-decision~1]
 # Contrôle des relevés de séance et du registre des décisions.
 #
 # Pourquoi cette porte existe — le précédent qui l'a motivée (ergonomia,

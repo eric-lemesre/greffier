@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~onboarding-outille~2]
 # Test mécanisé du bootstrap consenti et modulaire (ADR-0014) : rejoue les
 # critères d'acceptation sur leurs cas d'échec — R3, aucun contrôle qui passe
 # toujours. POSIX sh strict.

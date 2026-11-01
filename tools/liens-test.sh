@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~integrite-liens~1]
 # Test mécanisé de la porte des liens de documentation. Les cas NÉGATIFS sont
 # les plus importants : une porte qui ne signale jamais rien passe toujours.
 # POSIX sh strict.

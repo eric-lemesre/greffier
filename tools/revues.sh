@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~suivi-constats-revue~1]
 # Consolidation des constats de revue de code : rassemble les tableaux des
 # fiches `docs/revues/` en un tableau de bord unique, et REFUSE qu'un constat
 # de sévérité haute reste sans réponse.

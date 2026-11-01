@@ -1,38 +1,33 @@
-# alm-forge
+# Greffier
 
-**ALM template repository: from expressed need to mechanized tests,
-language-agnostic and agent-agnostic.**
+**An anchored legal research engine. It keeps the record; it never judges.**
 
-The normative documentation lives in French (see [README.md](README.md) and
-`docs/methode/`); artefact templates are provided in both languages under
-`templates/en/` and `templates/fr/`.
+Greffier answers a question of French law with items **all tied to an
+authentic text**: a code article or a court decision, identified by its
+official identifier (`LEGIARTI…`, `ECLI…`) and its version in force. It never
+asks a language model to cite a text, because a model that cites invents,
+and its reader cannot tell.
 
-What you get when you instantiate this template:
+It is meant for those who need *the rule that applies to an everyday
+situation* without being lawyers — conciliators and mediators, legal aid
+services, associations, lone in-house counsels — and for software agents
+that need a documentary source rather than a memory.
 
-- **Needs and requirements as code**: needs (feat items) declined into
-  requirements written with the [EARS](https://alistairmavin.com/ears/) syntax,
-  with normative levels and Given/When/Then acceptance criteria.
-- **Architecture Decision Records**: a chartered ADR register derived from
-  [MADR](https://adr.github.io/madr/), with a mandatory, mechanically checked
-  Verification section — accepted ADRs are immutable.
-- **Mechanized traceability**: the whole chain need → requirement → design →
-  implementation → test is verified by
-  [OpenFastTrace](https://github.com/itsallcode/openfasttrace) — coverage tags
-  live in code comments of any language; a missing link fails the commit
-  (git hooks) and the CI. No hand-maintained matrix.
-- **Open-question protocol**: a blocked contributor (human or AI agent) stops
-  and files a structured question (context, options, recommendation); a human
-  arbitrates; the decision is traced to an ADR.
-- **Agent governance**: a single authoritative AGENTS.md contract with
-  numbered, tool-verified rules; per-agent adapter files contain no rules of
-  their own.
-- **A multi-language example** (Python, Rust, shell) running the full chain,
-  scanned by the same gate as the rest of the repository.
+Three layers: **authentic texts** (source of truth, never generated,
+versioned in time), a **wiki of situations and practice** compiled by a
+curator agent under a legal schema and reviewed by a human referent, and a
+**search** (lexical first, semantic next) that returns anchored items only.
+The engine (this repository) and the knowledge (a text-only repository:
+raw sources, compiled pages, curator schema, question bench) are separate.
 
-- **Interchangeable orchestrator**: quality gates are standalone POSIX
-  scripts (`tools/`); the default [Task](https://taskfile.dev/) façade purely
-  delegates to them and can be swapped for just, make, or nothing.
+Four interfaces: an MCP server, a command line, an HTTP API, and an agent
+skill.
 
-Quick start: `task hooks && task ci` (or `sh tools/oft.sh trace && sh
-tools/checks.sh` without any runner) — prerequisites: git, a POSIX `sh`
-(bundled with Git on Windows), curl, Java 17+. Licence: [MIT](LICENSE).
+Greffier is not legal advice: it provides a sourced, dated documentary aid;
+the human reader remains the author of their own assessment.
+
+Status (November 2026): scoping. Founding decisions are taken (ADR-0001,
+ADR-0002), the first need and its requirements are proposed, no code yet.
+French is the normative language of this repository; see `README.md`.
+
+Owner: Eric Lemesre. Licence: [EUPL 1.2](LICENSE).

@@ -2,7 +2,7 @@
 
 La chaîne besoin → exigence → conception → implémentation → test est vérifiée
 par [OpenFastTrace](https://github.com/itsallcode/openfasttrace) (décision :
-[ADR-0002](../adr/0002-tracer-les-exigences-avec-openfasttrace.md)). L'outil
+[ADR-0002](https://github.com/eric-lemesre/alm-forge/blob/main/docs/adr/0002-tracer-les-exigences-avec-openfasttrace.md)). L'outil
 échoue si un maillon manque ; il n'y a pas de matrice tenue à la main.
 
 ## Types d'artefacts et chaîne
@@ -49,7 +49,6 @@ Le tag `[type-aval->identifiant-couvert]` se place dans un commentaire,
 n'importe quel langage à extension reconnue :
 
 ```python
-# [impl->req~mon-exigence~1]
 def ma_fonction():
     ...
 ```

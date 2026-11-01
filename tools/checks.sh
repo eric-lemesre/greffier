@@ -11,7 +11,6 @@ cd "${ROOT}"
 FAILURES=0
 
 # --- parite-templates:debut ---
-# [impl->req~bilinguisme-templates~1]
 # Parité des templates fr/en : mêmes noms de fichiers des deux côtés.
 # Bloc retiré à l'instanciation quand une seule langue est conservée
 # (ADR-0009) ; ne pas déplacer les marqueurs.
@@ -35,7 +34,6 @@ else
 fi
 # --- parite-templates:fin ---
 
-# [impl->req~adr-verification~1]
 # Tout ADR au statut Accepté comporte une section « ## Vérification » (R6).
 adr_fail=0
 for f in docs/adr/[0-9]*.md; do
@@ -61,7 +59,6 @@ else
     FAILURES=$((FAILURES + 1))
 fi
 
-# [impl->req~versionnement-release~1]
 # La version du fichier VERSION a sa section dans le CHANGELOG (Keep a Changelog).
 version="$(cat VERSION)"
 found=0
@@ -77,7 +74,6 @@ else
     FAILURES=$((FAILURES + 1))
 fi
 
-# [impl->req~registre-adr~1]
 # Tout ADR a sa ligne dans l'index, et réciproquement. Même dérive que tout
 # index tenu à la main : il finit par ignorer les décisions récentes, et une
 # décision qu'on ne trouve plus est une décision qu'on rouvre.
@@ -106,7 +102,6 @@ if [ -f docs/adr/README.md ]; then
     fi
 fi
 
-# [impl->req~portabilite-forges~1]
 # Les façades CI exécutent la MÊME liste d'étapes (ADR-0010). Une étape
 # ajoutée d'un seul côté produit exactement ce que la portabilité promet
 # d'éviter : un verdict qui dépend de l'hébergeur.
@@ -128,7 +123,6 @@ if [ -f .github/workflows/ci.yml ] && [ -f .gitlab-ci.yml ]; then
     fi
 fi
 
-# [impl->req~lexique-outille~1]
 # Complétude du lexique : tout terme déclaré porte ses deux formes. Un terme
 # dont la forme anglaise manque ferait taire une porte dans un dépôt
 # anglophone, sans erreur — le pire des symptômes.
@@ -148,7 +142,6 @@ if [ -f tools/lexique.sh ]; then
     fi
 fi
 
-# [impl->req~garde-fous-locaux~1]
 # Tout script est analysable par le shell. Contrôle trivial, ajouté après
 # TROIS occurrences du même défaut : une apostrophe dans un commentaire de
 # programme awk referme la quote qui l entoure, et le shell se met à lire le

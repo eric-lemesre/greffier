@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~porte-ci~2]
 # Test du lanceur parallèle (tools/paralleles.sh) sur ses cas d'échec (R3) :
 # une étape en échec n'empêche pas les autres, même quand elles attendent
 # leur tour (CI_PARALLELE=1), et rend le lanceur rouge ; les sorties sortent

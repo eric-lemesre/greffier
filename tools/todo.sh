@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~feuille-de-route-outillee~1]
 # Feuille de route : cohérence des fiches et GÉNÉRATION de leur index.
 #
 # Pourquoi cette porte existe. Un index tenu à la main finit toujours par

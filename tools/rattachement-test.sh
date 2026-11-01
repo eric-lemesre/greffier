@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~rattachement-code-exigence~1]
 # Test de la porte du rattachement (tools/rattachement.sh). Chaque cas part
 # d'un dépôt jetable qui définit deux exigences, y pose un fichier de code
 # et vérifie le verdict de la porte — ses cas d'échec d'abord (R3).

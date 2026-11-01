@@ -1,5 +1,4 @@
 #!/bin/sh
-# Exigence servie : req~kit-lint-markdown~1.
 # Porte lint Markdown — MODÈLE à copier dans tools/ d'un projet instancié.
 # Matériel post-instanciation : le gabarit ne l'exécute pas. À la copie,
 # taguer ce fichier vers l'exigence de qualité documentaire du projet (R2),

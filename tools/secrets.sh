@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~detection-secrets~1]
 # Porte anti-secrets (gitleaks, ADR-0012) : bloquante en CI, signalante en
 # local quand l'outil est indisponible. Binaire épinglé par version et par
 # empreinte SHA-256 (même mécanique que le jar OpenFastTrace).

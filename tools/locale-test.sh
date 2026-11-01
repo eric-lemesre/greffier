@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~anti-derive-generes~1]
 # Test d'indépendance à la locale des générateurs qui trient ou mesurent du
 # texte (R3) : un artefact généré sur le poste (fr_FR.UTF-8) doit être
 # identique à celui de la CI (C.UTF-8, ou C), sans quoi l'anti-dérive le dit

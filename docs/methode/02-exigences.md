@@ -1,10 +1,8 @@
 # 2. Exigences
 
-<!-- [impl->req~format-exigence-ears~1] -->
-<!-- [impl->req~cycle-de-vie-exigence~2] -->
 
 Une exigence est un contrat vérifiable entre le besoin et la réalisation.
-Format acté par l'[ADR-0004](../adr/0004-rediger-les-exigences-selon-ears.md) :
+Format acté par l'[ADR-0004](https://github.com/eric-lemesre/alm-forge/blob/main/docs/adr/0004-rediger-les-exigences-selon-ears.md) :
 item OpenFastTrace de type **req**, formulation EARS, niveau normatif, critères
 d'acceptation.
 

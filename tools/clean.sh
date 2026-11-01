@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~nettoyage-outille~1]
 # Nettoyage du dépôt local. Motivation (règle justifiée par son incident,
 # pratique reprise d'ergonomia) : sans mécanisme dédié, les artefacts de
 # build s'accumulent sans limite — 500 Go de target/ constatés sur un dépôt

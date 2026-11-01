@@ -37,8 +37,8 @@ optionnelle et remplaçable (ADR-0007, `templates/orchestrators/`).
 - Une exigence orpheline ou un tag fantôme (`task trace` échoue).
 - Un ADR accepté sans section Vérification (`task check` échoue).
 - Un message de commit non conventionnel, ou ne respectant pas la politique
-  de mention de l'IA du projet (par défaut : trailer `IA:` obligatoire,
-  responsable humain si IA — R0, ADR-0011).
+  de mention de l'IA du projet — ici, aucune mention d'agent, de co-auteur
+  généré ni d'outil d'IA n'est admise (R0, ADR-0011 du gabarit).
 - Un contrôle introduit sans démonstration de son cas d'échec (R3).
 - Un secret dans une contribution (`task secrets` — bloquant en CI ; les faux
   positifs passent par une entrée justifiée de `.gitleaks.toml`).

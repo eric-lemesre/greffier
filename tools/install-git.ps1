@@ -1,4 +1,3 @@
-# [impl->req~onboarding-outille~2]
 # Installation de git sous Windows — le PRÉREQUIS de tools/bootstrap.sh.
 # Sous Windows, aucun shell sh n'existe avant Git for Windows (qui fournit
 # Git Bash) : ce script PowerShell comble ce vide via winget. Sans git pour

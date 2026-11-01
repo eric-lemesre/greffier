@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~journaux-depot-et-logiciel~1]
 # Les deux journaux, et l'intangibilité de ce qui est publié.
 #
 # CHANGELOG ⟂ NEWS — deux lectorats, deux fichiers :

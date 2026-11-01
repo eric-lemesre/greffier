@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~badges-autonomes~1]
 # Badges SVG AUTONOMES — aucun appel réseau, aucun service tiers.
 #
 # Pourquoi ne pas utiliser shields.io. Un dépôt privé, hébergé sur une forge

@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~confinement-artefacts-worktree~1]
 # Test du kit Rust (templates/bootstrap.d/rust/rust.sh) sur ses cas d'échec
 # (R3) : la garde d'un worktree lié refuse le cache du tree principal et un
 # cache partagé dont un composant porte le nom du worktree ; elle admet le

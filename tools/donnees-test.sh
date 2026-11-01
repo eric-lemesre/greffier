@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~donnees-hors-depot~1]
 # Test de la porte des données, chaque refus sur son cas d'échec (R3).
 #
 # Une porte qui protège d'une fuite est celle qu'on éprouve le plus mal : le

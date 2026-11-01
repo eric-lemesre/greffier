@@ -1,6 +1,4 @@
 #!/bin/sh
-# [impl->req~classification-exigences~2]
-# [impl->req~format-exigence-ears~1]
 # Classification des exigences : niveau normatif × niveau de vérification.
 #
 # Ce que cette porte ajoute à la traçabilité. OpenFastTrace vérifie qu'un

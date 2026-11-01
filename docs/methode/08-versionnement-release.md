@@ -1,6 +1,5 @@
 # 8. Versionnement et release
 
-<!-- [impl->req~versionnement-release~1] -->
 
 ## Versionnement
 
@@ -19,7 +18,6 @@
 
 ## Deux journaux, deux lectorats
 
-<!-- [impl->req~journaux-depot-et-logiciel~1] -->
 
 | Fichier | Pour qui | Ce qu'on y met |
 | --- | --- | --- |

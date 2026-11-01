@@ -1,6 +1,4 @@
 #!/bin/sh
-# [impl->req~statut-specification~1]
-# [impl->req~cycle-de-vie-exigence~2]
 # Statuts des domaines de spécification — le COMMUTATEUR de couverture.
 #
 # Un statut n'est pas une décoration : il commande le dénominateur. ACTIVE

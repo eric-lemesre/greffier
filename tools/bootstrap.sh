@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~onboarding-outille~2]
 # « Scripts to Rule Them All » — bootstrap : amener les dépendances du projet.
 # Flux consenti (ADR-0014) : ANNONCE ce qui sera vérifié, DEMANDE L'ACCORD,
 # puis vérifie et n'installe que les manquants (un outil présent n'est jamais

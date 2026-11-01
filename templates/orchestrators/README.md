@@ -16,7 +16,7 @@ Règles à l'instanciation :
 2. Une façade est une délégation pure : si une recette contient de la logique,
    c'est un défaut — la logique va dans `tools/`.
 3. Ajouter une autre façade (Makefile, scripts npm…) suit le même contrat :
-   mêmes noms de cibles (`init`, `setup`, `bootstrap`, `trace`, `report`,
+   mêmes noms de cibles (`setup`, `bootstrap`, `trace`, `report`,
    `check`, `secrets`, `ci`, `hooks`, `adr-new`, `bump`, `clean`), délégation
    pure.
 

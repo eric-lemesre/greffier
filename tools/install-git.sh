@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~onboarding-outille~2]
 # Installation multiplateforme de git — le PRÉREQUIS de tools/bootstrap.sh.
 # Linux (apt/dnf) et macOS (Homebrew, sinon xcode-select). Sous Windows, aucun
 # shell sh n'existe avant Git for Windows : utiliser tools/install-git.ps1

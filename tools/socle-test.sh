@@ -1,7 +1,4 @@
 #!/bin/sh
-# [utest->req~tracabilite-outillee~1]
-# [utest->req~garde-fous-locaux~1]
-# [utest->req~exemple-multilangage~1]
 # Test du socle : la traçabilité échoue-t-elle vraiment sur un maillon
 # manquant, les garde-fous locaux refusent-ils vraiment un commit non
 # conforme, et l'exemple multi-langage s'exécute-t-il ?
@@ -85,7 +82,6 @@ commit_avec() {
     (cd "${D}" && git -c user.name=t -c user.email=t@t commit -q -m "$1" >/dev/null 2>&1)
 }
 
-# [impl->req~coherence-choix-instanciation~1]
 # La politique de mention de l'IA est un choix d'instanciation (ADR-0011) :
 # les assertions SUIVENT le hook installé, elles ne supposent jamais le
 # défaut. Un test qui affirme le contraire de la règle n'échoue pas une fois,

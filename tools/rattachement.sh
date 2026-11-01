@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~rattachement-code-exigence~1]
 # Porte du rattachement : tout fichier de code suivi par git se rattache à
 # une exigence existante.
 #

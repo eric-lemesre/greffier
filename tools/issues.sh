@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~conformite-issues~1]
 # Conformité des issues ouvertes au cycle de vie déclaré (méthode, ch. 11).
 #
 # DÉLIBÉRÉMENT HORS PORTE. Ce contrôle appelle l'API de la forge : il dépend

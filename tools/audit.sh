@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~audit-de-realisation~1]
 # Audit de réalisation : le produit tient-il sa spécification ?
 #
 # À ne pas confondre avec la traçabilité. OpenFastTrace répond à « cette

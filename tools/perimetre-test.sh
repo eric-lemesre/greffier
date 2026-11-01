@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~perimetre-constate~1]
 # Test du classement de périmètre. L'outil qui décide de CE QUI SERA VÉRIFIÉ
 # doit lui-même être vérifié : une allowlist trop large ne se manifeste par
 # aucune erreur — elle se manifeste par un défaut qui passe. Les cas NÉGATIFS

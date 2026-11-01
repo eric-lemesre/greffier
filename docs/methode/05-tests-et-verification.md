@@ -1,6 +1,5 @@
 # 5. Tests et vérification
 
-<!-- [impl->req~tests-mecanises~1] -->
 
 La vérification transforme les critères d'acceptation en preuves mécanisées.
 Une exigence n'est *vérifiée* que lorsqu'un test tagué la couvre et passe.
@@ -28,7 +27,6 @@ Le test porte le tag dans un commentaire adjacent, et son nom reprend le
 comportement vérifié :
 
 ```python
-# [utest->req~calcul-echeance~2]
 def test_echeance_fin_de_mois_reportee_au_dernier_jour():
     ...
 ```

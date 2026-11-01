@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~avancement-calcule~1]
 # Avancement des domaines d'exigences — CALCULÉ, jamais saisi.
 #
 # Pourquoi cette porte existe. Même défaut que l'index de feuille de route

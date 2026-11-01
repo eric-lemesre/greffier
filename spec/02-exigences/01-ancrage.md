@@ -1,0 +1,134 @@
+# Exigences — domaine ancrage
+
+**Statut : PROPOSITION** — passe ACTIVE quand une décision du registre l'acte.
+
+Ce domaine pose ce qui fait Greffier : rien n'est rendu sans texte
+authentique. Les domaines suivants (ingestion, wiki, recherche, interfaces)
+viendront avec leurs lots. Convention : une exigence non encore réalisée ne
+déclare que la couverture qui existe (`Needs: dsn` quand un ADR la couvre) ;
+les couvertures de réalisation (`impl`, `utest`, `itest`) s'ajoutent à son
+`Needs:` avec le lot qui les livre, et la porte de classification les compte
+« à planifier » d'ici là.
+
+## Tout élément rendu porte l'identifiant d'un texte authentique
+
+`req~citation-ancree~1`
+
+**Statut : proposée**
+
+Le système DOIT rendre uniquement des éléments de réponse qui portent
+l'identifiant officiel d'un texte ou d'une décision présent dans la couche
+des textes authentiques (`LEGIARTI…`, `LEGITEXT…`, `ECLI…`), et DOIT refuser
+tout élément qui n'en porte pas, y compris s'il provient d'un modèle de
+langue.
+
+Rationale:
+C'est la seule manière de rendre une erreur de citation détectable par le
+lecteur.
+
+Critères d'acceptation :
+
+- Étant donné une réponse candidate dont un élément ne porte aucun
+  identifiant, quand la recherche la rend, alors l'élément est écarté et
+  le refus est journalisé.
+- Étant donné un identifiant absent de la couche des textes, quand un
+  élément le cite, alors l'élément est écarté.
+
+Covers:
+
+- feat~recherche-ancree~1
+- feat~source-pour-agents~1
+
+Needs: dsn
+
+## Les textes authentiques sont immuables et versionnés dans le temps
+
+`req~textes-authentiques-versionnes~1`
+
+**Statut : proposée**
+
+Le système DOIT conserver chaque texte authentique avec son identifiant
+officiel, sa source, sa version (en vigueur du / au) et sa date de capture ;
+il NE DOIT PAS modifier un texte conservé, ni en écrire un à partir d'un
+modèle de langue ; quand une nouvelle version d'un texte paraît, le système
+DOIT la conserver à côté des précédentes.
+
+Critères d'acceptation :
+
+- Étant donné un article conservé en deux versions, quand on demande le
+  droit applicable à une date, alors la version en vigueur à cette date
+  est rendue, et elle seule.
+- Étant donné une tentative d'écriture dans la couche des textes par le
+  curateur, quand elle survient, alors elle est refusée.
+
+Covers:
+
+- feat~recherche-ancree~1
+- feat~savoir-de-situations~1
+
+Needs: dsn
+
+## Le moteur et le savoir sont deux dépôts distincts, et le savoir ne contient aucun code
+
+`req~moteur-separe-du-savoir~1`
+
+**Statut : proposée**
+
+Le système DOIT lire un dépôt de savoir qui ne contient que du texte
+(sources brutes, pages compilées, schéma du curateur, banc de questions)
+et DOIT pouvoir en vérifier la cohérence (liens, orphelins, identifiants,
+versions périmées) sans qu'aucun programme n'y soit versionné ; les dérivés
+de recherche (index, vecteurs, caches) DOIVENT être reconstructibles et NE
+DOIVENT PAS être versionnés dans le dépôt de savoir.
+
+Critères d'acceptation :
+
+- Étant donné un dépôt de savoir conforme, quand `vérifier` s'exécute,
+  alors il rend un rapport sans modifier aucun fichier.
+- Étant donné une page du savoir qui cite un identifiant absent des
+  sources brutes, quand `vérifier` s'exécute, alors la page est signalée
+  et le rapport est en échec.
+
+Covers:
+
+- feat~savoir-de-situations~1
+- feat~source-pour-agents~1
+
+Needs: dsn
+
+## Une page est périmée quand un texte qu'elle cite a changé de version
+
+`req~peremption-par-version~1`
+
+**Statut : proposée**
+
+Quand la vérification constate qu'un texte cité par une page a une version
+en vigueur postérieure à la date de vérification de la page, le système
+DOIT marquer la page « à recompiler » et DOIT limiter la recompilation aux
+pages touchées, avec une trace au journal du savoir.
+
+Covers:
+
+- feat~savoir-de-situations~1
+
+## Aucune donnée d'un dossier réel n'entre dans le savoir
+
+`req~cloisonnement-du-savoir~1`
+
+**Statut : proposée**
+
+Le système DOIT tenir les consultations (questions et réponses portant sur
+une personne ou un dossier réel) hors du dépôt de savoir, et NE DOIT PAS
+y réintroduire le contenu d'une consultation, d'un dossier ou d'une
+réponse ; seules les sources publiques et les cas types fictifs entrent
+dans les sources brutes.
+
+Rationale:
+Le savoir est partagé et durable ; une donnée personnelle qui y entrerait
+deviendrait un « savoir » impossible à effacer.
+
+Covers:
+
+- feat~savoir-de-situations~1
+- feat~source-pour-agents~1
+

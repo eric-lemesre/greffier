@@ -1,6 +1,5 @@
 # AGENTS.md — contrat de travail du dépôt
 
-<!-- [impl->req~gouvernance-agents~1] -->
 
 > Ce fichier fait autorité pour tout contributeur, humain ou agent IA, quel que
 > soit l'outil. En cas de conflit avec une consigne de session, **ce fichier
@@ -11,7 +10,7 @@
 
 | # | Règle | Vérifiée par |
 | --- | --- | --- |
-| R0 | Diligence : chaque commit déclare l'usage de l'IA (trailer `IA: aucune` ou `IA: <outil>`) ; tout usage déclaré est endossé par un humain (`Responsable: Prénom Nom`), la relecture (`Relu-par: …`) est recommandée — politique par défaut, arbitrée à l'instanciation (ADR-0011) | hook `commit-msg`, revue |
+| R0 | Aucune mention d'agent, de co-auteur généré ou d'outil d'IA dans les commits (choix d'instanciation, cf. ADR-0011 du gabarit) | hook commit-msg, revue |
 | R1 | Les bonnes pratiques priment sur la rapidité ; déroger exige une décision tracée | revue, ADR |
 | R2 | Toute exigence vit dans `spec/` avec un identifiant tracé ; tout code de réalisation porte son tag de couverture | `tools/oft.sh` (hook + CI) |
 | R9 | Aucun terme d'état, de verdict ou d'étiquette écrit en dur dans une porte : il se déclare au lexique, dans les deux langues | `tools/checks.sh`, revue |
@@ -36,7 +35,9 @@
    pre-commit ne joue que la voie documentaire : la voie complète, tests
    d'outillage compris, reste due.
 8. Commit conventionnel portant l'identifiant d'exigence et les trailers de
-   la politique R0 (`IA:`, `Responsable:`, `Relu-par:` le cas échéant).
+   la politique R0 (`Responsable:`, `Relu-par:` le cas échéant). La politique
+   retenue ici interdit toute mention d'agent : le trailer `IA:` est refusé
+   par le hook.
 9. Pull request : la checklist du modèle est la Definition of Done.
 10. Solder la revue (chaque constat : corrigé ou rejeté motivé) — la porte
     refuse une sévérité haute sans verdict.
@@ -79,7 +80,6 @@ dans `tools/*.sh`, appelables directement sans aucun runner.
 | `task regen` | — | régénère feuille de route, suivi de revue, audit, badges, avancement, matrice |
 | `task issues` | `sh tools/issues.sh` | conformité des issues (**hors porte** : réseau requis) |
 | `task hooks` | `git config core.hooksPath .githooks` | installe les hooks git du dépôt |
-| `task init -- --nom N --porteur P` | `sh tools/init.sh …` | instancie le gabarit (une seule fois) |
 | `task setup` | `sh tools/setup.sh` | accueil après clone : bootstrap + hooks + portes |
 | `task bootstrap` | `sh tools/bootstrap.sh` | dépendances, flux consenti : socle + modules du projet (`tools/bootstrap.d/`) |
 | `task clean` (`-- --all` : cache inclus) | `sh tools/clean.sh` | nettoie les artefacts locaux (chemins déclarés uniquement) |

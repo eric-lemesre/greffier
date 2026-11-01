@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~anti-derive-generes~1]
 # Anti-dérive des artefacts GÉNÉRÉS : un fichier produit par un outil ne
 # s'édite jamais à la main, il se régénère (règle R8 du contrat). Cette porte
 # régénère puis compare — si le résultat diffère de ce qui est versionné, le

@@ -1,16 +1,4 @@
 #!/bin/sh
-# [utest->req~statut-specification~1]
-# [utest->req~cycle-de-vie-exigence~2]
-# [utest->req~releves-de-decision~1]
-# [utest->req~classification-exigences~2]
-# [utest->req~format-exigence-ears~1]
-# [utest->req~feuille-de-route-outillee~1]
-# [utest->req~suivi-constats-revue~1]
-# [utest->req~audit-de-realisation~1]
-# [utest->req~journaux-depot-et-logiciel~1]
-# [utest->req~badges-autonomes~1]
-# [utest->req~lexique-outille~1]
-# [utest->req~avancement-calcule~1]
 # Test des portes de gouvernance documentaire, chacune sur son cas d'échec.
 # Un dépôt de synthèse est reconstruit avant chaque cas : les portes se
 # vérifient sur des données maîtrisées, jamais sur l'état du dépôt réel.

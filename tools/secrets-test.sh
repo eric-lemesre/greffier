@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~detection-secrets~1]
 # Test mécanisé de la porte anti-secrets : un secret de synthèse est détecté,
 # un dépôt sain passe. Le motif est assemblé à l'exécution pour ne jamais
 # figurer en clair dans ce dépôt (sinon la porte se détecterait elle-même).

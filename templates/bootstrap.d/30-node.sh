@@ -2,7 +2,6 @@
 # (lint Markdown notamment ; markdownlint-cli2 ≥ 0.23 exige Node 22).
 # MODÈLE à copier dans tools/bootstrap.d/ d'un projet instancié, puis à
 # taguer vers l'ADR/l'exigence du projet qui le justifie (R2).
-# Exigence servie : req~kit-lint-markdown~1 (module de bootstrap, req~onboarding-outille~2).
 # Contrat : sourcé par tools/bootstrap.sh, PHASE=annonce puis PHASE=verifie
 # (voir l'en-tête de bootstrap.sh pour les variables et aides disponibles).
 case "${PHASE}" in

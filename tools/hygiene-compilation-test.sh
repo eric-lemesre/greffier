@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~hygiene-artefacts-compilation~1]
 # Test de la porte d'hygiène des artefacts de compilation, sur ses cas
 # d'échec (R3) et de passage, critère par critère : dépôt sans Cargo ;
 # chaîne absente, non suivie par git, flottante (« stable ») ou exacte ;

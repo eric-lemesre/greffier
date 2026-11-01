@@ -1,8 +1,5 @@
 # 11. Cycle de vie des issues
 
-<!-- [impl->req~issues-etat-attente-acte~2] -->
-<!-- [impl->req~issues-flux-avancement~2] -->
-<!-- [impl->req~issues-triage-priorites~2] -->
 
 Le dépôt est la mémoire, l'issue n'est que le lieu de coordination (principe
 transverse 4) : toute décision finit dans `spec/`, `docs/adr/` ou
@@ -250,7 +247,6 @@ filtre dessus est un coût de saisie sans contrepartie.
 
 ## Automatismes — fournis prêts à câbler, non câblés dans le gabarit
 
-<!-- [impl->req~automatismes-forge~1] -->
 
 Les automatismes de coordination vivent côté forge. Le gabarit les **fournit**
 dans [`templates/forge/`](../../templates/forge/README.md) — logique unique en
@@ -284,7 +280,6 @@ l'issue, ce qui est précisément la garde qui l'empêche de boucler.
 
 ## Conformité des issues — un rapport, pas une porte
 
-<!-- [impl->req~conformite-issues~1] -->
 
 `tools/issues.sh` confronte les issues ouvertes au cycle de vie ci-dessus :
 étiquette d'état unique, assignation présente quand une attente existe,

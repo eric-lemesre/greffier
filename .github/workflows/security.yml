@@ -1,4 +1,3 @@
-# [impl->req~detection-secrets~1]
 # Balayage PLANIFIÉ de l'historique complet par la porte anti-secrets — en
 # plus de la porte à chaque poussée : une règle gitleaks ajoutée après coup
 # ne voit que les commits futurs, le balayage hebdomadaire rattrape le passé.

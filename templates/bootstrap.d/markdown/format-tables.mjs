@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// Exigence servie : req~kit-lint-markdown~1.
 // Normalisation des **tableaux GFM** : pipes alignés verticalement, ligne de
 // séparateurs comprise — le style `aligned` vérifié par la règle markdownlint
 // MD060 (voir .markdownlint-cli2.jsonc). La largeur des cellules est mesurée

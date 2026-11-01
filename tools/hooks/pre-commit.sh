@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~garde-fous-locaux~1]
 # Corps du hook pre-commit : rejoue les portes de la CI avant que le commit
 # n'atteigne le dépôt, sans dépendre d'aucun orchestrateur (ADR-0007). Le
 # wrapper .githooks/pre-commit (sans extension, non scanné par OpenFastTrace)

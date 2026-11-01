@@ -1,4 +1,3 @@
-# [impl->req~onboarding-outille~2]
 # Module bootstrap — Java 17+ : requis par OpenFastTrace (ADR-0002).
 # Vérifie la présence ET la version, contrairement aux outils à simple commande.
 # Contrat : sourcé par tools/bootstrap.sh, PHASE=annonce puis PHASE=verifie.

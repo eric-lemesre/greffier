@@ -1,6 +1,4 @@
 #!/bin/sh
-# [impl->req~perimetre-constate~1]
-# [impl->req~porte-ci~2]
 # Point d'entrée UNIQUE des portes : ce que la CI exécute est exactement ce
 # que le poste exécute. Les façades (Taskfile, justfile) et les deux CI
 # délèguent ici — aucune ne redéfinit sa propre liste d'étapes, faute de quoi
@@ -169,7 +167,6 @@ test — anti-dérive	sh tools/derive-test.sh
 test — cohérence	sh tools/checks-test.sh
 test — socle	sh tools/socle-test.sh
 test — gouvernance	sh tools/gouvernance-test.sh
-test — instanciation	sh tools/init-test.sh
 test — accueil	sh tools/setup-test.sh
 test — bootstrap	sh tools/bootstrap-test.sh
 test — nettoyage	sh tools/clean-test.sh

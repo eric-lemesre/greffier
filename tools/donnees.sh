@@ -1,5 +1,4 @@
 #!/bin/sh
-# [impl->req~donnees-hors-depot~1]
 # Porte des données : le dépôt porte le MODÈLE des données, jamais les données.
 #
 # Trois refus, tous constatés sur le CONTENU et non sur un nom de fichier. Un

@@ -24,7 +24,6 @@ mesurent la vérité.
 
 ## Le suivi consolidé des constats
 
-<!-- [impl->req~suivi-constats-revue~1] -->
 
 Les constats vivent dispersés, une fiche par branche dans `docs/revues/` ;
 passée la fusion, plus personne ne les rouvre. `tools/revues.sh --ecrire`

@@ -1,6 +1,5 @@
 # 14. Audit de réalisation
 
-<!-- [impl->req~audit-de-realisation~1] -->
 
 **La traçabilité mesure la présence. L'audit mesure la vérité.**
 
@@ -11,7 +10,7 @@ binaire, et un outil suffit.
 L'audit répond à : *ce qui est livré fait-il ce que l'exigence dit ?* La
 question se lit. Aucun outil ne la tranche — et un **tag de complaisance**,
 posé sur un fichier qui ne réalise pas l'exigence, passe la traçabilité sans
-la moindre réserve (décision : [ADR-0016](../adr/0016-audit-de-realisation-distinct-de-la-tracabilite.md)).
+la moindre réserve (décision : [ADR-0016](https://github.com/eric-lemesre/alm-forge/blob/main/docs/adr/0016-audit-de-realisation-distinct-de-la-tracabilite.md)).
 
 ## Le partage du travail
 

@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~porte-ci~2]
 # Test du LANCEUR de portes : joue-t-il toutes les portes de la voie, quel
 # qu'ait été le verdict des précédentes, et le bilan les nomme-t-il toutes ?
 #

@@ -1,6 +1,5 @@
 #!/bin/sh
 # Crée l'ADR suivant depuis le modèle : tools/adr-new.sh titre-en-kebab
-# Exigence servie : req~registre-adr~1.
 # POSIX sh strict, sans sed : le numéro est rappelé à l'utilisateur.
 set -eu
 

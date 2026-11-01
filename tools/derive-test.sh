@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~anti-derive-generes~1]
 # Test de la mécanique anti-dérive, sur des cibles de synthèse. Le cas
 # capital est le TROISIÈME : un artefact généré mais non versionné ne produit
 # aucune différence — sans le contrôle « suivi par git », la porte serait un

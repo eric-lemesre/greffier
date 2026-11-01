@@ -4,7 +4,6 @@
 # piloté par package.json (versionner le package-lock.json produit).
 # MODÈLE à copier dans tools/bootstrap.d/ d'un projet instancié, puis à
 # taguer vers l'ADR/l'exigence du projet qui le justifie (R2).
-# Exigence servie : req~kit-lint-markdown~1 (module de bootstrap, req~onboarding-outille~2).
 # Contrat : sourcé par tools/bootstrap.sh, PHASE=annonce puis PHASE=verifie.
 case "${PHASE}" in
     annonce)

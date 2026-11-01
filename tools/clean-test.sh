@@ -1,5 +1,4 @@
 #!/bin/sh
-# [utest->req~nettoyage-outille~1]
 # Test mécanisé du nettoyage : artefacts supprimés, cache préservé sans
 # --all, fichiers versionnés intacts, idempotence. POSIX sh strict.
 set -eu

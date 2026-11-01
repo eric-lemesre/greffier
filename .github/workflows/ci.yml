@@ -1,4 +1,3 @@
-# [impl->req~porte-ci~2]
 # La CI rejoue exactement les portes locales : elle délègue à tools/ci.sh,
 # point unique de vérité des étapes (R7, ADR-0010). Aucune étape ne se
 # déclare ici : ce qui tourne en CI est ce qui tourne sur le poste.
