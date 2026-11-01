@@ -39,9 +39,14 @@ Comportements vérifiés empiriquement (OpenFastTrace 4.9.0) :
 
 - les blocs de code (comme ci-dessus) sont **ignorés** : la documentation peut
   citer la syntaxe sans créer d'items ;
-- une mention d'identifiant à l'intérieur d'une phrase ne crée pas d'item ;
-  éviter simplement de placer un identifiant entre accents graves seul en début
-  de ligne hors définition volontaire.
+- une mention d'identifiant à l'intérieur d'une phrase, ou indentée, ne crée
+  pas d'item ;
+- en revanche, une ligne qui **commence en colonne 0** par un identifiant entre
+  accents graves est une définition, **même suivie de texte** (« `req~x~1`, et
+  la suite ») : une citation ainsi placée dans un journal ou une fiche redéfinit
+  l'item. `tools/oft.sh` le contrôle avant la trace et nomme chaque
+  identifiant défini plusieurs fois avec ses fichiers (`sh tools/oft.sh
+  doublons`).
 
 ## Taguer une couverture (tout langage)
 

@@ -1,18 +1,18 @@
 # Exigences — domaine ancrage
 
-**Statut : PROPOSITION** — passe ACTIVE quand une décision du registre l'acte.
+**Statut : ACTIVE** — domaine acté le 2026-11-01 (D-2026-11-04).
 
 Ce domaine pose ce qui fait Greffier : rien n'est rendu sans texte
 authentique. Les domaines suivants (ingestion, wiki, recherche, interfaces)
-viendront avec leurs lots. Convention : une exigence non encore réalisée ne
-déclare que la couverture qui existe (`Needs: dsn` quand un ADR la couvre) ;
-les couvertures de réalisation (`impl`, `utest`, `itest`) s'ajoutent à son
-`Needs:` avec le lot qui les livre, et la porte de classification les compte
-« à planifier » d'ici là.
+viendront avec leurs lots. Chaque exigence déclare d'emblée toute la
+couverture qu'elle attend ; une exigence non approuvée porte son statut
+OpenFastTrace (`Status: proposed`) collé sous son identifiant et reste hors
+de la traçabilité jusqu'à son approbation (ADR-0020 du gabarit alm-forge).
 
 ## Tout élément rendu porte l'identifiant d'un texte authentique
 
 `req~citation-ancree~1`
+Status: proposed
 
 **Statut : proposée**
 
@@ -39,13 +39,13 @@ Covers:
 - feat~recherche-ancree~1
 - feat~source-pour-agents~1
 
-Needs: dsn
+Needs: dsn, impl, utest
 
 ## Les textes authentiques sont immuables et versionnés dans le temps
 
 `req~textes-authentiques-versionnes~1`
 
-**Statut : proposée**
+**Statut : approuvée**
 
 Le système DOIT conserver chaque texte authentique avec son identifiant
 officiel, sa source, sa version (en vigueur du / au) et sa date de capture ;
@@ -72,7 +72,7 @@ Needs: dsn, impl, utest, itest
 
 `req~capture-des-sources-officielles~1`
 
-**Statut : proposée**
+**Statut : approuvée**
 
 Le système DOIT capturer un article de Légifrance ou une décision de
 Judilibre par son identifiant officiel, depuis l'API officielle
@@ -107,7 +107,7 @@ Needs: dsn, impl, utest, itest
 
 `req~detection-des-versions~1`
 
-**Statut : proposée**
+**Statut : approuvée**
 
 Quand on lui donne un article et une date, le système DOIT signaler toute
 version de l'article entrée en vigueur après cette date et toute fin de
@@ -136,7 +136,7 @@ Needs: impl, utest, itest
 
 `req~chaine-de-verification-du-moteur~1`
 
-**Statut : proposée**
+**Statut : approuvée**
 
 Le système DOIT être construit par une chaîne de compilation épinglée, et
 chaque fichier de son code DOIT porter l'en-tête de licence
@@ -164,6 +164,7 @@ Needs: dsn, impl, utest
 ## Le moteur et le savoir sont deux dépôts distincts, et le savoir ne contient aucun code
 
 `req~moteur-separe-du-savoir~1`
+Status: proposed
 
 **Statut : proposée**
 
@@ -187,11 +188,12 @@ Covers:
 - feat~savoir-de-situations~1
 - feat~source-pour-agents~1
 
-Needs: dsn
+Needs: dsn, impl, utest
 
 ## Une page est périmée quand un texte qu'elle cite a changé de version
 
 `req~peremption-par-version~1`
+Status: proposed
 
 **Statut : proposée**
 
@@ -204,9 +206,12 @@ Covers:
 
 - feat~savoir-de-situations~1
 
+Needs: impl, utest
+
 ## Aucune donnée d'un dossier réel n'entre dans le savoir
 
 `req~cloisonnement-du-savoir~1`
+Status: proposed
 
 **Statut : proposée**
 
@@ -225,3 +230,4 @@ Covers:
 - feat~savoir-de-situations~1
 - feat~source-pour-agents~1
 
+Needs: impl, utest

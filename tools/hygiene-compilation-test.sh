@@ -114,6 +114,13 @@ echo "hygiene-test — [H] 'cargo tree' et 'cargo build' ne sont pas des appels 
 prepare ; printf 'arbre:\n    cargo tree\nbuild:\n    cargo build --release\n' > "${D}/justfile"
 attend_passage H
 
+
+echo "hygiene-test — [I] matériel du gabarit copié dans le projet (kit Rust, module bootstrap, ce test) : passe sans réglage natif"
+prepare ; mkdir -p "${D}/tools/bootstrap.d"
+cp "${ROOT}/tools/hygiene-compilation-test.sh" "${D}/tools/"
+cp "${ROOT}/templates/bootstrap.d/50-rust.sh" "${D}/tools/bootstrap.d/"
+cp "${ROOT}/templates/bootstrap.d/rust/rust.sh" "${D}/tools/rust.sh"
+attend_passage I
 if [ "${fail}" -ne 0 ]; then
     echo "hygiene-test : ÉCHEC." >&2
     exit 1

@@ -26,7 +26,9 @@
 #      depuis les tags réellement posés — un « vérifiée » écrit à la main est
 #      un chiffre faux qui inspire d'autant plus confiance qu'il est affiché ;
 #   6. une exigence n'est approuvée que dans un domaine actif — c'est ce qui
-#      empêche les deux axes de diverger en silence.
+#      empêche les deux axes de diverger en silence ;
+#   7. le statut OpenFastTrace (« Status: … ») concorde avec le statut
+#      déclaré : la traçabilité ne retient que les items approuvés (ADR-0020).
 #
 #   sh tools/statuts.sh
 #
@@ -53,6 +55,9 @@ FICHIERS="$(git ls-files 'spec/02-exigences/*.md' 2>/dev/null | grep -v "${INDEX
 [ -n "${FICHIERS}" ] || { echo "Statuts : aucun domaine de spécification."; exit 0; }
 
 MOTIF_STATUT="$(lex SPEC_PROPOSITION)|$(lex SPEC_ACTIVE)|$(lex SPEC_OBSOLETE)"
+# Mots-clés de statut d'OpenFastTrace : vocabulaire de l'outil, invariant
+# quelle que soit la langue du dépôt — rien à déclarer au lexique.
+OFT_APPROUVE="approved"; OFT_PROPOSE="proposed"; OFT_BROUILLON="draft"; OFT_REJETE="rejected"
 # Motif PARENTHÉSÉ — même piège que dans todo.sh (constat de revue n° 1).
 LIB_STATUT="$(lex_motif SECTION_STATUT)"
 FAILURES=0
@@ -151,25 +156,35 @@ for f in ${FICHIERS}; do
     dom_actif=0
     lex_est SPEC_ACTIVE "$(statut_de "${f}")" && dom_actif=1
 
-    # Chaque exigence et la ligne de statut qui la suit.
+    # Chaque exigence, la ligne de statut qui la suit, et le statut
+    # OpenFastTrace (« Status: … » collé sous l'identifiant, seule place où
+    # l'outil le lit) — « approved » quand il est absent (ADR-0020).
     exigences="$(awk '
         /^`req~[a-z0-9-]+~[0-9]+`[ \t]*$/ {
-            id = $0; gsub(/`/, "", id); gsub(/[ \t]/, "", id); attente = 1; next
+            id = $0; gsub(/`/, "", id); gsub(/[ \t]/, "", id)
+            attente = 1; oft = "approved"; colle = 1; next
         }
+        attente && colle && /^Status:/ {
+            oft = $0; sub(/^Status:[ \t]*/, "", oft); gsub(/[ \t]+$/, "", oft)
+            colle = 0; next
+        }
+        attente { colle = 0 }
         attente && /^\*\*/ {
             st = $0
             sub(/^[^:]*:[ \t]*/, "", st); sub(/\*\*[ \t]*$/, "", st)
             gsub(/[ \t]+$/, "", st)
-            print id "\t" st "\t" FNR
+            print id "\t" st "\t" oft "\t" FNR
             attente = 0; next
         }
-        attente && NF > 0 { print id "\t\t" FNR; attente = 0 }
+        attente && NF > 0 { print id "\t\t" oft "\t" FNR; attente = 0 }
     ' "${f}")"
 
     for entree in ${exigences}; do
         id="${entree%%	*}"
         reste="${entree#*	}"
         statut="${reste%%	*}"
+        reste="${reste#*	}"
+        oft="${reste%%	*}"
         ligne="${reste##*	}"
 
         # 4. statut déclaré, au vocabulaire.
@@ -184,6 +199,26 @@ for f in ${FICHIERS}; do
         if lex_est EXIGENCE_IMPLEMENTEE "${statut}" || lex_est EXIGENCE_VERIFIEE "${statut}"; then
             echo "ÉCHEC : ${f}:${ligne} — ${id} déclare « ${statut} », qui se CALCULE." >&2
             echo "        Un avancement saisi se périme au premier remaniement, sans rien signaler." >&2
+            FAILURES=$((FAILURES + 1))
+            continue
+        fi
+
+        # 7. le statut lu par OpenFastTrace suit le statut déclaré. La porte
+        #    de traçabilité ne retient que les items « approved » (ADR-0020) :
+        #    sans cette concordance, une exigence approuvée marquée
+        #    « Status: draft » échapperait à la traçabilité en silence.
+        if lex_est EXIGENCE_APPROUVEE "${statut}"; then attendu="${OFT_APPROUVE}"
+        elif lex_est EXIGENCE_PROPOSEE "${statut}"; then attendu="${OFT_PROPOSE}"
+        elif lex_est EXIGENCE_BROUILLON "${statut}"; then attendu="${OFT_BROUILLON}"
+        else attendu="${OFT_REJETE}"
+        fi
+        if [ "${oft}" != "${attendu}" ]; then
+            echo "ÉCHEC : ${f}:${ligne} — ${id} déclare « ${statut} » mais OpenFastTrace lit « ${oft} » (attendu : ${attendu})." >&2
+            if [ "${attendu}" = "${OFT_APPROUVE}" ]; then
+                echo "        Retirer la ligne « Status: ${oft} » sous l'identifiant." >&2
+            else
+                echo "        Placer « Status: ${attendu} » sur la ligne qui suit l'identifiant." >&2
+            fi
             FAILURES=$((FAILURES + 1))
             continue
         fi

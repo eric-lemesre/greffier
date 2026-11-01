@@ -23,7 +23,12 @@ case "${PHASE}" in
             # la plateforme — on n'attend pas le gestionnaire de paquets. Un
             # manquant est compté comme tel AVANT toute installation, comme
             # le fait verifier() : le bilan dit alors ce qui a été installé.
-            for outil in cargo-nextest cargo-sweep; do
+            # Les noms se composent (« cargo-${nom} ») : écrits en toutes
+            # lettres sur la ligne du for, ils ressemblaient à un appel de
+            # test pour la porte d'hygiène de compilation (constaté sur un
+            # projet instancié).
+            for nom in nextest sweep; do
+                outil="cargo-${nom}"
                 if command -v "${outil}" >/dev/null 2>&1; then
                     echo "ok — ${outil}"
                     continue
