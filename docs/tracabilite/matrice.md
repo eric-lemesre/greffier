@@ -12,17 +12,26 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest
-- Couvertures réelles : — À COUVRIR
+- Couvertures réelles (7) :
+  - `impl` — src/banc.rs:10
+  - `utest` — src/banc.rs:254
+  - `impl` — src/recherche.rs:18
+  - `utest` — src/recherche.rs:646
+  - `utest` — src/recherche.rs:665
+  - `utest` — src/recherche.rs:684
+  - `utest` — src/recherche.rs:704
 
 #### `req~textes-authentiques-versionnes~1`
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest, itest
-- Couvertures réelles (4) :
+- Couvertures réelles (6) :
   - `impl` — src/couche.rs:13
   - `utest` — src/couche.rs:282
   - `utest` — src/couche.rs:314
   - `utest` — src/couche.rs:346
+  - `impl` — src/recherche.rs:19
+  - `utest` — src/recherche.rs:722
 
 #### `req~capture-des-sources-officielles~1`
 
@@ -61,10 +70,10 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Needs: dsn, impl, utest, itest
 - Couvertures réelles (5) :
   - `impl` — src/verifier.rs:17
-  - `utest` — src/verifier.rs:664
-  - `utest` — src/verifier.rs:673
-  - `utest` — src/verifier.rs:692
-  - `utest` — src/verifier.rs:709
+  - `utest` — src/verifier.rs:668
+  - `utest` — src/verifier.rs:677
+  - `utest` — src/verifier.rs:696
+  - `utest` — src/verifier.rs:713
 
 #### `req~peremption-par-version~1`
 
@@ -80,7 +89,7 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 
 ### Bilan (couvertures réelles)
 
-5/8 exigence(s) testable(s) couverte(s) par au moins une trace réelle (62.5 %) — 3 à couvrir.
+6/8 exigence(s) testable(s) couverte(s) par au moins une trace réelle (75.0 %) — 2 à couvrir.
 
 ## 2. L'inverse — outillage sans exigence
 

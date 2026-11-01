@@ -55,6 +55,15 @@ pub enum Erreur {
     #[error("fichier de la couche des textes mal formé : {0}")]
     FichierMalForme(PathBuf),
 
+    /// Une ligne du banc de questions n'a pas la forme attendue.
+    #[error("banc de questions, ligne {ligne} : {cause}")]
+    BancMalForme {
+        /// Numéro de la ligne (à partir de 1).
+        ligne: usize,
+        /// Ce qui ne va pas.
+        cause: String,
+    },
+
     /// Erreur d'entrée-sortie sur la couche des textes.
     #[error("entrée-sortie sur {chemin} : {cause}")]
     Fichier {

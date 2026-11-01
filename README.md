@@ -66,7 +66,10 @@ les exigences sont en proposition (`spec/`), la feuille de route est dans
 authentiques : il capture un article Légifrance ou une décision Judilibre
 par son identifiant officiel, le conserve, immuable et daté, dans le
 dossier `raw/` d'un dépôt de savoir, et constate les changements de
-version.
+version ; il vérifie un dépôt de savoir et y cherche dans les deux couches
+(textes et wiki), en ne rendant que des éléments ancrés dans un texte
+conservé et en vigueur à la date demandée ; il mesure la recherche sur le
+banc de questions du savoir.
 
 ```sh
 export GREFFIER_PISTE_CLIENT_ID=…  GREFFIER_PISTE_CLIENT_SECRET=…   # application PISTE
@@ -75,6 +78,8 @@ greffier capturer decision <identifiant Judilibre> --savoir ../savoir
 greffier versions LEGIARTI… --depuis 2026-01-01      # sortie 3 si l'article a changé
 greffier en-vigueur <cid> --le 2026-01-01 --savoir ../savoir   # hors ligne
 greffier verifier --savoir ../savoir                  # lecture seule, sortie 1 si erreur
+greffier chercher "branches du voisin" --le 2026-01-01 --savoir ../savoir   # écarts sur stderr
+greffier banc --savoir ../savoir                      # rappel, précision, délai ; sortie 1 si non ancré
 ```
 
 Les identifiants viennent d'une application enregistrée sur
