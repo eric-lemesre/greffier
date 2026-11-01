@@ -17,11 +17,11 @@ source) qu'il faut prouver par un banc avant de l'exposer.
   deux à réaliser, deux proposées ; licence de contenu du savoir tranchée (fermée, utilisable
   par Pacilia) ; décisions restantes du porteur : modèle d'ingestion (local
   ou nuage, sources publiques), référents éditoriaux.
-- Lot 1 — connecteur aux textes authentiques : livré sur forme publiée et
-  éprouvé contre un faux serveur ; reste la recette sur l'API réelle, qui
-  attend une application PISTE du porteur (production, avec Légifrance et
-  Judilibre souscrites) — confirmer alors la forme des dates (millisecondes
-  ou ISO) et l'adresse publique des textes hors code (`loda`).
+- Lot 1 — connecteur aux textes authentiques : livré, recette sur l'API de
+  production faite le 2026-11-01 (article, décision, versions). Restent :
+  conserver la structure en paragraphes (le champ `texte` de Légifrance
+  l'aplatit, `texteHtml` la porte) ; vérifier l'adresse publique d'un
+  article hors code (`loda`) sur un premier texte réel de ce type.
 - Lot 2 — vérification livrée : `greffier verifier` (lecture seule) ; le
   dépôt de savoir réel passe sans constat. Reste la première dizaine de
   situations, qui attend deux préalables : la capture des textes cités
