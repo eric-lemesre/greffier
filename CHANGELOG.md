@@ -5,7 +5,26 @@ versionnement : [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.1.0] - 2026-11-01
+
 ### Ajouté
+
+- Lot 4, exposition (ADR-0004, D-2026-11-06, domaine « interfaces ») :
+  `greffier mcp` (serveur MCP, SDK officiel `rmcp`, sur l'entrée et la
+  sortie standard) et `greffier servir` (API HTTP JSON sur `axum`, MCP sous
+  `/mcp`) ; outils `chercher`, `lire_texte`, `verifier_citation`,
+  `verifier_savoir` ; lien vers la source officielle de chaque élément
+  rendu ; écoute locale par défaut, jeton porteur `GREFFIER_JETON` exigé
+  hors boucle locale, en-tête `Host` contrôlé sur tout le routeur (contre
+  le rattachement DNS). Quatre exigences nouvelles.
+- Lot 3, recherche ancrée : `greffier chercher` (BM25 sur les textes
+  authentiques et le wiki, droit en vigueur à une date, tout élément non
+  ancré écarté et journalisé) et `greffier banc` (rappel, précision, délai,
+  échec au premier élément non ancré). Réalise `req~citation-ancree~1`.
+- Chaîne de publication : `.github/workflows/release.yml`, déclenchée par
+  un tag `vX.Y.Z` égal à `VERSION`, construit le binaire Linux x86-64 et
+  publie la release avec son empreinte SHA-256 et la section de `NEWS.md`.
+  Journal des utilisateurs `NEWS.md`.
 
 - Capture : le texte d'un article est conservé en paragraphes, lu depuis
   `texteHtml` (les deux formes rencontrées à la source : paragraphes
@@ -54,9 +73,5 @@ versionnement : [SemVer](https://semver.org/lang/fr/).
   étapes format, lints et tests dans la voie complète de la CI, porte des
   en-têtes de licence `SPDX-License-Identifier: EUPL-1.2` (`tools/spdx.sh`,
   promise par ADR-0002) et son test d'échec.
-
-## [0.1.0] - 2026-11-01
-
-### Ajouté
 
 - Instanciation de greffier depuis le gabarit alm-forge.

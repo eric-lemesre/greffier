@@ -58,7 +58,8 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest
-- Couvertures réelles (4) :
+- Couvertures réelles (5) :
+  - `impl` — .github/workflows/release.yml:6
   - `impl` — tools/bootstrap.d/50-rust.sh:2
   - `impl` — tools/rust.sh:2
   - `utest` — tools/spdx-test.sh:2
@@ -219,5 +220,5 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `tools/hooks/commit-msg.sh`
 - `tools/hooks/pre-commit.sh`
 
-**Total : 63/71 fichier(s) d'outillage sans trace de traçabilité.**
+**Total : 63/72 fichier(s) d'outillage sans trace de traçabilité.**
 
