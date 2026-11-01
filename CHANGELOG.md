@@ -7,6 +7,20 @@ versionnement : [SemVer](https://semver.org/lang/fr/).
 
 ### Ajouté
 
+- Capture : le texte d'un article est conservé en paragraphes, lu depuis
+  `texteHtml` (les deux formes rencontrées à la source : paragraphes
+  encadrés, ou séparés par des balises vides) ; le champ `texte`, aplati en
+  un bloc, ne sert plus qu'à défaut. Recette sur l'API de production.
+
+- Lot 2 : `greffier verifier --savoir <dossier>`, vérification en lecture
+  seule d'un dépôt de savoir — en-têtes des pages (type, sources,
+  `verifie_le`, référent), sources présentes dans `raw/` et hors
+  propositions, identifiants officiels cités portés par une source brute,
+  liens `[[…]]`, index, journal (ingestion validée par un référent),
+  programmes et dérivés versionnés ; pages orphelines ou sur-connectées en
+  avertissement ; sortie 1 sur erreur. Réalise
+  `req~moteur-separe-du-savoir~1`.
+
 - Adoption de la révision ADR-0021 du gabarit : une exigence ou un item de
   conception approuvés sans code ni test sont listés « à réaliser », même
   conçus. « Citation ancrée » et « moteur séparé du savoir » approuvées

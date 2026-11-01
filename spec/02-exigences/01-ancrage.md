@@ -188,7 +188,7 @@ Covers:
 - feat~savoir-de-situations~1
 - feat~source-pour-agents~1
 
-Needs: dsn, impl, utest
+Needs: dsn, impl, utest, itest
 
 ## Une page est périmée quand un texte qu'elle cite a changé de version
 

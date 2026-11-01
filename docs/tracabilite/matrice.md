@@ -28,11 +28,12 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest, itest
-- Couvertures réelles (4) :
+- Couvertures réelles (5) :
   - `impl` — src/judilibre.rs:77
   - `utest` — src/judilibre.rs:151
   - `impl` — src/legifrance.rs:90
-  - `utest` — src/legifrance.rs:277
+  - `utest` — src/legifrance.rs:377
+  - `utest` — src/legifrance.rs:456
 
 #### `req~detection-des-versions~1`
 
@@ -57,8 +58,13 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 #### `req~moteur-separe-du-savoir~1`
 
 - Niveau normatif : DOIT
-- Needs: dsn, impl, utest
-- Couvertures réelles : — À COUVRIR
+- Needs: dsn, impl, utest, itest
+- Couvertures réelles (5) :
+  - `impl` — src/verifier.rs:17
+  - `utest` — src/verifier.rs:664
+  - `utest` — src/verifier.rs:673
+  - `utest` — src/verifier.rs:692
+  - `utest` — src/verifier.rs:709
 
 #### `req~peremption-par-version~1`
 
@@ -74,7 +80,7 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 
 ### Bilan (couvertures réelles)
 
-4/8 exigence(s) testable(s) couverte(s) par au moins une trace réelle (50.0 %) — 4 à couvrir.
+5/8 exigence(s) testable(s) couverte(s) par au moins une trace réelle (62.5 %) — 3 à couvrir.
 
 ## 2. L'inverse — outillage sans exigence
 

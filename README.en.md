@@ -32,7 +32,8 @@ Status (November 2026): first increment. Founding decisions are taken
 a Judilibre decision by its official identifier, stores it, immutable and
 dated, in the `raw/` folder of a knowledge repository, and reports version
 changes (`greffier capturer article|decision`, `greffier versions`,
-`greffier en-vigueur`). Credentials come from an application registered
+`greffier en-vigueur`), and checks a knowledge repository read-only
+(`greffier verifier`). Credentials come from an application registered
 on PISTE (`GREFFIER_PISTE_CLIENT_ID`, `GREFFIER_PISTE_CLIENT_SECRET`) and
 are never written or displayed.
 French is the normative language of this repository; see `README.md`.

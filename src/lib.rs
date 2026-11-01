@@ -23,4 +23,5 @@ pub mod judilibre;
 pub mod legifrance;
 pub mod periode;
 pub mod piste;
+pub mod verifier;
 pub mod versions;
