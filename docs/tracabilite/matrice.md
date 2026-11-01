@@ -17,8 +17,42 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 #### `req~textes-authentiques-versionnes~1`
 
 - Niveau normatif : DOIT
-- Needs: dsn
-- Couvertures réelles : — À COUVRIR
+- Needs: dsn, impl, utest, itest
+- Couvertures réelles (4) :
+  - `impl` — src/couche.rs:13
+  - `utest` — src/couche.rs:282
+  - `utest` — src/couche.rs:314
+  - `utest` — src/couche.rs:346
+
+#### `req~capture-des-sources-officielles~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, utest, itest
+- Couvertures réelles (4) :
+  - `impl` — src/judilibre.rs:77
+  - `utest` — src/judilibre.rs:151
+  - `impl` — src/legifrance.rs:90
+  - `utest` — src/legifrance.rs:277
+
+#### `req~detection-des-versions~1`
+
+- Niveau normatif : DOIT
+- Needs: impl, utest, itest
+- Couvertures réelles (4) :
+  - `impl` — src/versions.rs:8
+  - `utest` — src/versions.rs:66
+  - `utest` — src/versions.rs:78
+  - `utest` — src/versions.rs:85
+
+#### `req~chaine-de-verification-du-moteur~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, utest
+- Couvertures réelles (4) :
+  - `impl` — tools/bootstrap.d/50-rust.sh:2
+  - `impl` — tools/rust.sh:2
+  - `utest` — tools/spdx-test.sh:2
+  - `impl` — tools/spdx.sh:2
 
 #### `req~moteur-separe-du-savoir~1`
 
@@ -40,7 +74,7 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 
 ### Bilan (couvertures réelles)
 
-0/5 exigence(s) testable(s) couverte(s) par au moins une trace réelle (0.0 %) — 5 à couvrir.
+4/8 exigence(s) testable(s) couverte(s) par au moins une trace réelle (50.0 %) — 4 à couvrir.
 
 ## 2. L'inverse — outillage sans exigence
 
@@ -126,5 +160,5 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `tools/hooks/commit-msg.sh`
 - `tools/hooks/pre-commit.sh`
 
-**Total : 59/63 fichier(s) d'outillage sans trace de traçabilité.**
+**Total : 59/67 fichier(s) d'outillage sans trace de traçabilité.**
 

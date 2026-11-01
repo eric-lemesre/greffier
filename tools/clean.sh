@@ -52,6 +52,15 @@ nettoyer build
 # no-op est un contrôle qui passe toujours.
 # -------------------------------------------------------------------------
 
+# Rust — artefacts de compilation, par l'âge, chemin résolu par cargo
+# metadata (ADR-0003, kit templates/bootstrap.d/rust/). Le kit REFUSE un
+# cache partagé entre projets (CARGO_TARGET_DIR du poste) : ce refus est
+# voulu, il est rapporté sans faire échouer le reste du nettoyage.
+if [ -f Cargo.toml ] && [ -f tools/rust.sh ] && command -v cargo >/dev/null 2>&1; then
+    sh tools/rust.sh clean \
+        || echo "note : artefacts Rust non balayés (voir ci-dessus) — sh tools/rust.sh clean --partage pour un cache partagé, en connaissance de cause."
+fi
+
 if [ "${ALL}" -eq 1 ]; then
     # Cache d'outillage (jar OpenFastTrace…) : re-téléchargé et re-vérifié
     # par empreinte au prochain lancement des portes.

@@ -21,7 +21,9 @@ JAR="${ROOT}/.cache/openfasttrace-${OFT_VERSION}.jar"
 # a pas — il ne réalise rien — mais tout projet instancié en aura un, et sans
 # lui au périmètre ses exigences resteraient orphelines sans qu'on sache
 # pourquoi. Manque constaté sur un projet instancié.
-INPUTS="spec docs examples src tools .github .gitlab .gitlab-ci.yml AGENTS.md README.md README.en.md CONTRIBUTING.md CHANGELOG.md Taskfile.yml"
+# « tests » porte les tests d'intégration Rust (tags itest), que cargo range
+# hors de src.
+INPUTS="spec docs examples src tests tools .github .gitlab .gitlab-ci.yml AGENTS.md README.md README.en.md CONTRIBUTING.md CHANGELOG.md Taskfile.yml"
 
 scan_inputs() {
     SCAN=""

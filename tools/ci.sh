@@ -142,6 +142,7 @@ etape "anti-dérive"        sh tools/derive.sh
 etape "secrets"            sh tools/secrets.sh scan
 etape "données"            sh tools/donnees.sh
 etape "hygiène de compilation" sh tools/hygiene-compilation.sh
+etape "en-têtes de licence" sh tools/spdx.sh
 
 # Forme explicite plutôt que « [ … ] && bilan » : sous « set -e », un test
 # faux en tête d'une liste ET est exempté, mais la règle est assez subtile
@@ -149,6 +150,13 @@ etape "hygiène de compilation" sh tools/hygiene-compilation.sh
 if [ "${voie}" = "docs" ]; then
     bilan
 fi
+
+# --- Code du moteur (voie complète) — ADR-0003 -------------------------------
+# Format, lints (les lints du manifeste refusent toute panique hors tests),
+# tests unitaires et d'intégration, incrémental coupé par le kit Rust.
+etape "rust — format"      cargo fmt --check
+etape "rust — lints"       cargo clippy --all-targets --locked -- -D warnings
+etape "rust — tests"       sh tools/rust.sh test
 
 # --- Tests d'outillage (voie complète) --------------------------------------
 # Chaque porte se teste sur son cas d'échec (R3). Ces tests créent des dépôts
@@ -172,6 +180,7 @@ test — bootstrap	sh tools/bootstrap-test.sh
 test — nettoyage	sh tools/clean-test.sh
 test — hygiène de compilation	sh tools/hygiene-compilation-test.sh
 test — kit Rust	sh tools/rust-kit-test.sh
+test — en-têtes de licence	sh tools/spdx-test.sh
 test — rattachement	sh tools/rattachement-test.sh
 test — indépendance à la locale	sh tools/locale-test.sh
 FIN
