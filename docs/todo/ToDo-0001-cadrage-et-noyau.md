@@ -33,9 +33,12 @@ source) qu'il faut prouver par un banc avant de l'exposer.
   vices cachés ; dépôt de garantie en fin de bail ; réparations et charges
   locatives ; petite créance entre particuliers. Puis vérification jouée en
   intégration continue du dépôt de savoir.
-- Lot 3 — recherche lexicale sur les deux couches, filtre par date en
-  vigueur, banc de questions (rappel, précision, délai, zéro élément non
-  ancré).
+- Lot 3 — recherche livrée : `greffier chercher` (lexicale, BM25, sur les
+  textes authentiques et le wiki ; droit en vigueur à la date demandée ;
+  tout élément non ancré écarté et journalisé) et `greffier banc` (rappel,
+  précision, délai, échec au premier élément non ancré). Reste : la mesure
+  sur le savoir réel, qui attend les premières situations et des questions
+  du banc munies de leurs identifiants attendus.
 - Lot 4 — exposition : serveur MCP, API HTTP ; vecteurs quantifiés sur la
   couche des situations seulement si le banc le justifie.
 

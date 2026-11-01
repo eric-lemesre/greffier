@@ -174,7 +174,11 @@ fn fichiers_du_depot(savoir: &Path) -> Resultat<Vec<PathBuf>> {
     Ok(fichiers)
 }
 
-fn parcourir(racine: &Path, relatif: &Path, fichiers: &mut Vec<PathBuf>) -> Resultat<()> {
+pub(crate) fn parcourir(
+    racine: &Path,
+    relatif: &Path,
+    fichiers: &mut Vec<PathBuf>,
+) -> Resultat<()> {
     let dossier = racine.join(relatif);
     let entrees = fs::read_dir(&dossier).map_err(|cause| Erreur::Fichier {
         chemin: dossier.clone(),
@@ -580,7 +584,7 @@ fn resoudre<'a>(lien: &str, noms: &'a BTreeMap<String, PathBuf>) -> Option<&'a P
 
 /// Identifiants officiels cités dans un texte : `LEGIARTI`, `LEGITEXT`,
 /// `JORFTEXT` suivis de douze chiffres, et `ECLI:…`.
-fn identifiants_cites(contenu: &str) -> BTreeSet<String> {
+pub(crate) fn identifiants_cites(contenu: &str) -> BTreeSet<String> {
     let mut trouves = BTreeSet::new();
     for prefixe in ["LEGIARTI", "LEGITEXT", "JORFTEXT"] {
         for (position, _) in contenu.match_indices(prefixe) {
