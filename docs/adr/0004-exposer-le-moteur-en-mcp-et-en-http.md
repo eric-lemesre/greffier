@@ -1,14 +1,13 @@
 # ADR-0004 — Exposer le moteur en serveur MCP et en API HTTP, sur axum et rmcp, local par défaut
 
-**Statut** : Proposé
+**Statut** : Accepté
 **Date** : 2026-11-01
-**Décideur** : Eric Lemesre — seul (porteur) ; arbitrages du 2026-11-01 sur la pile, l'accès et les outils, à acter avec le domaine « interfaces »
+**Décideur** : Eric Lemesre — seul (porteur), D-2026-11-06 au registre
 **Portée** : durable
 
 ## Item de conception
 
 `dsn~exposition-mcp-http~1`
-Status: proposed
 
 Le binaire `greffier` sert le même cœur synchrone (recherche, porte de
 l'ancrage, lecture des textes, vérification) par deux interfaces : un
@@ -46,8 +45,9 @@ sur un réseau le publie, sauf contrôle d'accès.
    ligne de commande l'appellent, le travail de disque passe par
    `spawn_blocking`. Aucune règle d'ancrage n'est réécrite dans une
    interface.
-3. **Index** : construit au démarrage en mémoire, reconstruit à la
-   demande ; rien n'est écrit dans le savoir (ADR-0001, point 3).
+3. **Index** : construit au démarrage en mémoire, reconstruit dès que le
+   savoir change (empreinte des fichiers indexés : chemin, taille, date de
+   modification) ; rien n'est écrit dans le savoir (ADR-0001, point 3).
 4. **Commandes** : `greffier mcp --savoir S` (stdio, pour un agent local)
    et `greffier servir --savoir S [--ecoute ADRESSE]` (API sous `/`, MCP
    sous `/mcp`).

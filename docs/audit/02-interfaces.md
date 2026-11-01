@@ -8,9 +8,12 @@
 
 Verdicts admis : `conforme` · `écart` · `non examiné`.
 
-Domaine en proposition : ses quatre exigences sont proposées et
-n'entreront au périmètre de l'audit qu'à leur approbation (lot 4,
-ADR-0004).
+Domaine actif depuis D-2026-11-06 : quatre exigences approuvées, réalisées
+au lot 4 (ADR-0004).
 
 | Exigence | Verdict | Preuve / écart |
 | --- | --- | --- |
+| `req~source-de-chaque-element~1` | conforme | `src/recherche.rs` : `Ancres::source` rend le lien conservé à la capture (en-tête `source`), celui de la version en vigueur à la date pour un identifiant chronologique ; chaque élément rendu porte ses `sources` (ligne de commande, MCP, HTTP) ; tests `une_page_rendue_porte_le_lien_de_la_version_en_vigueur_de_l_article_cite`, `une_decision_rendue_porte_le_lien_conserve_a_sa_capture` |
+| `req~outils-mcp~1` | conforme | `src/mcp.rs` (SDK `rmcp`) et `src/service.rs` : quatre outils en lecture seule, date et mention dans chaque réponse de `chercher` et `lire_texte` ; `greffier mcp` (stdio) et `/mcp` (HTTP) ; tests unitaires de `service.rs`, test d'intégration `un_agent_mcp_liste_les_quatre_outils_et_ne_recoit_que_de_l_ancre` (session JSON-RPC réelle : liste, recherche sans élément non ancré, refus d'une citation inventée) |
+| `req~api-http~1` | conforme | `src/http.rs` (axum) : routes `/recherche`, `/textes/{identifiant}`, `/citations/verification`, `/savoir/verification`, `/sante` ; erreurs JSON (400, 404, 500) sans chemin ni secret (`ErreurPublique`) ; test d'intégration `l_api_rend_des_elements_ancres_et_sources_et_des_erreurs_en_json` |
+| `req~acces-http-protege~1` | conforme | `src/http.rs` : `controler_ecoute` refuse une écoute hors boucle locale sans `GREFFIER_JETON` ; jeton porteur comparé à temps constant sur toute route hors `/sante`, MCP compris ; tests `hors_de_la_boucle_locale_le_jeton_est_exige`, `hors_de_la_boucle_locale_sans_jeton_le_serveur_refuse_de_demarrer`, `avec_un_jeton_toute_requete_sans_lui_est_refusee_sauf_la_sante` (jeton absent de l'annonce de démarrage) |

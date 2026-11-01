@@ -1,6 +1,6 @@
 # Exigences — domaine interfaces
 
-**Statut : PROPOSITION** — passe ACTIVE quand une décision du registre l'acte.
+**Statut : ACTIVE** — domaine acté le 2026-11-01 (D-2026-11-06).
 
 Ce domaine expose le moteur aux agents logiciels et aux outils métier :
 serveur MCP et API HTTP, sur les opérations déjà tenues par la ligne de
@@ -13,9 +13,7 @@ le contenu est sous licence fermée.
 ## Tout élément rendu porte le lien vers la source officielle de ses identifiants
 
 `req~source-de-chaque-element~1`
-Status: proposed
-
-**Statut : proposée**
+**Statut : approuvée**
 
 Le système DOIT rendre, pour chaque identifiant officiel d'un élément de
 réponse, le lien vers sa source officielle tel qu'il a été conservé à la
@@ -45,9 +43,7 @@ Needs: impl, utest
 ## Un serveur MCP offre la recherche ancrée aux agents
 
 `req~outils-mcp~1`
-Status: proposed
-
-**Statut : proposée**
+**Statut : approuvée**
 
 Le système DOIT offrir, en serveur MCP sur l'entrée et la sortie standard
 et sur HTTP, les outils `chercher` (question, date), `lire_texte`
@@ -80,9 +76,7 @@ Needs: dsn, impl, utest, itest
 ## Une API HTTP offre les mêmes opérations aux outils métier
 
 `req~api-http~1`
-Status: proposed
-
-**Statut : proposée**
+**Statut : approuvée**
 
 Le système DOIT offrir les opérations `chercher`, `lire_texte`,
 `verifier_citation` et `verifier_savoir` en API HTTP à réponses JSON, avec
@@ -110,9 +104,7 @@ Needs: dsn, impl, itest
 ## L'API n'est joignable hors du poste qu'avec un jeton
 
 `req~acces-http-protege~1`
-Status: proposed
-
-**Statut : proposée**
+**Statut : approuvée**
 
 Si le serveur HTTP écoute sur une adresse autre que la boucle locale,
 alors le système DOIT exiger un jeton porteur fourni par l'environnement

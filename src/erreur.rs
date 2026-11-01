@@ -64,6 +64,16 @@ pub enum Erreur {
         cause: String,
     },
 
+    /// Le serveur écouterait hors de la boucle locale sans jeton.
+    #[error(
+        "écoute sur {0} hors de la boucle locale sans jeton : définir GREFFIER_JETON, ou écouter sur 127.0.0.1"
+    )]
+    EcouteSansJeton(String),
+
+    /// Le serveur n'a pas pu démarrer ou s'est arrêté sur une erreur.
+    #[error("serveur : {0}")]
+    Serveur(String),
+
     /// Erreur d'entrée-sortie sur la couche des textes.
     #[error("entrée-sortie sur {chemin} : {cause}")]
     Fichier {
