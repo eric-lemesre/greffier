@@ -45,6 +45,23 @@ jobs:
           path: .cache
           key: outillage-oft-4.9.0-gitleaks-8.30.1
 
+      # Outillage Rust exigé par le module tools/bootstrap.d/50-rust.sh
+      # (ADR-0003) : la chaîne vient de rust-toolchain.toml (rustup du
+      # runner) ; cargo-nextest et cargo-sweep s'installent par cargo, à
+      # version épinglée, et le cache évite de les recompiler. Ce n'est pas
+      # une étape de vérification : seulement l'outillage du poste.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: |
+            ~/.cargo/bin/cargo-nextest
+            ~/.cargo/bin/cargo-sweep
+          key: outillage-rust-nextest-0.9.143-sweep-0.8.0
+
+      - name: Outillage Rust
+        run: |
+          command -v cargo-nextest >/dev/null || cargo install --locked cargo-nextest --version 0.9.143
+          command -v cargo-sweep >/dev/null || cargo install --locked cargo-sweep --version 0.8.0
+
       # Point d'entrée UNIQUE : la CI n'a pas sa propre liste d'étapes.
       # tools/ci.sh constate le périmètre et emprunte la voie qui convient
       # (ADR-0017) ; l'historique complet du checkout ci-dessus lui donne la

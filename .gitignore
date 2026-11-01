@@ -42,3 +42,6 @@ build/
 .hermes/
 .codewhale/
 .deepseek/
+
+# Artefacts de compilation Rust (emplacement résolu par cargo metadata)
+/target/

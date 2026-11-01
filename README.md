@@ -57,12 +57,28 @@ réponse ne conclut sur le fond d'un litige concret.
 
 ## État
 
-Cadrage (novembre 2026) : les décisions fondatrices sont prises
+Premier lot (novembre 2026) : les décisions fondatrices sont prises
 ([ADR-0001](docs/adr/0001-separer-le-moteur-du-savoir-et-ancrer-toute-citation.md),
-[ADR-0002](docs/adr/0002-publier-le-moteur-sous-eupl-1-2.md)), le premier
-besoin et ses exigences sont en proposition (`spec/`), la feuille de route
-est dans `docs/todo/`. Aucun code encore : il viendra en Rust, en un binaire
-unique qui travaille sur un dossier de savoir versionné par Git.
+[ADR-0002](docs/adr/0002-publier-le-moteur-sous-eupl-1-2.md),
+[ADR-0003](docs/adr/0003-ecrire-le-moteur-en-rust-en-binaire-unique.md)),
+les exigences sont en proposition (`spec/`), la feuille de route est dans
+`docs/todo/`. Le binaire `greffier` (Rust) porte la couche des textes
+authentiques : il capture un article Légifrance ou une décision Judilibre
+par son identifiant officiel, le conserve, immuable et daté, dans le
+dossier `raw/` d'un dépôt de savoir, et constate les changements de
+version.
+
+```sh
+export GREFFIER_PISTE_CLIENT_ID=…  GREFFIER_PISTE_CLIENT_SECRET=…   # application PISTE
+greffier capturer article LEGIARTI… --toutes-versions --savoir ../savoir
+greffier capturer decision <identifiant Judilibre> --savoir ../savoir
+greffier versions LEGIARTI… --depuis 2026-01-01      # sortie 3 si l'article a changé
+greffier en-vigueur <cid> --le 2026-01-01 --savoir ../savoir   # hors ligne
+```
+
+Les identifiants viennent d'une application enregistrée sur
+[PISTE](https://piste.gouv.fr) (production et bac à sable — `--bac-a-sable`
+— ont des identifiants distincts) ; ils ne sont jamais écrits ni affichés.
 
 ## Méthode
 

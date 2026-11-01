@@ -26,8 +26,15 @@ skill.
 Greffier is not legal advice: it provides a sourced, dated documentary aid;
 the human reader remains the author of their own assessment.
 
-Status (November 2026): scoping. Founding decisions are taken (ADR-0001,
-ADR-0002), the first need and its requirements are proposed, no code yet.
+Status (November 2026): first increment. Founding decisions are taken
+(ADR-0001 to ADR-0003), requirements are proposed. The `greffier` binary
+(Rust) holds the authentic-text layer: it captures a Légifrance article or
+a Judilibre decision by its official identifier, stores it, immutable and
+dated, in the `raw/` folder of a knowledge repository, and reports version
+changes (`greffier capturer article|decision`, `greffier versions`,
+`greffier en-vigueur`). Credentials come from an application registered
+on PISTE (`GREFFIER_PISTE_CLIENT_ID`, `GREFFIER_PISTE_CLIENT_SECRET`) and
+are never written or displayed.
 French is the normative language of this repository; see `README.md`.
 
 Owner: Eric Lemesre. Licence: [EUPL 1.2](LICENSE).

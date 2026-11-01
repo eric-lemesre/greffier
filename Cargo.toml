@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: EUPL-1.2
+[package]
+name = "greffier"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.95"
+license = "EUPL-1.2"
+description = "Moteur de recherche juridique ancré : rien n'est rendu sans texte authentique."
+repository = "https://github.com/eric-lemesre/greffier"
+publish = false
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+time = { version = "0.3", features = ["formatting", "parsing", "macros"] }
+ureq = { version = "3", features = ["json"] }
+
+[lints.rust]
+missing_docs = "deny"
+unsafe_code = "forbid"
+
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+indexing_slicing = "deny"
+todo = "deny"
+unimplemented = "deny"
