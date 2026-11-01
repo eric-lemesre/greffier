@@ -18,10 +18,10 @@ source) qu'il faut prouver par un banc avant de l'exposer.
   par Pacilia) ; décisions restantes du porteur : modèle d'ingestion (local
   ou nuage, sources publiques), référents éditoriaux.
 - Lot 1 — connecteur aux textes authentiques : livré, recette sur l'API de
-  production faite le 2026-11-01 (article, décision, versions). Restent :
-  conserver la structure en paragraphes (le champ `texte` de Légifrance
-  l'aplatit, `texteHtml` la porte) ; vérifier l'adresse publique d'un
-  article hors code (`loda`) sur un premier texte réel de ce type.
+  production faite le 2026-11-01 (article, décision, versions) ; texte
+  conservé en paragraphes depuis `texteHtml`. Reste : vérifier l'adresse
+  publique d'un article hors code (`loda`) sur un premier texte réel de ce
+  type.
 - Lot 2 — vérification livrée : `greffier verifier` (lecture seule) ; le
   dépôt de savoir réel passe sans constat. Reste la première dizaine de
   situations, qui attend deux préalables : la capture des textes cités

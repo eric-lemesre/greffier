@@ -137,11 +137,110 @@ fn article_depuis_reponse(reponse: Value, demande: &str) -> Resultat<Article> {
         numero: requis(brut.num, "num")?,
         etat: brut.etat.unwrap_or_default(),
         en_vigueur,
-        texte: requis(brut.texte, "texte")?,
+        // texteHtml porte les paragraphes ; texte les aplatit en un bloc.
+        texte: requis(
+            brut.texte_html
+                .as_deref()
+                .map(texte_depuis_html)
+                .filter(|texte| !texte.is_empty())
+                .or(brut.texte),
+            "texte",
+        )?,
         titre_texte: titre.as_ref().and_then(|titre| titre.titre.clone()),
         nature_texte: titre.and_then(|titre| titre.nature),
         versions,
     })
+}
+
+/// Texte d'un article depuis son HTML Légifrance, un paragraphe par bloc,
+/// séparés par une ligne vide. Deux formes coexistent à la source : des
+/// paragraphes encadrés (`<p>…</p>`), et des `<p></p>` vides posés entre des
+/// paragraphes laissés hors balise. Toute balise de bloc vaut donc coupure ;
+/// les autres balises (liens) sont retirées, leur texte gardé ; les entités
+/// sont décodées et les blancs d'un paragraphe ramenés à un seul.
+fn texte_depuis_html(html: &str) -> String {
+    let mut paragraphes: Vec<String> = Vec::new();
+    let mut courant = String::new();
+    let mut reste = html;
+    while let Some(debut) = reste.find('<') {
+        courant.push_str(reste.get(..debut).unwrap_or_default());
+        let apres = reste.get(debut..).unwrap_or_default();
+        let Some(fin) = apres.find('>') else {
+            courant.push_str(apres);
+            reste = "";
+            break;
+        };
+        let balise = apres.get(1..fin).unwrap_or_default();
+        let nom: String = balise
+            .trim_start_matches('/')
+            .chars()
+            .take_while(char::is_ascii_alphanumeric)
+            .collect::<String>()
+            .to_ascii_lowercase();
+        if matches!(
+            nom.as_str(),
+            "p" | "br" | "div" | "li" | "tr" | "h1" | "h2" | "h3" | "h4"
+        ) {
+            paragraphes.push(std::mem::take(&mut courant));
+        }
+        reste = apres.get(fin + 1..).unwrap_or_default();
+    }
+    courant.push_str(reste);
+    paragraphes.push(courant);
+    paragraphes
+        .iter()
+        .map(|paragraphe| {
+            decoder_entites(paragraphe)
+                .split_whitespace()
+                .collect::<Vec<_>>()
+                .join(" ")
+        })
+        .filter(|paragraphe| !paragraphe.is_empty())
+        .collect::<Vec<_>>()
+        .join("\n\n")
+}
+
+/// Décode les entités HTML nommées courantes et numériques ; une entité
+/// inconnue est laissée telle quelle.
+fn decoder_entites(texte: &str) -> String {
+    let mut sortie = String::with_capacity(texte.len());
+    let mut reste = texte;
+    while let Some(debut) = reste.find('&') {
+        sortie.push_str(reste.get(..debut).unwrap_or_default());
+        let apres = reste.get(debut..).unwrap_or_default();
+        let entite = apres
+            .find(';')
+            .and_then(|fin| apres.get(1..fin).map(|nom| (nom, fin)));
+        let decode = entite.and_then(|(nom, fin)| {
+            let caractere = match nom {
+                "amp" => Some('&'),
+                "lt" => Some('<'),
+                "gt" => Some('>'),
+                "quot" => Some('"'),
+                "apos" => Some('\''),
+                "nbsp" => Some('\u{a0}'),
+                _ => nom
+                    .strip_prefix("#x")
+                    .or_else(|| nom.strip_prefix("#X"))
+                    .and_then(|hexa| u32::from_str_radix(hexa, 16).ok())
+                    .or_else(|| nom.strip_prefix('#').and_then(|dec| dec.parse().ok()))
+                    .and_then(char::from_u32),
+            };
+            caractere.map(|c| (c, fin))
+        });
+        match decode {
+            Some((caractere, fin)) => {
+                sortie.push(caractere);
+                reste = apres.get(fin + 1..).unwrap_or_default();
+            }
+            None => {
+                sortie.push('&');
+                reste = apres.get(1..).unwrap_or_default();
+            }
+        }
+    }
+    sortie.push_str(reste);
+    sortie
 }
 
 fn periode(debut: Option<DateSource>, fin: Option<DateSource>) -> Resultat<Periode> {
@@ -188,6 +287,7 @@ struct ArticleBrut {
     date_debut: Option<DateSource>,
     date_fin: Option<DateSource>,
     texte: Option<String>,
+    texte_html: Option<String>,
     text_titles: Option<Vec<TitreBrut>>,
     article_versions: Option<Vec<VersionBrute>>,
 }
@@ -351,6 +451,46 @@ pub(crate) mod tests {
         let source = SourceFactice::new(reponse);
         let article = lire_article(&source, "LEGIARTI000000000002").unwrap();
         assert_eq!(article.en_vigueur.debut, date!(2016 - 10 - 01));
+    }
+
+    // [utest->req~capture-des-sources-officielles~1]
+    #[test]
+    fn les_paragraphes_du_html_encadre_sont_conserves() {
+        let html = "<p>Premier alinéa, selon <a href=\"/x?id=LEGIARTI000000000003\">l'article 6</a> :</p><p>  I. Second   alinéa &amp; suite.</p>";
+        assert_eq!(
+            texte_depuis_html(html),
+            "Premier alinéa, selon l'article 6 :\n\nI. Second alinéa & suite."
+        );
+    }
+
+    #[test]
+    fn les_paragraphes_separes_par_des_balises_vides_sont_conserves() {
+        let html = "<p></p>   Premier alinéa :<p></p><p></p><p></p>   I. Second.<p></p>";
+        assert_eq!(texte_depuis_html(html), "Premier alinéa :\n\nI. Second.");
+    }
+
+    #[test]
+    fn les_entites_numeriques_sont_decodees_et_les_inconnues_gardees() {
+        assert_eq!(
+            decoder_entites("&#233;t&#xE9; &inconnue; a&b"),
+            "été &inconnue; a&b"
+        );
+    }
+
+    #[test]
+    fn le_html_prime_sur_le_texte_aplati() {
+        let mut reponse = reponse_fictive();
+        reponse["article"]["texteHtml"] = json!("<p>Alinéa un.</p><p>Alinéa deux.</p>");
+        let source = SourceFactice::new(reponse);
+        let article = lire_article(&source, "LEGIARTI000000000002").unwrap();
+        assert_eq!(article.texte, "Alinéa un.\n\nAlinéa deux.");
+    }
+
+    #[test]
+    fn sans_html_le_texte_aplati_est_garde() {
+        let source = SourceFactice::new(reponse_fictive());
+        let article = lire_article(&source, "LEGIARTI000000000002").unwrap();
+        assert_eq!(article.texte, "Texte fictif de l'article.");
     }
 
     #[test]
