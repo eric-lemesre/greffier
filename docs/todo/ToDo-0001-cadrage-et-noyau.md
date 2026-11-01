@@ -39,8 +39,12 @@ source) qu'il faut prouver par un banc avant de l'exposer.
   précision, délai, échec au premier élément non ancré). Reste : la mesure
   sur le savoir réel, qui attend les premières situations et des questions
   du banc munies de leurs identifiants attendus.
-- Lot 4 — exposition : serveur MCP, API HTTP ; vecteurs quantifiés sur la
-  couche des situations seulement si le banc le justifie.
+- Lot 4 — exposition : serveur MCP et API HTTP (ADR-0004, proposé ;
+  domaine « interfaces », quatre exigences proposées, à approuver avant
+  le code) : outils `chercher`, `lire_texte`, `verifier_citation`,
+  `verifier_savoir`, lien vers la source de chaque élément, écoute locale
+  par défaut et jeton exigé au-dehors. Vecteurs quantifiés sur la couche
+  des situations seulement si le banc le justifie.
 
 ## Renvois
 
@@ -48,7 +52,8 @@ source) qu'il faut prouver par un banc avant de l'exposer.
   req~capture-des-sources-officielles~1, req~detection-des-versions~1,
   req~chaine-de-verification-du-moteur~1,
   req~moteur-separe-du-savoir~1, req~peremption-par-version~1,
-  req~cloisonnement-du-savoir~1
-- Décisions : ADR-0001, ADR-0002, ADR-0003, D-2026-11-02, D-2026-11-03,
+  req~cloisonnement-du-savoir~1, req~source-de-chaque-element~1,
+  req~outils-mcp~1, req~api-http~1, req~acces-http-protege~1
+- Décisions : ADR-0001, ADR-0002, ADR-0003, ADR-0004, D-2026-11-02, D-2026-11-03,
   D-2026-11-04, D-2026-11-05
 - Issues : —

@@ -87,9 +87,35 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Needs: impl, utest
 - Couvertures réelles : — À COUVRIR
 
+### spec/02-exigences/02-interfaces.md
+
+#### `req~source-de-chaque-element~1`
+
+- Niveau normatif : DOIT
+- Needs: impl, utest
+- Couvertures réelles : — À COUVRIR
+
+#### `req~outils-mcp~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, utest, itest
+- Couvertures réelles : — À COUVRIR
+
+#### `req~api-http~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, itest
+- Couvertures réelles : — À COUVRIR
+
+#### `req~acces-http-protege~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, utest, itest
+- Couvertures réelles : — À COUVRIR
+
 ### Bilan (couvertures réelles)
 
-6/8 exigence(s) testable(s) couverte(s) par au moins une trace réelle (75.0 %) — 2 à couvrir.
+6/12 exigence(s) testable(s) couverte(s) par au moins une trace réelle (50.0 %) — 6 à couvrir.
 
 ## 2. L'inverse — outillage sans exigence
 

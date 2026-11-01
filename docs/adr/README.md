@@ -58,3 +58,4 @@ Proposé ──▶ Accepté ──▶ Déprécié
 | [ADR-0001](0001-separer-le-moteur-du-savoir-et-ancrer-toute-citation.md) | Séparer le moteur du savoir et ancrer toute citation dans un texte authentique | Accepté |
 | [ADR-0002](0002-publier-le-moteur-sous-eupl-1-2.md) | Publier le moteur sous la licence publique de l'Union européenne (EUPL 1.2) | Accepté |
 | [ADR-0003](0003-ecrire-le-moteur-en-rust-en-binaire-unique.md) | Écrire le moteur en Rust, en binaire unique, et joindre les sources officielles par PISTE | Accepté |
+| [ADR-0004](0004-exposer-le-moteur-en-mcp-et-en-http.md) | Exposer le moteur en serveur MCP et en API HTTP, sur axum et rmcp, local par défaut | Proposé |
