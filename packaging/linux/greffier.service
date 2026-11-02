@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: EUPL-1.2
+# Service système de Greffier, posé désactivé par les paquets deb et rpm
+# (ADR-0005). Réglages : /etc/greffier/greffier.env. Mise en route :
+#   systemctl enable --now greffier
+# Le serveur ne fait que lire le savoir et garde son index en mémoire : tout
+# le système de fichiers lui est rendu en lecture seule.
+# [impl->req~service-systeme-desactive~1]
+[Unit]
+Description=Greffier, moteur de recherche juridique ancré (API HTTP et MCP)
+Documentation=https://github.com/eric-lemesre/greffier
+After=network.target
+
+[Service]
+Type=simple
+User=greffier
+Group=greffier
+EnvironmentFile=/etc/greffier/greffier.env
+ExecStart=/usr/bin/greffier servir
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+SystemCallArchitectures=native
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

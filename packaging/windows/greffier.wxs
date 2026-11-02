@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SPDX-License-Identifier: EUPL-1.2
+  Installateur Windows de Greffier (ADR-0005), construit par WiX v5 dans
+  .github/workflows/paquets.yml :
+    wix build packaging/windows/greffier.wxs -arch x64
+      -d Version=X.Y.Z -d Racine=<dépôt> -d Binaire=<greffier.exe> -o <msi>
+  Installation par machine dans Program Files\Greffier, dossier ajouté au
+  PATH du système. L'UpgradeCode ne change JAMAIS : c'est lui qui fait
+  qu'une version remplace la précédente au lieu de s'installer à côté.
+  [impl->req~paquets-natifs~1]
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="Greffier"
+           Manufacturer="Eric Lemesre"
+           Version="$(var.Version)"
+           UpgradeCode="D5AA797E-8BC1-4760-8D70-967002F57F53"
+           Language="1036"
+           Codepage="1252"
+           Scope="perMachine">
+    <SummaryInformation Description="Greffier, moteur de recherche juridique ancré" />
+    <MajorUpgrade DowngradeErrorMessage="Une version plus récente de Greffier est déjà installée." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Greffier">
+        <Component Id="Binaire">
+          <File Id="GreffierExe" Source="$(var.Binaire)" Name="greffier.exe" KeyPath="yes" />
+          <Environment Id="CheminSysteme"
+                       Name="PATH"
+                       Value="[INSTALLFOLDER]"
+                       Part="last"
+                       Action="set"
+                       System="yes"
+                       Permanent="no" />
+        </Component>
+        <!-- Un fichier par composant : WiX ne donne un identifiant stable,
+             calculé, qu'à un composant d'un seul fichier. -->
+        <Component Id="Licence">
+          <File Id="Licence" Source="$(var.Racine)\LICENSE" Name="LICENSE.txt" KeyPath="yes" />
+        </Component>
+        <Component Id="Lisezmoi">
+          <File Id="Lisezmoi" Source="$(var.Racine)\README.md" Name="README.md" KeyPath="yes" />
+        </Component>
+        <Component Id="Nouveautes">
+          <File Id="Nouveautes" Source="$(var.Racine)\NEWS.md" Name="NEWS.md" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <Feature Id="Greffier" Title="Greffier">
+      <ComponentRef Id="Binaire" />
+      <ComponentRef Id="Licence" />
+      <ComponentRef Id="Lisezmoi" />
+      <ComponentRef Id="Nouveautes" />
+    </Feature>
+  </Package>
+</Wix>

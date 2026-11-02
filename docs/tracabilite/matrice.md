@@ -59,7 +59,7 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest
 - Couvertures réelles (5) :
-  - `impl` — .github/workflows/release.yml:6
+  - `impl` — .github/workflows/release.yml:7
   - `impl` — tools/bootstrap.d/50-rust.sh:2
   - `impl` — tools/rust.sh:2
   - `utest` — tools/spdx-test.sh:2
@@ -128,9 +128,40 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
   - `utest` — src/http.rs:317
   - `utest` — src/http.rs:325
 
+### spec/02-exigences/03-distribution.md
+
+#### `req~paquets-natifs~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, itest
+- Couvertures réelles (6) :
+  - `impl` — .github/workflows/paquets.yml:8
+  - `itest` — .github/workflows/paquets.yml:94
+  - `itest` — .github/workflows/paquets.yml:113
+  - `itest` — .github/workflows/paquets.yml:164
+  - `itest` — .github/workflows/paquets.yml:213
+  - `impl` — .github/workflows/release.yml:8
+
+#### `req~installation-sans-dependance~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, itest
+- Couvertures réelles (2) :
+  - `impl` — .github/workflows/paquets.yml:9
+  - `itest` — .github/workflows/paquets.yml:74
+
+#### `req~service-systeme-desactive~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, itest
+- Couvertures réelles (3) :
+  - `itest` — .github/workflows/paquets.yml:95
+  - `itest` — .github/workflows/paquets.yml:114
+  - `impl` — src/main.rs:105
+
 ### Bilan (couvertures réelles)
 
-10/12 exigence(s) testable(s) couverte(s) par au moins une trace réelle (83.3 %) — 2 à couvrir.
+13/15 exigence(s) testable(s) couverte(s) par au moins une trace réelle (86.7 %) — 2 à couvrir.
 
 ## 2. L'inverse — outillage sans exigence
 
@@ -220,5 +251,5 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `tools/hooks/commit-msg.sh`
 - `tools/hooks/pre-commit.sh`
 
-**Total : 63/72 fichier(s) d'outillage sans trace de traçabilité.**
+**Total : 63/73 fichier(s) d'outillage sans trace de traçabilité.**
 
