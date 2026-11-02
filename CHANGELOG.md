@@ -5,6 +5,8 @@ versionnement : [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.2.0] - 2026-11-02
+
 ### Ajouté
 
 - Paquets natifs (ADR-0005, D-2026-11-07, domaine « distribution ») :
