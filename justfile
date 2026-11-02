@@ -71,6 +71,10 @@ rattachement:
 hygiene:
     sh tools/hygiene-compilation.sh
 
+# Journalisation Rust (abonné dans le seul binaire, instrument sans arguments, secrets masqués, aucun println! de bibliothèque)
+journalisation:
+    sh tools/journalisation.sh
+
 # Nettoie les artefacts locaux (chemins déclarés) : just clean [--all]
 clean *args:
     sh tools/clean.sh {{args}}

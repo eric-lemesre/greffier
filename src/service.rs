@@ -250,6 +250,7 @@ struct Charge {
 
 /// Le moteur ouvert sur un dépôt de savoir.
 pub struct Service {
+    nom: String,
     savoir: PathBuf,
     charge: RwLock<Charge>,
 }
@@ -257,9 +258,21 @@ pub struct Service {
 impl Service {
     /// Ouvre le dépôt de savoir situé à `savoir` et construit son index.
     pub fn ouvrir(savoir: &Path) -> Resultat<Self> {
+        Self::ouvrir_nomme(crate::configuration::DEPOT_PAR_DEFAUT, savoir)
+    }
+
+    /// Ouvre le dépôt de savoir nommé `nom`, situé à `savoir`.
+    pub fn ouvrir_nomme(nom: &str, savoir: &Path) -> Resultat<Self> {
+        let debut = std::time::Instant::now();
         let empreinte = empreinte(savoir)?;
         let index = Arc::new(Index::construire(savoir)?);
+        tracing::info!(
+            depot = nom,
+            duree_ms = millisecondes(debut),
+            "index construit"
+        );
         Ok(Self {
+            nom: nom.to_owned(),
             savoir: savoir.to_owned(),
             charge: RwLock::new(Charge { index, empreinte }),
         })
@@ -274,7 +287,13 @@ impl Service {
                 return Ok(Arc::clone(&charge.index));
             }
         }
+        let debut = std::time::Instant::now();
         let index = Arc::new(Index::construire(&self.savoir)?);
+        tracing::info!(
+            depot = %self.nom,
+            duree_ms = millisecondes(debut),
+            "index reconstruit : le savoir a changé"
+        );
         let mut charge = self.charge.write().map_err(|_| verrou())?;
         *charge = Charge {
             index: Arc::clone(&index),
@@ -410,6 +429,10 @@ fn date(le: Option<&str>) -> Resultat<Date> {
 
 fn chemin(chemin: &Path) -> String {
     chemin.to_string_lossy().into_owned()
+}
+
+fn millisecondes(debut: std::time::Instant) -> u64 {
+    u64::try_from(debut.elapsed().as_millis()).unwrap_or(u64::MAX)
 }
 
 fn verrou() -> Erreur {

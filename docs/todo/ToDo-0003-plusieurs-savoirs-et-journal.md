@@ -10,17 +10,11 @@ aujourd'hui qu'un dépôt, sous un jeton unique, sans journal.
 
 ## Reste à faire
 
-- Lot 1 — configuration : fichier TOML (`--config`, `GREFFIER_CONFIG`),
-  priorité option, environnement, fichier, défaut ; garde sur les droits
-  d'un fichier à secret ; secrets typés ; section `[piste]`.
-- Lot 2 — plusieurs dépôts et jetons à portée : dépôts nommés, routes
-  `/savoirs/{nom}/…` et MCP par dépôt, routes de la 0.2.0 gardées, clients
-  de l'environnement et du fichier, empreintes SHA-256, 404 hors portée.
-- Lot 3 — journal : `tracing` installé par le binaire, `X-Request-Id`,
-  ligne par requête, cible `greffier::acces`, journald, filtre et format ;
-  porte `tools/journalisation.sh` du gabarit.
-- Lot 4 — documentation (README, service systemd et modèle de fichier
-  des paquets), version 0.3.0 sur demande du porteur.
+- Lots 1 à 3 (configuration, plusieurs dépôts et jetons à portée,
+  journal) : réalisés, en attente de fusion.
+- Lot 4 — documentation : README, modèle d'environnement des paquets et
+  journaux faits ; reste la version 0.3.0, sur demande du porteur, et
+  l'adoption par Pacilia (`X-Request-Id` transmis par son adaptateur).
 
 ## Renvois
 

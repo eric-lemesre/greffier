@@ -106,39 +106,48 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Couvertures réelles (5) :
   - `impl` — src/mcp.rs:11
   - `impl` — src/service.rs:13
-  - `utest` — src/service.rs:451
-  - `utest` — src/service.rs:465
+  - `utest` — src/service.rs:474
   - `utest` — src/service.rs:488
+  - `utest` — src/service.rs:511
 
 #### `req~api-http~1`
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, itest
 - Couvertures réelles (2) :
-  - `impl` — src/http.rs:23
+  - `impl` — src/http.rs:33
   - `impl` — src/service.rs:14
 
 #### `req~acces-http-protege~1`
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest, itest
-- Couvertures réelles (4) :
-  - `impl` — src/http.rs:24
-  - `utest` — src/http.rs:305
-  - `utest` — src/http.rs:317
-  - `utest` — src/http.rs:325
+- Couvertures réelles (3) :
+  - `impl` — src/http.rs:34
+  - `utest` — src/http.rs:585
+  - `utest` — src/http.rs:602
 
 #### `req~savoirs-multiples~1`
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest, itest
-- Couvertures réelles : — À COUVRIR
+- Couvertures réelles (5) :
+  - `impl` — src/configuration.rs:36
+  - `utest` — src/configuration.rs:456
+  - `utest` — src/configuration.rs:468
+  - `impl` — src/http.rs:36
+  - `utest` — src/http.rs:611
 
 #### `req~jetons-a-portee~1`
 
 - Niveau normatif : DOIT
-- Needs: dsn, impl, itest
-- Couvertures réelles : — À COUVRIR
+- Needs: dsn, impl, utest, itest
+- Couvertures réelles (5) :
+  - `impl` — src/configuration.rs:35
+  - `utest` — src/configuration.rs:479
+  - `utest` — src/configuration.rs:514
+  - `utest` — src/configuration.rs:537
+  - `impl` — src/http.rs:37
 
 ### spec/02-exigences/03-distribution.md
 
@@ -169,7 +178,7 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Couvertures réelles (3) :
   - `itest` — .github/workflows/paquets.yml:95
   - `itest` — .github/workflows/paquets.yml:114
-  - `impl` — src/main.rs:105
+  - `impl` — src/main.rs:131
 
 ### spec/02-exigences/04-exploitation.md
 
@@ -177,17 +186,26 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest, itest
-- Couvertures réelles : — À COUVRIR
+- Couvertures réelles (7) :
+  - `impl` — src/configuration.rs:34
+  - `utest` — src/configuration.rs:421
+  - `utest` — src/configuration.rs:429
+  - `utest` — src/configuration.rs:450
+  - `impl` — src/main.rs:14
+  - `impl` — src/piste.rs:92
+  - `utest` — src/piste.rs:281
 
 #### `req~journal-du-service~1`
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, itest
-- Couvertures réelles : — À COUVRIR
+- Couvertures réelles (2) :
+  - `impl` — src/http.rs:39
+  - `impl` — src/main.rs:13
 
 ### Bilan (couvertures réelles)
 
-13/19 exigence(s) testable(s) couverte(s) par au moins une trace réelle (68.4 %) — 6 à couvrir.
+17/19 exigence(s) testable(s) couverte(s) par au moins une trace réelle (89.5 %) — 2 à couvrir.
 
 ## 2. L'inverse — outillage sans exigence
 
@@ -215,7 +233,7 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `.github/workflows/ci.yml`
 - `.github/workflows/security.yml`
 
-### `tools` (49)
+### `tools` (51)
 
 - `tools/adr-new.sh`
 - `tools/audit.sh`
@@ -241,6 +259,8 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `tools/install-git.ps1`
 - `tools/install-git.sh`
 - `tools/issues.sh`
+- `tools/journalisation-test.sh`
+- `tools/journalisation.sh`
 - `tools/journaux-revisions-editoriales.txt`
 - `tools/journaux.sh`
 - `tools/lexique.sh`
@@ -277,5 +297,5 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `tools/hooks/commit-msg.sh`
 - `tools/hooks/pre-commit.sh`
 
-**Total : 63/73 fichier(s) d'outillage sans trace de traçabilité.**
+**Total : 65/75 fichier(s) d'outillage sans trace de traçabilité.**
 
