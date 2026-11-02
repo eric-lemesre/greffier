@@ -5,6 +5,24 @@ Ce qui change pour qui utilise ou exploite Greffier. Le journal du dépôt
 
 ## [Non publié]
 
+### Ajouté
+
+- **Plusieurs savoirs sur une même instance** : chaque dépôt sous son nom
+  (`/savoirs/{nom}/…`, MCP compris) ; le dépôt de `--savoir` reste servi
+  sous les routes de la 0.2.0.
+- **Clients à portée** : chaque client a son jeton et ne lit que les
+  dépôts de sa portée (`GREFFIER_JETON_<CLIENT>`,
+  `GREFFIER_SAVOIRS_<CLIENT>`, ou la configuration) ; `GREFFIER_JETON`
+  garde son sens (tous les dépôts).
+- **Fichier de configuration** TOML (`--config`, `GREFFIER_CONFIG`,
+  `/etc/greffier/greffier.toml`) pour tous les réglages, identifiants PISTE
+  compris ; l'option l'emporte sur l'environnement, et l'environnement sur
+  le fichier. Un fichier à secret lisible par d'autres est refusé.
+- **Journal du service** : une ligne par requête, corrélée par
+  `X-Request-Id`, refus d'accès à part, ni jeton ni question ; journald
+  sous systemd, texte ou JSON ailleurs (`GREFFIER_JOURNAL`,
+  `GREFFIER_JOURNAL_FORMAT`).
+
 ## [0.2.0] - 2026-11-02
 
 ### Ajouté

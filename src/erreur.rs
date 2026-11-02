@@ -70,6 +70,46 @@ pub enum Erreur {
     )]
     EcouteSansJeton(String),
 
+    /// Le fichier de configuration est mal formé.
+    #[error("configuration {chemin} : {cause}")]
+    Configuration {
+        /// Fichier de configuration.
+        chemin: PathBuf,
+        /// Ce qui ne va pas (sans valeur lue).
+        cause: String,
+    },
+
+    /// Le fichier de configuration porte un secret et reste lisible par le
+    /// groupe ou par tous.
+    #[error(
+        "configuration {chemin} : elle porte un secret et reste lisible par d'autres (mode {mode:o}) ; la protéger (chmod 600, ou 640 au groupe du service)"
+    )]
+    ConfigurationExposee {
+        /// Fichier de configuration.
+        chemin: PathBuf,
+        /// Mode du fichier.
+        mode: u32,
+    },
+
+    /// Un nom de dépôt ou de client sort de l'alphabet admis.
+    #[error("nom « {0} » refusé : attendu 1 à 40 caractères parmi a-z, 0-9 et -")]
+    NomInvalide(String),
+
+    /// Aucun dépôt de savoir n'est déclaré.
+    #[error(
+        "aucun dépôt de savoir : définir --savoir, GREFFIER_SAVOIR ou la section [savoirs] de la configuration"
+    )]
+    AucunSavoir,
+
+    /// Un client du fichier déclare à la fois un jeton et une empreinte, ou
+    /// ni l'un ni l'autre.
+    #[error("client « {0} » : déclarer soit un jeton, soit une empreinte")]
+    JetonDuClient(String),
+
+    /// L'empreinte d'un client n'a pas la forme `sha256:<64 hexadécimaux>`.
+    #[error("client « {0} » : empreinte attendue au format sha256:<64 chiffres hexadécimaux>")]
+    EmpreinteInvalide(String),
+
     /// Le serveur n'a pas pu démarrer ou s'est arrêté sur une erreur.
     #[error("serveur : {0}")]
     Serveur(String),

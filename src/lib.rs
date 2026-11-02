@@ -20,6 +20,7 @@
 )]
 
 pub mod banc;
+pub mod configuration;
 pub mod couche;
 pub mod erreur;
 pub mod http;

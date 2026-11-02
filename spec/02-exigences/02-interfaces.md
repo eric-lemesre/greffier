@@ -132,3 +132,73 @@ Covers:
 - feat~source-pour-agents~1
 
 Needs: dsn, impl, utest, itest
+
+## Une instance sert plusieurs dépôts de savoir, chacun sous son nom
+
+`req~savoirs-multiples~1`
+**Statut : approuvée**
+
+Le système DOIT servir un ou plusieurs dépôts de savoir déclarés chacun par
+un nom et un chemin, sous des routes qui nomment le dépôt
+(`/savoirs/{nom}/…`, MCP compris), chacun avec son index propre ; le dépôt
+déclaré par `--savoir` ou `GREFFIER_SAVOIR` DOIT rester servi sous les
+routes de la version 0.2.0.
+
+Rationale:
+Plusieurs communautés tiennent chacune leur savoir, sous des licences
+différentes ; une instance par dépôt multiplierait ports, services et
+secrets.
+
+Critères d'acceptation :
+
+- Étant donné deux dépôts déclarés, quand on cherche sous le nom de l'un,
+  alors seuls les éléments de ce dépôt sont rendus.
+- Étant donné un nom de dépôt inconnu, quand on l'interroge, alors la
+  réponse est une erreur 404 en JSON.
+- Étant donné un dépôt déclaré par `--savoir`, quand on interroge
+  `/recherche`, alors il répond comme en 0.2.0.
+- Étant donné un nom de dépôt hors de `[a-z0-9-]` ou de plus de 40
+  caractères, quand le serveur démarre, alors il refuse et nomme le dépôt.
+
+Covers:
+
+- feat~source-pour-agents~1
+
+Needs: dsn, impl, utest, itest
+
+## Chaque client ne lit que les dépôts de sa portée
+
+`req~jetons-a-portee~1`
+**Statut : approuvée**
+
+Le système DOIT reconnaître des clients nommés, chacun avec son jeton porteur
+et sa portée (liste de dépôts, ou tous), déclarés par l'environnement ou par
+le fichier de configuration ; quand au moins un client est déclaré, le
+système DOIT refuser (401) toute requête hors santé sans jeton connu, et
+DOIT répondre à un dépôt hors de la portée du client exactement comme à un
+dépôt inconnu (404) ; la liste des dépôts rendue à un client NE DOIT nommer
+que ceux de sa portée.
+
+Rationale:
+Un jeton unique ouvrirait au client d'un savoir ouvert le savoir sous
+licence fermée ; un refus distinct révélerait l'existence d'un dépôt à qui
+n'a pas à la connaître.
+
+Critères d'acceptation :
+
+- Étant donné un client dont la portée nomme le seul dépôt A, quand il
+  interroge B, alors la réponse est la même 404 que pour un dépôt inconnu,
+  et `/savoirs` ne nomme que A.
+- Étant donné `GREFFIER_JETON` défini, quand son jeton est présenté, alors
+  tous les dépôts sont lisibles (comportement de la 0.2.0).
+- Étant donné un client déclaré par l'empreinte SHA-256 de son jeton, quand
+  il présente le jeton, alors il est reconnu.
+- Étant donné un même nom de client dans l'environnement et dans le
+  fichier, quand le serveur démarre, alors l'environnement l'emporte et le
+  journal le signale sans citer de jeton.
+
+Covers:
+
+- feat~source-pour-agents~1
+
+Needs: dsn, impl, utest, itest

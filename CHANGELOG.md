@@ -5,6 +5,25 @@ versionnement : [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Ajouté
+
+- Plusieurs savoirs, jetons à portée, configuration (ADR-0006,
+  D-2026-11-08) : `src/configuration.rs` (fichier TOML, clients de
+  l'environnement et du fichier, empreintes SHA-256, garde sur les droits),
+  routeur `/savoirs/{nom}/…` et contrôle d'accès par portée dans
+  `src/http.rs`, identifiants PISTE résolus aussi depuis le fichier ; tests
+  `tests/savoirs_itest.rs`.
+- Journal du service (ADR-0007, D-2026-11-09) : `tracing` installé par le
+  seul binaire, span par requête et `X-Request-Id` (`tower-http`), cible
+  `greffier::acces`, journald quand `JOURNAL_STREAM` désigne bien la
+  sortie d'erreur ; porte `tools/journalisation.sh` reprise du gabarit et
+  câblée dans `tools/ci.sh`.
+
+### Corrigé
+
+- Le message de démarrage de `servir` passait par `eprintln!` depuis la
+  bibliothèque : il est désormais un événement du journal.
+
 ## [0.2.0] - 2026-11-02
 
 ### Ajouté

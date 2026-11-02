@@ -76,15 +76,13 @@ fn servir(savoir: &Path, jeton: Option<&str>) -> (Processus, String, String) {
         .env_remove("GREFFIER_JETON")
         .env_remove("GREFFIER_ECOUTE")
         .env_remove("GREFFIER_HOTES")
-        .env_remove("GREFFIER_SAVOIR");
+        .env_remove("GREFFIER_SAVOIR")
+        .env_remove("GREFFIER_CONFIG");
     if let Some(jeton) = jeton {
         commande.env("GREFFIER_JETON", jeton);
     }
     let mut enfant = commande.spawn().unwrap();
-    let mut ligne = String::new();
-    BufReader::new(enfant.stderr.take().unwrap())
-        .read_line(&mut ligne)
-        .unwrap();
+    let ligne = ligne_d_adresse(&mut enfant);
     let base = ligne
         .split("http://")
         .nth(1)
@@ -92,6 +90,19 @@ fn servir(savoir: &Path, jeton: Option<&str>) -> (Processus, String, String) {
         .map(|adresse| format!("http://{adresse}"))
         .unwrap_or_else(|| panic!("adresse introuvable : {ligne}"));
     (Processus(enfant), base, ligne)
+}
+
+/// Lit le journal du serveur jusqu'à la ligne qui annonce son adresse.
+fn ligne_d_adresse(enfant: &mut Child) -> String {
+    let mut journal = BufReader::new(enfant.stderr.take().unwrap());
+    loop {
+        let mut ligne = String::new();
+        assert!(journal.read_line(&mut ligne).unwrap() > 0, "serveur arrêté");
+        if ligne.contains("http://") {
+            enfant.stderr = Some(journal.into_inner());
+            return ligne;
+        }
+    }
 }
 
 fn agent() -> ureq::Agent {
@@ -210,10 +221,7 @@ fn servir_se_regle_par_ses_variables_d_environnement() {
         .stderr(Stdio::piped())
         .spawn()
         .unwrap();
-    let mut ligne = String::new();
-    BufReader::new(enfant.stderr.take().unwrap())
-        .read_line(&mut ligne)
-        .unwrap();
+    let ligne = ligne_d_adresse(&mut enfant);
     let _serveur = Processus(enfant);
     let base = ligne
         .split("http://")

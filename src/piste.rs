@@ -15,6 +15,7 @@ use std::time::{Duration, Instant};
 use serde::Deserialize;
 use serde_json::Value;
 
+use crate::configuration::SectionPiste;
 use crate::erreur::{Erreur, Resultat};
 
 /// Variable d'environnement portant l'identifiant de l'application PISTE.
@@ -45,6 +46,18 @@ impl Secret {
     pub fn new(valeur: String) -> Self {
         Self(valeur)
     }
+
+    /// La valeur, pour la seule opération qui en a besoin (comparer,
+    /// s'authentifier) ; jamais pour l'afficher.
+    pub fn exposer(&self) -> &str {
+        &self.0
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for Secret {
+    fn deserialize<D: serde::Deserializer<'de>>(lecteur: D) -> Result<Self, D::Error> {
+        String::deserialize(lecteur).map(Self)
+    }
 }
 
 impl fmt::Debug for Secret {
@@ -71,22 +84,32 @@ impl Identifiants {
 
     /// Lit les identifiants dans l'environnement.
     pub fn depuis_environnement() -> Resultat<Self> {
-        let lire = |nom: &'static str| {
-            std::env::var(nom)
-                .ok()
-                .filter(|valeur| !valeur.trim().is_empty())
-                .ok_or(Erreur::IdentifiantsAbsents(nom))
-        };
-        Ok(Self::new(
-            lire(VAR_CLIENT_ID)?,
-            Secret::new(lire(VAR_CLIENT_SECRET)?),
-        ))
+        Self::resoudre(|nom| std::env::var(nom).ok(), &SectionPiste::default())
+    }
+
+    /// Les identifiants de l'environnement (lu par `variable`), à défaut
+    /// ceux de la section `[piste]` du fichier de configuration.
+    // [impl->req~configuration-environnement-et-fichier~1]
+    pub fn resoudre(
+        variable: impl Fn(&str) -> Option<String>,
+        fichier: &SectionPiste,
+    ) -> Resultat<Self> {
+        let lire = |nom: &str| variable(nom).filter(|valeur| !valeur.trim().is_empty());
+        let client_id = lire(VAR_CLIENT_ID)
+            .or_else(|| fichier.client_id.clone())
+            .ok_or(Erreur::IdentifiantsAbsents(VAR_CLIENT_ID))?;
+        let client_secret = lire(VAR_CLIENT_SECRET)
+            .map(Secret::new)
+            .or_else(|| fichier.client_secret.clone())
+            .ok_or(Erreur::IdentifiantsAbsents(VAR_CLIENT_SECRET))?;
+        Ok(Self::new(client_id, client_secret))
     }
 }
 
 /// Adresses d'un environnement PISTE.
 #[derive(Debug, Clone)]
 pub struct Environnement {
+    // journal: admis — adresse du point d'émission des jetons, pas un jeton
     jeton: String,
     api: String,
 }
@@ -253,6 +276,33 @@ mod tests {
             Secret::new("cle-tres-secrete".to_owned()),
         );
         assert!(!format!("{identifiants:?}").contains("cle-tres-secrete"));
+    }
+
+    // [utest->req~configuration-environnement-et-fichier~1]
+    #[test]
+    fn les_identifiants_viennent_de_l_environnement_sinon_du_fichier() {
+        let fichier = SectionPiste {
+            client_id: Some("appli-du-fichier".to_owned()),
+            client_secret: Some(Secret::new("secret-du-fichier".to_owned())),
+            ..SectionPiste::default()
+        };
+        let du_fichier = Identifiants::resoudre(|_| None, &fichier).unwrap();
+        assert_eq!(du_fichier.client_id, "appli-du-fichier");
+        assert_eq!(du_fichier.client_secret.exposer(), "secret-du-fichier");
+        let de_l_environnement = Identifiants::resoudre(
+            |nom| (nom == VAR_CLIENT_SECRET).then(|| "secret-de-l-environnement".to_owned()),
+            &fichier,
+        )
+        .unwrap();
+        assert_eq!(de_l_environnement.client_id, "appli-du-fichier");
+        assert_eq!(
+            de_l_environnement.client_secret.exposer(),
+            "secret-de-l-environnement"
+        );
+        assert!(matches!(
+            Identifiants::resoudre(|_| None, &SectionPiste::default()),
+            Err(Erreur::IdentifiantsAbsents(VAR_CLIENT_ID))
+        ));
     }
 
     #[test]

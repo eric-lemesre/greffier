@@ -145,8 +145,54 @@ Quatre outils, en lecture seule : `chercher` (question, date),
 (`GET /recherche?question=&le=`, `GET /textes/{identifiant}?le=`,
 `POST /citations/verification`, `GET /savoir/verification`, `GET /sante`).
 Pour écouter hors de la boucle locale (`--ecoute 0.0.0.0:8370 --hote
-nom.exemple`), le jeton porteur `GREFFIER_JETON` est exigé ; sans lui, le
-serveur refuse de démarrer.
+nom.exemple`), un client à jeton porteur est exigé ; sans lui, le serveur
+refuse de démarrer.
+
+### Plusieurs savoirs, clients et configuration
+
+Une instance sert plusieurs dépôts de savoir, chacun sous son nom :
+`GET /savoirs` liste ceux que le client peut lire,
+`GET /savoirs/{nom}/recherche`, `/savoirs/{nom}/textes/{identifiant}`,
+`POST /savoirs/{nom}/citations/verification`,
+`GET /savoirs/{nom}/verification` et MCP sous `/savoirs/{nom}/mcp`. Le
+dépôt de `--savoir` s'appelle `defaut` et reste servi sous les routes
+ci-dessus.
+
+Chaque client a un jeton et une portée ; un dépôt hors de sa portée lui
+répond comme un dépôt inconnu (404). Tout réglage se donne par option, par
+l'environnement ou par un fichier TOML (`--config`, `GREFFIER_CONFIG`, ou
+`/etc/greffier/greffier.toml` pour `servir`), dans cet ordre de priorité :
+
+```toml
+[savoirs]
+conciliateurs = "/var/lib/greffier/savoir-conciliateurs"
+
+[[client]]
+nom = "pacilia"
+empreinte = "sha256:…"        # printf %s "$JETON" | sha256sum ; ou : jeton = "…"
+savoirs = ["conciliateurs"]   # ou : ["*"]
+
+[journal]
+filtre = "info"               # ou GREFFIER_JOURNAL, --journal
+format = "texte"              # ou json ; GREFFIER_JOURNAL_FORMAT
+
+[piste]                       # identifiants de l'opérateur qui capture
+client_id = "…"
+client_secret = "…"
+```
+
+Dans l'environnement : `GREFFIER_JETON` (client de portée totale, comme
+en 0.2.0), `GREFFIER_JETON_<CLIENT>` et `GREFFIER_SAVOIRS_<CLIENT>`
+(dépôts séparés par des virgules) ; un client défini des deux côtés prend
+la valeur de l'environnement. Un fichier qui porte un jeton ou un secret en
+clair doit être illisible des autres (`chmod 600`, ou `640` au groupe du
+service) : sinon Greffier refuse de démarrer.
+
+Le journal dit, pour chaque requête, son identifiant de corrélation
+(`X-Request-Id`, repris ou créé, et rendu dans la réponse), la route, le
+dépôt, le client, le statut et la durée ; les refus d'accès sont sous la
+cible `greffier::acces`. Il ne contient jamais ni jeton ni question. Sous
+systemd, il va à journald avec la priorité de chaque ligne.
 
 Ce que chaque version apporte : [NEWS.md](NEWS.md) ; journal du dépôt :
 [CHANGELOG.md](CHANGELOG.md).
