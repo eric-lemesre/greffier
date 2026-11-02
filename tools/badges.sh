@@ -11,7 +11,14 @@
 # Sources de vérité — lues, jamais recopiées :
 #   version   : fichier VERSION ;
 #   exigences : items req~…~n définis dans spec/02-exigences/ ;
-#   licence   : type de licence déclaré en tête de LICENSE.
+#   licence   : identifiant SPDX du champ license de Cargo.toml, à défaut
+#               le type de licence déclaré en tête de LICENSE ;
+#   technologies : rust-toolchain.toml (Rust), Cargo.lock (axum, tokio,
+#               rmcp — la plus haute version verrouillée), tools/oft.sh
+#               (OpenFastTrace). Versions arrêtées à la majeure ou à la
+#               mineure : une montée de correctif ne périme pas un badge.
+#               Une source introuvable fait échouer la génération plutôt
+#               que d'afficher un badge vide ou faux.
 #
 #   sh tools/badges.sh             # vérifie la fraîcheur des badges
 #   sh tools/badges.sh --ecrire    # (re)génère docs/badges/*.svg
@@ -94,19 +101,67 @@ else
     nb=0
 fi
 
-licence="$(awk 'NR <= 3 && /Licen[cs]e/ { print; exit }' LICENSE 2>/dev/null | \
+licence="$(sed -n 's/^license[ \t]*=[ \t]*"\([^"]*\)".*/\1/p' Cargo.toml 2>/dev/null | head -n 1)"
+[ -n "${licence}" ] || licence="$(awk 'NR <= 3 && /Licen[cs]e/ { print; exit }' LICENSE 2>/dev/null | \
            awk '{ for (i = 1; i <= NF; i++) if ($i ~ /^(MIT|Apache|BSD|GPL|MPL|EUPL)/) { print $i; exit } }')"
 [ -n "${licence}" ] || licence="—"
+
+# Version verrouillée d'une crate : la plus haute de Cargo.lock (une
+# dépendance peut en tirer une plus ancienne à côté de la nôtre).
+crate() {
+    awk -v nom="$1" '
+        /^name = / { courant = $3; gsub(/"/, "", courant); next }
+        /^version = / && courant == nom { v = $3; gsub(/"/, "", v); print v; courant = "" }
+    ' Cargo.lock | sort -t. -k1,1n -k2,2n -k3,3n | tail -n 1
+}
+majeure_mineure() { printf '%s' "$1" | sed -n 's/^\([0-9]*\.[0-9]*\).*/\1/p'; }
+majeure() { printf '%s' "$1" | sed -n 's/^\([0-9]*\).*/\1/p'; }
+exige() {
+    if [ -z "$2" ]; then
+        echo "ÉCHEC : version de $1 introuvable dans sa source — badge non calculable." >&2
+        exit 1
+    fi
+}
+
+# Un badge de technologie n'existe que si son fichier source existe (un
+# projet sans Rust n'a pas de badge Rust) ; présent mais muet, il échoue.
+BADGES="version exigences licence"
+TECHS=""
+tech() {
+    # tech <fichier du badge> <libellé> <version> <couleur>
+    exige "$2" "$3"
+    BADGES="${BADGES} $1"
+    TECHS="${TECHS}$1|$2|$3|$4
+"
+}
+if [ -f rust-toolchain.toml ]; then
+    tech rust "Rust" "$(majeure_mineure "$(sed -n 's/^channel[ \t]*=[ \t]*"\([^"]*\)".*/\1/p' rust-toolchain.toml)")" "#ce422b"
+fi
+if [ -f Cargo.lock ]; then
+    tech axum "axum" "$(majeure_mineure "$(crate axum)")" "#5a4fcf"
+    tech tokio "tokio" "$(majeure "$(crate tokio)")" "#4a4a8a"
+    tech rmcp "rmcp (MCP)" "$(majeure_mineure "$(crate rmcp)")" "#2b6cb0"
+fi
+if [ -f tools/oft.sh ]; then
+    tech openfasttrace "OpenFastTrace" "$(majeure_mineure "$(sed -n 's/^OFT_VERSION="\([^"]*\)".*/\1/p' tools/oft.sh)")" "#1f6feb"
+fi
 
 ecrire_tous() {
     badge version   "version"   "${version}" "#007ec6"
     badge exigences "exigences" "${nb}"      "#4c1"
     badge licence   "licence"   "${licence}" "#97ca00"
+    for ligne in ${TECHS}; do
+        _ancien="${IFS}"; IFS='|'
+        # shellcheck disable=SC2086 — découpage voulu sur « | ».
+        set -- ${ligne}
+        IFS="${_ancien}"
+        badge "$1" "$2" "$3" "$4"
+    done
 }
 
 if [ "${ECRIRE}" -eq 1 ]; then
     ecrire_tous
-    echo "Badges régénérés : ${REP}/{version,exigences,licence}.svg"
+    echo "Badges régénérés dans ${REP} : ${BADGES}."
     exit 0
 fi
 
@@ -119,7 +174,7 @@ REP="${TMP}"
 ecrire_tous
 REP="${REP_REEL}"
 FAILURES=0
-for b in version exigences licence; do
+for b in $(printf '%s\n' "${BADGES}" | tr ' ' '\n'); do
     if ! cmp -s "${TMP}/${b}.svg" "${REP}/${b}.svg" 2>/dev/null; then
         echo "ÉCHEC : ${REP}/${b}.svg périmé — exécuter « sh tools/badges.sh --ecrire »." >&2
         FAILURES=$((FAILURES + 1))
