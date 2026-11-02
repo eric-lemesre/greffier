@@ -5,6 +5,8 @@ Ce qui change pour qui utilise ou exploite Greffier. Le journal du dépôt
 
 ## [Non publié]
 
+## [0.2.0] - 2026-11-02
+
 ### Ajouté
 
 - **Paquets pour chaque système** : deb et rpm (Linux x86-64 et ARM64),

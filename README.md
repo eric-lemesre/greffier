@@ -1,5 +1,15 @@
 # Greffier
 
+[![Version](docs/badges/version.svg)](NEWS.md)
+[![Licence](docs/badges/licence.svg)](LICENSE)
+[![Exigences couvertes](docs/badges/exigences.svg)](docs/tracabilite/matrice.md)
+
+[![Rust](docs/badges/rust.svg)](rust-toolchain.toml)
+[![axum](docs/badges/axum.svg)](Cargo.toml)
+[![tokio](docs/badges/tokio.svg)](Cargo.toml)
+[![rmcp (MCP)](docs/badges/rmcp.svg)](Cargo.toml)
+[![OpenFastTrace](docs/badges/openfasttrace.svg)](tools/oft.sh)
+
 **Moteur de recherche juridique ancrée. Il tient le registre, il ne juge
 pas.**
 
