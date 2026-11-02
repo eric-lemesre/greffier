@@ -1,5 +1,9 @@
 # Greffier
 
+[![Version](docs/badges/version.svg)](NEWS.md)
+[![Licence](docs/badges/licence.svg)](LICENSE)
+[![Covered requirements](docs/badges/exigences.svg)](docs/tracabilite/matrice.md)
+
 **An anchored legal research engine. It keeps the record; it never judges.**
 
 Greffier answers a question of French law with items **all tied to an

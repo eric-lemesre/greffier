@@ -1,5 +1,9 @@
 # Greffier
 
+[![Version](docs/badges/version.svg)](NEWS.md)
+[![Licence](docs/badges/licence.svg)](LICENSE)
+[![Exigences couvertes](docs/badges/exigences.svg)](docs/tracabilite/matrice.md)
+
 **Moteur de recherche juridique ancrée. Il tient le registre, il ne juge
 pas.**
 
