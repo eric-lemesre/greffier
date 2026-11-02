@@ -128,6 +128,18 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
   - `utest` — src/http.rs:317
   - `utest` — src/http.rs:325
 
+#### `req~savoirs-multiples~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, utest, itest
+- Couvertures réelles : — À COUVRIR
+
+#### `req~jetons-a-portee~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, itest
+- Couvertures réelles : — À COUVRIR
+
 ### spec/02-exigences/03-distribution.md
 
 #### `req~paquets-natifs~1`
@@ -159,9 +171,23 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
   - `itest` — .github/workflows/paquets.yml:114
   - `impl` — src/main.rs:105
 
+### spec/02-exigences/04-exploitation.md
+
+#### `req~configuration-environnement-et-fichier~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, utest, itest
+- Couvertures réelles : — À COUVRIR
+
+#### `req~journal-du-service~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, itest
+- Couvertures réelles : — À COUVRIR
+
 ### Bilan (couvertures réelles)
 
-13/15 exigence(s) testable(s) couverte(s) par au moins une trace réelle (86.7 %) — 2 à couvrir.
+13/19 exigence(s) testable(s) couverte(s) par au moins une trace réelle (68.4 %) — 6 à couvrir.
 
 ## 2. L'inverse — outillage sans exigence
 

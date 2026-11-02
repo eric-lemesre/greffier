@@ -60,3 +60,5 @@ Proposé ──▶ Accepté ──▶ Déprécié
 | [ADR-0003](0003-ecrire-le-moteur-en-rust-en-binaire-unique.md) | Écrire le moteur en Rust, en binaire unique, et joindre les sources officielles par PISTE | Accepté |
 | [ADR-0004](0004-exposer-le-moteur-en-mcp-et-en-http.md) | Exposer le moteur en serveur MCP et en API HTTP, sur axum et rmcp, local par défaut | Accepté |
 | [ADR-0005](0005-livrer-le-moteur-en-paquets-natifs.md) | Livrer le moteur en paquets natifs, binaire Linux statique, service système désactivé | Accepté |
+| [ADR-0006](0006-servir-plusieurs-savoirs-par-jetons-a-portee.md) | Servir plusieurs dépôts de savoir, par jetons à portée, réglés par l'environnement ou un fichier | Accepté |
+| [ADR-0007](0007-journaliser-le-service.md) | Journaliser le service par tracing, corrélé, sans secret ni question | Accepté |
