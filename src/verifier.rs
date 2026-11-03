@@ -583,7 +583,8 @@ fn resoudre<'a>(lien: &str, noms: &'a BTreeMap<String, PathBuf>) -> Option<&'a P
 }
 
 /// Identifiants officiels cités dans un texte : `LEGIARTI`, `LEGITEXT`,
-/// `JORFTEXT` suivis de douze chiffres, et `ECLI:…`.
+/// `JORFTEXT` suivis de douze chiffres, `ECLI:…`, et `POURVOI:` suivi d'un
+/// numéro de pourvoi de la Cour de cassation (décision sans ECLI).
 pub(crate) fn identifiants_cites(contenu: &str) -> BTreeSet<String> {
     let mut trouves = BTreeSet::new();
     for prefixe in ["LEGIARTI", "LEGITEXT", "JORFTEXT"] {
@@ -593,6 +594,15 @@ pub(crate) fn identifiants_cites(contenu: &str) -> BTreeSet<String> {
             if chiffres.len() == 12 {
                 trouves.insert(format!("{prefixe}{chiffres}"));
             }
+        }
+    }
+    let prefixe = crate::judilibre::PREFIXE_POURVOI;
+    for (position, _) in contenu.match_indices(prefixe) {
+        let suite = contenu.get(position + prefixe.len()..).unwrap_or_default();
+        if let Some(numero) = suite.get(..9)
+            && crate::judilibre::est_numero_de_pourvoi(numero)
+        {
+            trouves.insert(format!("{prefixe}{numero}"));
         }
     }
     for (position, _) in contenu.match_indices("ECLI:") {
@@ -822,11 +832,16 @@ mod tests {
     #[test]
     fn les_identifiants_cites_sont_extraits_sans_ponctuation_finale() {
         let trouves = identifiants_cites(
-            "Voir LEGIARTI000000000003, ECLI:FR:CCASS:2000:C300000. Et LEGIARTI12.",
+            "Voir LEGIARTI000000000003, ECLI:FR:CCASS:2000:C300000. Et LEGIARTI12. \
+             Puis POURVOI:81-14.743, et POURVOI:81-14 tronqué.",
         );
         assert_eq!(
             trouves.into_iter().collect::<Vec<_>>(),
-            ["ECLI:FR:CCASS:2000:C300000", "LEGIARTI000000000003"]
+            [
+                "ECLI:FR:CCASS:2000:C300000",
+                "LEGIARTI000000000003",
+                "POURVOI:81-14.743"
+            ]
         );
     }
 }

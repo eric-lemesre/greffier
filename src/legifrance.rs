@@ -87,7 +87,7 @@ pub fn verifier_identifiant(identifiant: &str) -> Resultat<()> {
     }
 }
 
-// [impl->req~capture-des-sources-officielles~1]
+// [impl->req~capture-des-sources-officielles~2]
 /// Lit un article par son identifiant de version.
 pub fn lire_article(source: &impl SourcePiste, identifiant: &str) -> Resultat<Article> {
     verifier_identifiant(identifiant)?;
@@ -374,7 +374,7 @@ pub(crate) mod tests {
         })
     }
 
-    // [utest->req~capture-des-sources-officielles~1]
+    // [utest->req~capture-des-sources-officielles~2]
     #[test]
     fn un_article_est_lu_avec_son_identifiant_sa_version_et_ses_versions() {
         let source = SourceFactice::new(reponse_fictive());
@@ -453,7 +453,7 @@ pub(crate) mod tests {
         assert_eq!(article.en_vigueur.debut, date!(2016 - 10 - 01));
     }
 
-    // [utest->req~capture-des-sources-officielles~1]
+    // [utest->req~capture-des-sources-officielles~2]
     #[test]
     fn les_paragraphes_du_html_encadre_sont_conserves() {
         let html = "<p>Premier alinéa, selon <a href=\"/x?id=LEGIARTI000000000003\">l'article 6</a> :</p><p>  I. Second   alinéa &amp; suite.</p>";

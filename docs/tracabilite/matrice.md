@@ -8,7 +8,7 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 
 ### spec/02-exigences/01-ancrage.md
 
-#### `req~citation-ancree~1`
+#### `req~citation-ancree~2`
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest
@@ -27,19 +27,22 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Needs: dsn, impl, utest, itest
 - Couvertures réelles (6) :
   - `impl` — src/couche.rs:13
-  - `utest` — src/couche.rs:282
-  - `utest` — src/couche.rs:314
-  - `utest` — src/couche.rs:346
+  - `utest` — src/couche.rs:285
+  - `utest` — src/couche.rs:317
+  - `utest` — src/couche.rs:349
   - `impl` — src/recherche.rs:19
   - `utest` — src/recherche.rs:840
 
-#### `req~capture-des-sources-officielles~1`
+#### `req~capture-des-sources-officielles~2`
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest, itest
-- Couvertures réelles (5) :
-  - `impl` — src/judilibre.rs:77
-  - `utest` — src/judilibre.rs:151
+- Couvertures réelles (8) :
+  - `utest` — src/couche.rs:407
+  - `impl` — src/judilibre.rs:125
+  - `utest` — src/judilibre.rs:197
+  - `utest` — src/judilibre.rs:210
+  - `utest` — src/judilibre.rs:220
   - `impl` — src/legifrance.rs:90
   - `utest` — src/legifrance.rs:377
   - `utest` — src/legifrance.rs:456
@@ -71,10 +74,10 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Needs: dsn, impl, utest, itest
 - Couvertures réelles (5) :
   - `impl` — src/verifier.rs:17
-  - `utest` — src/verifier.rs:668
-  - `utest` — src/verifier.rs:677
-  - `utest` — src/verifier.rs:696
-  - `utest` — src/verifier.rs:713
+  - `utest` — src/verifier.rs:678
+  - `utest` — src/verifier.rs:687
+  - `utest` — src/verifier.rs:706
+  - `utest` — src/verifier.rs:723
 
 #### `req~peremption-par-version~1`
 

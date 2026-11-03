@@ -13,13 +13,14 @@ listée « à réaliser » (ADR-0021 du gabarit alm-forge).
 
 ## Tout élément rendu porte l'identifiant d'un texte authentique
 
-`req~citation-ancree~1`
+`req~citation-ancree~2`
 
 **Statut : approuvée**
 
 Le système DOIT rendre uniquement des éléments de réponse qui portent
 l'identifiant officiel d'un texte ou d'une décision présent dans la couche
-des textes authentiques (`LEGIARTI…`, `LEGITEXT…`, `ECLI…`), et DOIT refuser
+des textes authentiques (`LEGIARTI…`, `LEGITEXT…`, `ECLI…`, ou `POURVOI:…`
+pour une décision de la Cour de cassation sans ECLI), et DOIT refuser
 tout élément qui n'en porte pas, y compris s'il provient d'un modèle de
 langue.
 
@@ -71,13 +72,15 @@ Needs: dsn, impl, utest, itest
 
 ## Les textes authentiques sont capturés depuis leur source officielle, par leur identifiant
 
-`req~capture-des-sources-officielles~1`
+`req~capture-des-sources-officielles~2`
 
 **Statut : approuvée**
 
 Le système DOIT capturer un article de Légifrance ou une décision de
 Judilibre par son identifiant officiel, depuis l'API officielle
-authentifiée, et DOIT refuser une réponse qui ne porte pas l'identifiant
+authentifiée — pour une décision, son ECLI ou, à défaut pour la Cour de
+cassation, son numéro de pourvoi (Judilibre ne donne pas d'ECLI aux
+arrêts anciens) —, et DOIT refuser une réponse qui ne porte pas l'identifiant
 demandé, son texte ou sa date (de vigueur ou de décision) ; si
 l'identifiant demandé est mal formé, alors le système NE DOIT PAS
 interroger la source ; les identifiants de l'application NE DOIVENT
@@ -93,8 +96,11 @@ Critères d'acceptation :
 - Étant donné un identifiant d'article valide, quand on le capture, alors
   le fichier conservé porte l'identifiant, l'identifiant chronologique,
   la source, la période de vigueur et la date de capture.
-- Étant donné une décision sans ECLI, quand on la capture, alors elle est
-  refusée.
+- Étant donné une décision de la Cour de cassation sans ECLI, quand on la
+  capture, alors elle est conservée sous son numéro de pourvoi
+  (`POURVOI:<numéro>`), jamais sous un ECLI reconstitué.
+- Étant donné une décision qui n'a ni ECLI, ni numéro de pourvoi de la Cour
+  de cassation, quand on la capture, alors elle est refusée.
 - Étant donné une source qui répond par une erreur, quand on la capture,
   alors l'erreur cite l'adresse sans jamais citer la clé.
 

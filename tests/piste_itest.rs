@@ -127,7 +127,7 @@ fn savoir_jetable(nom: &str) -> PathBuf {
     dossier
 }
 
-// [itest->req~capture-des-sources-officielles~1]
+// [itest->req~capture-des-sources-officielles~2]
 // [itest->req~textes-authentiques-versionnes~1]
 #[test]
 fn capturer_un_article_et_ses_versions_les_conserve_cote_a_cote() {
@@ -187,7 +187,7 @@ fn capturer_un_article_et_ses_versions_les_conserve_cote_a_cote() {
     std::fs::remove_dir_all(savoir).unwrap();
 }
 
-// [itest->req~capture-des-sources-officielles~1]
+// [itest->req~capture-des-sources-officielles~2]
 #[test]
 fn capturer_une_decision_la_conserve_sous_son_ecli() {
     let (adresse, _) = serveur();

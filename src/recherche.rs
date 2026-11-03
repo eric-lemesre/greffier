@@ -15,7 +15,7 @@
 //! jurisprudence interprète le droit applicable aux faits, même rendue
 //! après eux. La recherche n'écrit rien dans le savoir.
 
-// [impl->req~citation-ancree~1]
+// [impl->req~citation-ancree~2]
 // [impl->req~textes-authentiques-versionnes~1]
 // [impl->req~source-de-chaque-element~1]
 
@@ -761,7 +761,7 @@ pub(crate) mod tests {
         reponse.retenus.iter().map(|t| t.chemin.as_path()).collect()
     }
 
-    // [utest->req~citation-ancree~1]
+    // [utest->req~citation-ancree~2]
     #[test]
     fn une_page_sans_identifiant_est_ecartee_et_le_refus_est_motive() {
         let savoir = Savoir::new("sans-identifiant");
@@ -780,7 +780,7 @@ pub(crate) mod tests {
         }));
     }
 
-    // [utest->req~citation-ancree~1]
+    // [utest->req~citation-ancree~2]
     #[test]
     fn une_page_qui_cite_un_identifiant_absent_de_la_couche_est_ecartee() {
         let savoir = Savoir::new("absent");
@@ -799,7 +799,7 @@ pub(crate) mod tests {
         }));
     }
 
-    // [utest->req~citation-ancree~1]
+    // [utest->req~citation-ancree~2]
     #[test]
     fn un_texte_de_modele_n_est_admis_que_s_il_cite_un_texte_conserve() {
         let index = Savoir::new("modele").index();
@@ -819,7 +819,7 @@ pub(crate) mod tests {
         );
     }
 
-    // [utest->req~citation-ancree~1]
+    // [utest->req~citation-ancree~2]
     #[test]
     fn tout_element_rendu_porte_un_identifiant_de_la_couche() {
         let savoir = Savoir::new("tout-ancre");

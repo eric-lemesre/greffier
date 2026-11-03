@@ -17,7 +17,7 @@ savoir (un dépôt de texte séparé) sont deux objets distincts.
 
 Covers:
 
-- req~citation-ancree~1
+- req~citation-ancree~2
 - req~textes-authentiques-versionnes~1
 - req~moteur-separe-du-savoir~1
 
