@@ -5,6 +5,8 @@ Ce qui change pour qui utilise ou exploite Greffier. Le journal du dépôt
 
 ## [Non publié]
 
+## [0.3.0] - 2026-11-03
+
 ### Ajouté
 
 - **Plusieurs savoirs sur une même instance** : chaque dépôt sous son nom
