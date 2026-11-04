@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: EUPL-1.2
 [package]
 name = "greffier"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2024"
 rust-version = "1.95"
 license = "EUPL-1.2"

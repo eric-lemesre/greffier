@@ -5,6 +5,8 @@ versionnement : [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+## [0.3.0] - 2026-11-03
+
 ### Ajouté
 
 - Plusieurs savoirs, jetons à portée, configuration (ADR-0006,
