@@ -21,6 +21,12 @@ versionnement : [SemVer](https://semver.org/lang/fr/).
 
 ### Corrigé
 
+- Capture d'une décision sans ECLI (D-2026-11-11) : `judilibre.rs` retient
+  l'ECLI, à défaut le numéro de pourvoi de la Cour de cassation
+  (`POURVOI:`), et refuse le reste ; `couche.rs` conserve sous
+  `raw/decisions/POURVOI_<n>.md` ; `verifier.rs` reconnaît la citation
+  `POURVOI:` ; exigences `citation-ancree` et
+  `capture-des-sources-officielles` révisées en ~2.
 - Le message de démarrage de `servir` passait par `eprintln!` depuis la
   bibliothèque : il est désormais un événement du journal.
 

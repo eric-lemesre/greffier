@@ -7,7 +7,7 @@
 //! mesure rend le rappel, la précision et le délai ; un élément rendu sans
 //! ancrage n'est pas une mesure mais un échec.
 
-// [impl->req~citation-ancree~1]
+// [impl->req~citation-ancree~2]
 
 use std::collections::BTreeSet;
 use std::path::PathBuf;
@@ -251,7 +251,7 @@ mod tests {
         ));
     }
 
-    // [utest->req~citation-ancree~1]
+    // [utest->req~citation-ancree~2]
     #[test]
     fn le_banc_mesure_rappel_et_precision_sans_aucun_element_non_ancre() {
         let savoir = Savoir::new("banc");

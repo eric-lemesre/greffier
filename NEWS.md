@@ -23,6 +23,14 @@ Ce qui change pour qui utilise ou exploite Greffier. Le journal du dépôt
   sous systemd, texte ou JSON ailleurs (`GREFFIER_JOURNAL`,
   `GREFFIER_JOURNAL_FORMAT`).
 
+### Corrigé
+
+- **Arrêts anciens de la Cour de cassation** : une décision publiée sans
+  ECLI dans Judilibre est désormais capturée sous son numéro de pourvoi
+  (`POURVOI:81-14.743`), jamais sous un ECLI reconstitué ; une page qui la
+  cite par cet identifiant est vérifiée et ancrée comme les autres. Une
+  décision d'une autre juridiction sans ECLI reste refusée.
+
 ## [0.2.0] - 2026-11-02
 
 ### Ajouté

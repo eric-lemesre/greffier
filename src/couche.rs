@@ -2,7 +2,7 @@
 //! Couche des textes authentiques : le dossier `raw/` d'un dépôt de savoir.
 //!
 //! Un fichier par version d'article (`raw/textes/<identifiant>@<début>.md`)
-//! et un par décision (`raw/decisions/<ECLI, « : » remplacés par « _ »>.md`),
+//! et un par décision (`raw/decisions/<ECLI ou POURVOI:<numéro>, « : » remplacés par « _ »>.md`),
 //! chacun ouvert par un en-tête qui porte l'identifiant officiel, la source,
 //! la version et la date de capture. La couche est IMMUABLE : un fichier
 //! présent n'est jamais réécrit ; une capture identique est sans effet, une
@@ -87,20 +87,23 @@ impl Couche {
         decision: &Decision,
         capture_le: Date,
     ) -> Resultat<Conservation> {
-        let ecli = &decision.ecli;
-        if !ecli.starts_with("ECLI:")
-            || !ecli
+        let identifiant = &decision.identifiant;
+        let forme_admise = (identifiant.starts_with("ECLI:")
+            && identifiant
                 .bytes()
-                .all(|octet| octet.is_ascii_alphanumeric() || b":.".contains(&octet))
-        {
+                .all(|octet| octet.is_ascii_alphanumeric() || b":.".contains(&octet)))
+            || identifiant
+                .strip_prefix(crate::judilibre::PREFIXE_POURVOI)
+                .is_some_and(crate::judilibre::est_numero_de_pourvoi);
+        if !forme_admise {
             return Err(Erreur::IdentifiantInvalide(
-                ecli.clone(),
-                "ECLI:… (lettres, chiffres, « : », « . »)",
+                identifiant.clone(),
+                "ECLI:… (lettres, chiffres, « : », « . ») ou POURVOI:<numéro de pourvoi>",
             ));
         }
-        let nom = format!("{}.md", ecli.replace(':', "_"));
+        let nom = format!("{}.md", identifiant.replace(':', "_"));
         let entete = [
-            ("identifiant", ecli.clone()),
+            ("identifiant", identifiant.clone()),
             ("judilibre", decision.identifiant_judilibre.clone()),
             ("intitule", guillemets(&decision.intitule())),
             ("source", decision.source()),
@@ -401,13 +404,48 @@ mod tests {
         fs::remove_dir_all(savoir).unwrap();
     }
 
+    // [utest->req~capture-des-sources-officielles~2]
+    #[test]
+    fn une_decision_sans_ecli_est_conservee_sous_son_pourvoi() {
+        let savoir = dossier_jetable("pourvoi");
+        let couche = Couche::du_savoir(&savoir);
+        let mut reponse = decision_fictive();
+        reponse["ecli"] = serde_json::Value::Null;
+        let source = SourceFactice::new(reponse);
+        let decision = judilibre::lire_decision(&source, "000000000000000000000abc").unwrap();
+        let Conservation::Cree(chemin) = couche
+            .conserver_decision(&decision, date!(2026 - 11 - 01))
+            .unwrap()
+        else {
+            panic!("le fichier devait être créé");
+        };
+        assert!(chemin.ends_with("raw/decisions/POURVOI_00-00.000.md"));
+        let contenu = fs::read_to_string(&chemin).unwrap();
+        assert!(contenu.contains("identifiant: POURVOI:00-00.000\n"));
+        fs::remove_dir_all(savoir).unwrap();
+    }
+
+    #[test]
+    fn un_pourvoi_porteur_d_un_chemin_est_refuse() {
+        let savoir = dossier_jetable("traversee-pourvoi");
+        let couche = Couche::du_savoir(&savoir);
+        let source = SourceFactice::new(decision_fictive());
+        let mut decision = judilibre::lire_decision(&source, "000000000000000000000abc").unwrap();
+        decision.identifiant = "POURVOI:../../etc".to_owned();
+        assert!(matches!(
+            couche.conserver_decision(&decision, date!(2026 - 11 - 01)),
+            Err(Erreur::IdentifiantInvalide(..))
+        ));
+        assert!(!savoir.exists());
+    }
+
     #[test]
     fn un_ecli_porteur_d_un_chemin_est_refuse() {
         let savoir = dossier_jetable("traversee");
         let couche = Couche::du_savoir(&savoir);
         let source = SourceFactice::new(decision_fictive());
         let mut decision = judilibre::lire_decision(&source, "000000000000000000000abc").unwrap();
-        decision.ecli = "ECLI:../../etc".to_owned();
+        decision.identifiant = "ECLI:../../etc".to_owned();
         assert!(matches!(
             couche.conserver_decision(&decision, date!(2026 - 11 - 01)),
             Err(Erreur::IdentifiantInvalide(..))

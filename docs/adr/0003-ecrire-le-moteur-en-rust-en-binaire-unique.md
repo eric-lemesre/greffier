@@ -15,7 +15,7 @@ client HTTP synchrone, et lit ses identifiants dans l'environnement.
 
 Covers:
 
-- req~capture-des-sources-officielles~1
+- req~capture-des-sources-officielles~2
 - req~textes-authentiques-versionnes~1
 - req~chaine-de-verification-du-moteur~1
 

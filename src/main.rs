@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: EUPL-1.2
-// Exigence servie : req~capture-des-sources-officielles~1
+// Exigence servie : req~capture-des-sources-officielles~2
 //! Ligne de commande de Greffier.
 //!
 //! Codes de sortie : 0 réussite ; 1 erreur (pour `verifier` : rapport en
