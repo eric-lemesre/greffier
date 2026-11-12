@@ -1,5 +1,5 @@
 # Chaîne épinglée (porte d'hygiène de compilation) : monter de version est
 # un commit, visible et daté.
 [toolchain]
-channel = "1.95.0"
+channel = "1.99.1"
 components = ["rustfmt", "clippy"]
