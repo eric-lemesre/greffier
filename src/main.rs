@@ -6,11 +6,13 @@
 //! échec ; pour `banc` : un élément rendu sans ancrage) ; 2 usage ; 3
 //! (`versions`) l'article a changé depuis la date donnée.
 //!
-//! Le journal (ADR-0007) est installé ici, et seulement ici : la
+//! Le journal (ADR-0007, ADR-0008) est installé ici, et seulement ici : la
 //! bibliothèque émet, le binaire choisit où et comment écrire.
 
 // [impl->dsn~journal-du-service~1]
-// [impl->req~journal-du-service~1]
+// [impl->req~journal-du-service~2]
+// [impl->dsn~journal-en-fichier~1]
+// [impl->req~journal-en-fichier~1]
 // [impl->req~configuration-environnement-et-fichier~1]
 
 use std::collections::BTreeMap;
@@ -27,6 +29,7 @@ use greffier::couche::{Conservation, Couche};
 use greffier::erreur::Erreur;
 use greffier::erreur::Resultat;
 use greffier::http::{ECOUTE_PAR_DEFAUT, Instance, Reglages};
+use greffier::journal::{self, FichierDuJournal, Sortie, SortieParDefaut};
 use greffier::periode::{aujourdhui, ecrire_date, lire_date};
 use greffier::piste::{ClientPiste, Environnement, Identifiants};
 use greffier::recherche::Index;
@@ -69,6 +72,13 @@ struct Cli {
     /// Format du journal hors journald : `texte` ou `json`.
     #[arg(long, global = true, env = "GREFFIER_JOURNAL_FORMAT")]
     journal_format: Option<String>,
+    /// Sortie du journal : `fichier` (défaut de `servir` sous Unix),
+    /// `erreur` (défaut des autres commandes) ou `journald`.
+    #[arg(long, global = true, env = "GREFFIER_JOURNAL_SORTIE")]
+    journal_sortie: Option<String>,
+    /// Fichier du journal (par défaut : /var/log/greffier/greffier.log).
+    #[arg(long, global = true, env = "GREFFIER_JOURNAL_FICHIER")]
+    journal_fichier: Option<PathBuf>,
     #[command(subcommand)]
     commande: Commande,
 }
@@ -260,14 +270,38 @@ fn lancer(cli: Cli) -> Resultat<u8> {
         .journal_format
         .or_else(|| fichier.journal.format.clone())
         .unwrap_or_else(|| "texte".to_owned());
-    installer_journal(&filtre, &format)?;
-    executer(cli.commande, &fichier)
+    // Le service écrit dans un fichier que logrotate fait tourner ; hors
+    // Unix, ni logrotate ni SIGHUP : la sortie d'erreur reste le défaut.
+    let par_defaut = if service && cfg!(unix) {
+        SortieParDefaut::Fichier
+    } else {
+        SortieParDefaut::Erreur
+    };
+    let sortie = Sortie::choisir(
+        cli.journal_sortie
+            .as_deref()
+            .or(fichier.journal.sortie.as_deref()),
+        cli.journal_fichier
+            .as_deref()
+            .or(fichier.journal.fichier.as_deref()),
+        par_defaut,
+    )
+    .map_err(Erreur::Serveur)?;
+    let fichier_du_journal = installer_journal(&filtre, &format, &sortie)?;
+    executer(cli.commande, &fichier, fichier_du_journal)
 }
 
-/// Installe l'abonné du journal : journald quand le processus tourne sous
-/// systemd (`JOURNAL_STREAM`), sinon la sortie d'erreur, en texte ou en
-/// JSON. Seul le binaire l'installe (méthode d'alm-forge, ch. 17).
-fn installer_journal(filtre: &str, format: &str) -> Resultat<()> {
+/// Installe l'abonné du journal sur la sortie choisie : un fichier, la
+/// sortie d'erreur (journald natif quand systemd l'y a reliée,
+/// `JOURNAL_STREAM`) ou journald, en texte ou en JSON. Un fichier ou
+/// journald qui ne s'ouvre pas renvoie à la sortie d'erreur, et le premier
+/// événement le dit. Seul le binaire l'installe (méthode d'alm-forge,
+/// ch. 17). Rend le fichier ouvert, que le service rouvre sur `SIGHUP`.
+fn installer_journal(
+    filtre: &str,
+    format: &str,
+    sortie: &Sortie,
+) -> Resultat<Option<FichierDuJournal>> {
     let filtre = EnvFilter::try_new(filtre)
         .map_err(|cause| Erreur::Serveur(format!("filtre du journal « {filtre} » : {cause}")))?;
     let json = match format {
@@ -280,25 +314,47 @@ fn installer_journal(filtre: &str, format: &str) -> Resultat<()> {
         }
     };
     let mut repli = None;
-    let couche: Box<dyn Layer<Registry> + Send + Sync> = if sortie_d_erreur_vers_journald() {
-        match tracing_journald::layer() {
-            Ok(journald) => journald.boxed(),
-            Err(cause) => {
-                repli = Some(cause.to_string());
-                sortie_d_erreur(json)
+    let mut ouvert = None;
+    let couche: Box<dyn Layer<Registry> + Send + Sync> = match sortie {
+        Sortie::Fichier(chemin) => match FichierDuJournal::ouvrir(chemin) {
+            Ok(fichier) => {
+                ouvert = Some(fichier.clone());
+                vers_le_fichier(fichier, json)
             }
-        }
-    } else {
-        sortie_d_erreur(json)
+            Err(cause) => {
+                repli = Some(format!("fichier {} : {cause}", chemin.display()));
+                vers_la_sortie_d_erreur(json)
+            }
+        },
+        Sortie::Journald => vers_journald(json, &mut repli),
+        Sortie::Erreur if sortie_d_erreur_vers_journald() => vers_journald(json, &mut repli),
+        Sortie::Erreur => vers_la_sortie_d_erreur(json),
     };
     tracing_subscriber::registry()
         .with(couche.with_filter(filtre))
         .try_init()
         .map_err(|cause| Erreur::Serveur(format!("journal : {cause}")))?;
     if let Some(cause) = repli {
-        tracing::warn!(cause = %cause, "journald injoignable : journal sur la sortie d'erreur");
+        tracing::warn!(cause = %cause, "journal sur la sortie d'erreur, à défaut de la sortie choisie");
     }
-    Ok(())
+    if let Some(fichier) = &ouvert {
+        // Une ligne sur la sortie d'erreur dit où lire la suite : sans
+        // elle, un `greffier servir` lancé à la main resterait muet.
+        eprintln!("greffier : journal dans {}", fichier.chemin().display());
+        tracing::info!(chemin = %fichier.chemin().display(), "journal ouvert");
+    }
+    Ok(ouvert)
+}
+
+/// La couche journald, à défaut la sortie d'erreur, en notant pourquoi.
+fn vers_journald(json: bool, repli: &mut Option<String>) -> Box<dyn Layer<Registry> + Send + Sync> {
+    match tracing_journald::layer() {
+        Ok(journald) => journald.boxed(),
+        Err(cause) => {
+            *repli = Some(format!("journald injoignable : {cause}"));
+            vers_la_sortie_d_erreur(json)
+        }
+    }
 }
 
 /// La sortie d'erreur est-elle le flux que systemd a ouvert vers journald ?
@@ -328,7 +384,7 @@ fn sortie_d_erreur_vers_journald() -> bool {
     }
 }
 
-fn sortie_d_erreur(json: bool) -> Box<dyn Layer<Registry> + Send + Sync> {
+fn vers_la_sortie_d_erreur(json: bool) -> Box<dyn Layer<Registry> + Send + Sync> {
     let couche = tracing_subscriber::fmt::layer().with_writer(std::io::stderr);
     if json {
         couche.json().boxed()
@@ -337,7 +393,25 @@ fn sortie_d_erreur(json: bool) -> Box<dyn Layer<Registry> + Send + Sync> {
     }
 }
 
-fn executer(commande: Commande, fichier: &Fichier) -> Resultat<u8> {
+fn vers_le_fichier(
+    fichier: FichierDuJournal,
+    json: bool,
+) -> Box<dyn Layer<Registry> + Send + Sync> {
+    let couche = tracing_subscriber::fmt::layer()
+        .with_writer(fichier)
+        .with_ansi(false);
+    if json {
+        couche.json().boxed()
+    } else {
+        couche.boxed()
+    }
+}
+
+fn executer(
+    commande: Commande,
+    fichier: &Fichier,
+    journal: Option<FichierDuJournal>,
+) -> Resultat<u8> {
     match commande {
         Commande::Capturer(Capture::Article {
             identifiant,
@@ -497,8 +571,9 @@ fn executer(commande: Commande, fichier: &Fichier) -> Resultat<u8> {
             Ok(u8::from(mesure.en_echec()))
         }
         Commande::Mcp { savoir } => {
+            let executeur = executeur_du_service(journal)?;
             let service = Arc::new(Service::ouvrir(&savoir)?);
-            executeur()?.block_on(mcp::servir_stdio(service))?;
+            executeur.block_on(mcp::servir_stdio(service))?;
             Ok(0)
         }
         Commande::Servir {
@@ -506,6 +581,7 @@ fn executer(commande: Commande, fichier: &Fichier) -> Resultat<u8> {
             hotes,
             savoir,
         } => {
+            let executeur = executeur_du_service(journal)?;
             let ecoute = configuration::premier(
                 ecoute,
                 fichier.serveur.ecoute,
@@ -533,7 +609,7 @@ fn executer(commande: Commande, fichier: &Fichier) -> Resultat<u8> {
                 depots.insert(nom, Arc::new(service));
             }
             let instance = Arc::new(Instance { depots, clients });
-            executeur()?.block_on(http::servir(instance, Reglages { ecoute, hotes }))?;
+            executeur.block_on(http::servir(instance, Reglages { ecoute, hotes }))?;
             Ok(0)
         }
         Commande::EnVigueur { cid, le, savoir } => {
@@ -567,6 +643,19 @@ fn executeur() -> Resultat<tokio::runtime::Runtime> {
         .enable_all()
         .build()
         .map_err(|erreur| Erreur::Serveur(erreur.to_string()))
+}
+
+/// L'exécuteur d'un service, le journal en fichier déjà prêt à se rouvrir
+/// sur `SIGHUP` : posé avant la lecture des dépôts et la construction des
+/// index, faute de quoi une rotation pendant le démarrage arrêterait le
+/// service.
+fn executeur_du_service(journal: Option<FichierDuJournal>) -> Resultat<tokio::runtime::Runtime> {
+    let executeur = executeur()?;
+    if let Some(fichier) = journal {
+        let _contexte = executeur.enter();
+        journal::rouvrir_sur_sighup(fichier);
+    }
+    Ok(executeur)
 }
 
 fn millisecondes(delai: Duration) -> String {

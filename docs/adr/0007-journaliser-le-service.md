@@ -1,6 +1,6 @@
 # ADR-0007 — Journaliser le service par tracing, corrélé, sans secret ni question
 
-**Statut** : Accepté
+**Statut** : Accepté — point 6 remplacé par ADR-0008 (2026-11-18)
 **Date** : 2026-11-02
 **Décideur** : Eric Lemesre — seul (porteur), D-2026-11-09 au registre
 **Portée** : durable
@@ -18,7 +18,7 @@ priorité ; ailleurs, sur la sortie d'erreur, en texte ou en JSON.
 
 Covers:
 
-- req~journal-du-service~1
+- req~journal-du-service~2
 
 Needs: impl
 

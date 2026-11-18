@@ -3,8 +3,12 @@
 # (ADR-0005). Réglages : /etc/greffier/greffier.env. Mise en route :
 #   systemctl enable --now greffier
 # Le serveur ne fait que lire le savoir et garde son index en mémoire : tout
-# le système de fichiers lui est rendu en lecture seule.
+# le système de fichiers lui est rendu en lecture seule, sauf son dossier de
+# journal, /var/log/greffier (ADR-0008), créé par systemd au démarrage ; le
+# fichier tourne par /etc/logrotate.d/greffier, qui envoie SIGHUP au service
+# pour qu'il le rouvre.
 # [impl->req~service-systeme-desactive~1]
+# [impl->req~journal-en-fichier~1]
 [Unit]
 Description=Greffier, moteur de recherche juridique ancré (API HTTP et MCP)
 Documentation=https://github.com/eric-lemesre/greffier
@@ -17,6 +21,8 @@ Group=greffier
 EnvironmentFile=/etc/greffier/greffier.env
 ExecStart=/usr/bin/greffier servir
 Restart=on-failure
+LogsDirectory=greffier
+LogsDirectoryMode=0750
 RestartSec=5
 UMask=0077
 NoNewPrivileges=yes

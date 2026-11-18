@@ -104,6 +104,8 @@ jobs:
           test "$(systemctl is-enabled greffier.service || true)" = "disabled"
           test "$(systemctl is-active greffier.service || true)" = "inactive"
           systemd-analyze verify /usr/lib/systemd/system/greffier.service
+          test "$(stat -c '%a %U %G' /etc/logrotate.d/greffier)" = "644 root root"
+          sudo logrotate -d /etc/logrotate.d/greffier
           echo "GREFFIER_JETON=jeton-de-l-exploitant" | sudo tee -a /etc/greffier/greffier.env >/dev/null
           sudo apt-get install -y --reinstall ./dist/greffier_*.deb
           sudo grep -q "jeton-de-l-exploitant" /etc/greffier/greffier.env
@@ -121,6 +123,7 @@ jobs:
             test "$(stat -c "%a %U %G" /etc/greffier/greffier.env)" = "640 root greffier"
             rpm -q --qf "[%{FILENAMES} %{FILEFLAGS:fflags}\n]" greffier | grep -qx "/etc/greffier/greffier.env cn"
             test -f /usr/lib/systemd/system/greffier.service
+            rpm -q --qf "[%{FILENAMES} %{FILEFLAGS:fflags}\n]" greffier | grep -qx "/etc/logrotate.d/greffier cn"
             dnf -q remove -y greffier
             test ! -e /usr/bin/greffier
           '

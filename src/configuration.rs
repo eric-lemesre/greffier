@@ -24,6 +24,8 @@
 //! [journal]
 //! filtre = "info"
 //! format = "texte"            # ou : "json"
+//! sortie = "fichier"          # ou : "erreur", "journald" (ADR-0008)
+//! fichier = "/var/log/greffier/greffier.log"
 //!
 //! [piste]
 //! client_id = "…"
@@ -120,6 +122,10 @@ pub struct SectionJournal {
     pub filtre: Option<String>,
     /// `texte` ou `json`.
     pub format: Option<String>,
+    /// `fichier`, `erreur` ou `journald` (ADR-0008).
+    pub sortie: Option<String>,
+    /// Chemin du fichier du journal.
+    pub fichier: Option<PathBuf>,
 }
 
 /// Section `[piste]`.

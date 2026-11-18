@@ -47,8 +47,9 @@ assets = [
     ["README.md", "usr/share/doc/greffier/", "644"],
     ["NEWS.md", "usr/share/doc/greffier/", "644"],
     ["packaging/linux/greffier.env", "etc/greffier/greffier.env", "640"],
+    ["packaging/linux/logrotate/greffier", "etc/logrotate.d/greffier", "644"],
 ]
-conf-files = ["/etc/greffier/greffier.env"]
+conf-files = ["/etc/greffier/greffier.env", "/etc/logrotate.d/greffier"]
 maintainer-scripts = "packaging/linux/scripts/"
 systemd-units = { unit-name = "greffier", unit-scripts = "packaging/linux/", enable = false, start = false }
 
@@ -61,6 +62,7 @@ assets = [
     { source = "LICENSE", dest = "/usr/share/licenses/greffier/LICENSE", mode = "644" },
     { source = "packaging/linux/greffier.service", dest = "/usr/lib/systemd/system/greffier.service", mode = "644" },
     { source = "packaging/linux/greffier.env", dest = "/etc/greffier/greffier.env", mode = "640", config = "noreplace" },
+    { source = "packaging/linux/logrotate/greffier", dest = "/etc/logrotate.d/greffier", mode = "644", config = "noreplace" },
 ]
 post_install_script = "packaging/linux/scripts/postinst"
 pre_uninstall_script = "packaging/linux/scripts/rpm-preun"

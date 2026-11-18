@@ -36,7 +36,7 @@
 // [impl->req~savoirs-multiples~1]
 // [impl->req~jetons-a-portee~1]
 // [impl->dsn~journal-du-service~1]
-// [impl->req~journal-du-service~1]
+// [impl->req~journal-du-service~2]
 
 use std::collections::BTreeMap;
 use std::net::SocketAddr;

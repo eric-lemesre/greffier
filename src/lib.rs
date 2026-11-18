@@ -24,6 +24,7 @@ pub mod configuration;
 pub mod couche;
 pub mod erreur;
 pub mod http;
+pub mod journal;
 pub mod judilibre;
 pub mod legifrance;
 pub mod mcp;

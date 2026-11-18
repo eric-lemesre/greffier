@@ -74,7 +74,8 @@ impl Drop for Banc {
     }
 }
 
-/// `greffier` sans aucun réglage hérité du poste.
+/// `greffier` sans aucun réglage hérité du poste, son journal sur la
+/// sortie d'erreur, où les tests le lisent.
 fn greffier() -> Command {
     let mut commande = Command::new(env!("CARGO_BIN_EXE_greffier"));
     for (variable, _) in std::env::vars() {
@@ -82,6 +83,7 @@ fn greffier() -> Command {
             commande.env_remove(variable);
         }
     }
+    commande.env("GREFFIER_JOURNAL_SORTIE", "erreur");
     commande
 }
 
@@ -381,7 +383,7 @@ fn l_option_l_emporte_sur_l_environnement_qui_l_emporte_sur_le_fichier() {
     Serveur::lancer(commande, &["--ecoute", "127.0.0.1:0"]).arreter();
 }
 
-// [itest->req~journal-du-service~1]
+// [itest->req~journal-du-service~2]
 #[test]
 fn le_journal_dit_qui_interroge_quoi_sans_jeton_ni_question() {
     let banc = Banc::new("journal");
@@ -444,7 +446,7 @@ fn le_journal_dit_qui_interroge_quoi_sans_jeton_ni_question() {
     }
 }
 
-// [itest->req~journal-du-service~1]
+// [itest->req~journal-du-service~2]
 #[test]
 fn le_journal_au_format_json_est_une_suite_d_objets() {
     let banc = Banc::new("json");
@@ -494,4 +496,116 @@ fn sha256_hex(texte: &str) -> String {
         .next()
         .unwrap()
         .to_owned()
+}
+
+/// Attend, au plus dix secondes, que `constat` rende une valeur.
+fn attendre<T>(quoi: &str, mut constat: impl FnMut() -> Option<T>) -> T {
+    let limite = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    loop {
+        if let Some(valeur) = constat() {
+            return valeur;
+        }
+        assert!(std::time::Instant::now() < limite, "délai dépassé : {quoi}");
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
+}
+
+/// L'adresse de base annoncée par la ligne de démarrage du journal.
+fn adresse_annoncee(journal: &str) -> Option<String> {
+    journal
+        .split("http://")
+        .nth(1)
+        .and_then(|reste| reste.split('/').next())
+        .map(|adresse| format!("http://{adresse}"))
+}
+
+// [itest->req~journal-en-fichier~1]
+#[cfg(unix)]
+#[test]
+fn le_service_journalise_dans_son_fichier_et_le_rouvre_apres_rotation() {
+    let banc = Banc::new("fichier");
+    let chemin = banc.0.join("journaux/greffier.log");
+    let mut processus = greffier()
+        .env_remove("GREFFIER_JOURNAL_SORTIE")
+        .env("GREFFIER_ECOUTE", "127.0.0.1:0")
+        .env("GREFFIER_SAVOIR", banc.0.join("a"))
+        .env("GREFFIER_JOURNAL_FICHIER", &chemin)
+        .arg("servir")
+        .stdout(Stdio::null())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let lire = |chemin: &Path| fs::read_to_string(chemin).unwrap_or_default();
+    let base = attendre("ligne de démarrage au fichier", || {
+        adresse_annoncee(&lire(&chemin))
+    });
+    let requete = |identifiant: &str| {
+        let reponse = agent()
+            .get(&format!("{base}/recherche?question=branches"))
+            .header("X-Request-Id", identifiant)
+            .call()
+            .unwrap();
+        assert_eq!(reponse.status().as_u16(), 200);
+    };
+    requete("avant-rotation");
+    attendre("requête au fichier", || {
+        lire(&chemin).contains("avant-rotation").then_some(())
+    });
+
+    // Ce que fait logrotate : renommer, puis envoyer SIGHUP.
+    let tourne = banc.0.join("journaux/greffier.log.1");
+    fs::rename(&chemin, &tourne).unwrap();
+    let signal = Command::new("kill")
+        .args(["-HUP", &processus.id().to_string()])
+        .status()
+        .unwrap();
+    assert!(signal.success());
+    attendre("réouverture annoncée", || {
+        lire(&chemin).contains("journal rouvert").then_some(())
+    });
+    requete("apres-rotation");
+    attendre("requête au nouveau fichier", || {
+        lire(&chemin).contains("apres-rotation").then_some(())
+    });
+
+    let _ = processus.kill();
+    let mut erreur = String::new();
+    let _ = processus.stderr.take().unwrap().read_to_string(&mut erreur);
+    let _ = processus.wait();
+    let ancien = lire(&tourne);
+    assert!(ancien.contains("avant-rotation"), "{ancien}");
+    assert!(!ancien.contains("apres-rotation"), "{ancien}");
+    assert!(
+        erreur.contains(&format!("journal dans {}", chemin.display())),
+        "{erreur}"
+    );
+    assert!(
+        !erreur.contains("avant-rotation"),
+        "journal sur la sortie d'erreur : {erreur}"
+    );
+}
+
+// [itest->req~journal-en-fichier~1]
+#[test]
+fn un_fichier_de_journal_impossible_renvoie_a_la_sortie_d_erreur_en_le_disant() {
+    let banc = Banc::new("repli");
+    // Un fichier ordinaire tient la place du dossier du journal.
+    banc.ecrire("obstacle", "");
+    let mut commande = greffier();
+    commande
+        .env_remove("GREFFIER_JOURNAL_SORTIE")
+        .env("GREFFIER_ECOUTE", "127.0.0.1:0")
+        .env("GREFFIER_SAVOIR", banc.0.join("a"))
+        .env(
+            "GREFFIER_JOURNAL_FICHIER",
+            banc.0.join("obstacle/greffier.log"),
+        );
+    let serveur = Serveur::lancer(commande, &[]);
+    let journal = serveur.arreter();
+    let repli = journal
+        .lines()
+        .find(|l| l.contains("à défaut de la sortie choisie"))
+        .unwrap_or_else(|| panic!("repli non annoncé : {journal}"));
+    assert!(repli.contains("WARN"), "{repli}");
+    assert!(repli.contains("obstacle"), "{repli}");
 }

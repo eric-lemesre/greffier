@@ -75,6 +75,10 @@ hygiene:
 journalisation:
     sh tools/journalisation.sh
 
+# Rotation du journal (configuration logrotate livrée : SIGHUP, pas de copytruncate, su, create 0640, rétention bornée)
+logrotate:
+    sh tools/logrotate.sh
+
 # Nettoie les artefacts locaux (chemins déclarés) : just clean [--all]
 clean *args:
     sh tools/clean.sh {{args}}

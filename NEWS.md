@@ -5,6 +5,17 @@ Ce qui change pour qui utilise ou exploite Greffier. Le journal du dépôt
 
 ## [Non publié]
 
+### Modifié
+
+- **Journal du service en fichier** : `greffier servir` écrit son journal
+  dans `/var/log/greffier/greffier.log` (sous Unix), rouvert sur `SIGHUP` ;
+  les paquets deb et rpm posent `/etc/logrotate.d/greffier` (rotation
+  quotidienne, quatorze jours compressés). `GREFFIER_JOURNAL_SORTIE`
+  (`fichier`, `erreur`, `journald`) et `GREFFIER_JOURNAL_FICHIER` règlent
+  la sortie ; `GREFFIER_JOURNAL_SORTIE=erreur` rend le comportement de la
+  0.3.0 (journald sous systemd). Les autres commandes et `greffier mcp`
+  restent sur la sortie d'erreur.
+
 ## [0.3.0] - 2026-11-03
 
 ### Ajouté

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Exigence servie : req~journal-du-service~1 — test de la porte reprise du gabarit alm-forge.
+# Exigence servie : req~journal-du-service~2 — test de la porte reprise du gabarit alm-forge.
 # Test de la porte de journalisation, sur ses cas d'échec (R3) et de
 # passage, règle par règle : dépôt sans Cargo ; abonné installé dans une
 # bibliothèque (chaîne d'appels sur plusieurs lignes, set_global_default,
