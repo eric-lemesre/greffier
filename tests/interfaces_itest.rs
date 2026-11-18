@@ -77,7 +77,8 @@ fn servir(savoir: &Path, jeton: Option<&str>) -> (Processus, String, String) {
         .env_remove("GREFFIER_ECOUTE")
         .env_remove("GREFFIER_HOTES")
         .env_remove("GREFFIER_SAVOIR")
-        .env_remove("GREFFIER_CONFIG");
+        .env_remove("GREFFIER_CONFIG")
+        .env("GREFFIER_JOURNAL_SORTIE", "erreur");
     if let Some(jeton) = jeton {
         commande.env("GREFFIER_JETON", jeton);
     }
@@ -217,6 +218,7 @@ fn servir_se_regle_par_ses_variables_d_environnement() {
         .env("GREFFIER_ECOUTE", "127.0.0.1:0")
         .env("GREFFIER_HOTES", "greffier.exemple,autre.exemple")
         .env_remove("GREFFIER_JETON")
+        .env("GREFFIER_JOURNAL_SORTIE", "erreur")
         .stdout(Stdio::null())
         .stderr(Stdio::piped())
         .spawn()
@@ -245,6 +247,7 @@ fn hors_de_la_boucle_locale_sans_jeton_le_serveur_refuse_de_demarrer() {
         .args(["servir", "--ecoute", "0.0.0.0:0", "--savoir"])
         .arg(&savoir.0)
         .env_remove("GREFFIER_JETON")
+        .env("GREFFIER_JOURNAL_SORTIE", "erreur")
         .output()
         .unwrap();
     assert_eq!(sortie.status.code(), Some(1));

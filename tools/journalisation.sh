@@ -1,5 +1,5 @@
 #!/bin/sh
-# Exigence servie : req~journal-du-service~1 — porte reprise du gabarit alm-forge (ADR-0022 du gabarit, ADR-0007).
+# Exigence servie : req~journal-du-service~2 — porte reprise du gabarit alm-forge (ADR-0022 du gabarit, ADR-0007).
 # Porte de journalisation des projets Rust (méthode, ch. 17). Elle constate
 # les quatre règles du journal qu'un outil peut juger sans compiler ; les
 # autres (corrélation, niveaux, journald, absence de contenu métier) relèvent

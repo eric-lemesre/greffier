@@ -143,6 +143,7 @@ etape "secrets"            sh tools/secrets.sh scan
 etape "données"            sh tools/donnees.sh
 etape "hygiène de compilation" sh tools/hygiene-compilation.sh
 etape "journalisation"     sh tools/journalisation.sh
+etape "rotation du journal" sh tools/logrotate.sh
 etape "en-têtes de licence" sh tools/spdx.sh
 
 # Forme explicite plutôt que « [ … ] && bilan » : sous « set -e », un test
@@ -181,6 +182,7 @@ test — bootstrap	sh tools/bootstrap-test.sh
 test — nettoyage	sh tools/clean-test.sh
 test — hygiène de compilation	sh tools/hygiene-compilation-test.sh
 test — journalisation	sh tools/journalisation-test.sh
+test — rotation du journal	sh tools/logrotate-test.sh
 test — kit Rust	sh tools/rust-kit-test.sh
 test — en-têtes de licence	sh tools/spdx-test.sh
 test — définitions en double	sh tools/oft-doublons-test.sh

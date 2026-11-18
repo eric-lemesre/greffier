@@ -175,6 +175,8 @@ savoirs = ["conciliateurs"]   # ou : ["*"]
 [journal]
 filtre = "info"               # ou GREFFIER_JOURNAL, --journal
 format = "texte"              # ou json ; GREFFIER_JOURNAL_FORMAT
+sortie = "fichier"            # ou erreur, journald ; GREFFIER_JOURNAL_SORTIE
+fichier = "/var/log/greffier/greffier.log"  # GREFFIER_JOURNAL_FICHIER
 
 [piste]                       # identifiants de l'opérateur qui capture
 client_id = "…"
@@ -191,8 +193,14 @@ service) : sinon Greffier refuse de démarrer.
 Le journal dit, pour chaque requête, son identifiant de corrélation
 (`X-Request-Id`, repris ou créé, et rendu dans la réponse), la route, le
 dépôt, le client, le statut et la durée ; les refus d'accès sont sous la
-cible `greffier::acces`. Il ne contient jamais ni jeton ni question. Sous
-systemd, il va à journald avec la priorité de chaque ligne.
+cible `greffier::acces`. Il ne contient jamais ni jeton ni question.
+`greffier servir` l'écrit dans `/var/log/greffier/greffier.log` (sous
+Unix), qu'il rouvre sur `SIGHUP` : les paquets Linux posent la
+configuration logrotate qui le fait tourner chaque jour et en garde
+quatorze. Si le fichier ne s'ouvre pas, le journal va à la sortie d'erreur,
+et le dit. Les autres commandes, `greffier mcp` et Windows journalisent sur
+la sortie d'erreur ; `GREFFIER_JOURNAL_SORTIE=erreur` y ramène aussi le
+service (à journald, priorité comprise, sous systemd).
 
 Ce que chaque version apporte : [NEWS.md](NEWS.md) ; journal du dépôt :
 [CHANGELOG.md](CHANGELOG.md).

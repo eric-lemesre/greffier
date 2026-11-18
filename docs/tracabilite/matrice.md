@@ -135,9 +135,9 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest, itest
 - Couvertures réelles (5) :
-  - `impl` — src/configuration.rs:36
-  - `utest` — src/configuration.rs:456
-  - `utest` — src/configuration.rs:468
+  - `impl` — src/configuration.rs:38
+  - `utest` — src/configuration.rs:462
+  - `utest` — src/configuration.rs:474
   - `impl` — src/http.rs:36
   - `utest` — src/http.rs:611
 
@@ -146,10 +146,10 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest, itest
 - Couvertures réelles (5) :
-  - `impl` — src/configuration.rs:35
-  - `utest` — src/configuration.rs:479
-  - `utest` — src/configuration.rs:514
-  - `utest` — src/configuration.rs:537
+  - `impl` — src/configuration.rs:37
+  - `utest` — src/configuration.rs:485
+  - `utest` — src/configuration.rs:520
+  - `utest` — src/configuration.rs:543
   - `impl` — src/http.rs:37
 
 ### spec/02-exigences/03-distribution.md
@@ -161,9 +161,9 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Couvertures réelles (6) :
   - `impl` — .github/workflows/paquets.yml:8
   - `itest` — .github/workflows/paquets.yml:94
-  - `itest` — .github/workflows/paquets.yml:113
-  - `itest` — .github/workflows/paquets.yml:164
-  - `itest` — .github/workflows/paquets.yml:213
+  - `itest` — .github/workflows/paquets.yml:115
+  - `itest` — .github/workflows/paquets.yml:167
+  - `itest` — .github/workflows/paquets.yml:216
   - `impl` — .github/workflows/release.yml:8
 
 #### `req~installation-sans-dependance~1`
@@ -180,8 +180,8 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Needs: dsn, impl, itest
 - Couvertures réelles (3) :
   - `itest` — .github/workflows/paquets.yml:95
-  - `itest` — .github/workflows/paquets.yml:114
-  - `impl` — src/main.rs:131
+  - `itest` — .github/workflows/paquets.yml:116
+  - `impl` — src/main.rs:141
 
 ### spec/02-exigences/04-exploitation.md
 
@@ -190,15 +190,15 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
 - Niveau normatif : DOIT
 - Needs: dsn, impl, utest, itest
 - Couvertures réelles (7) :
-  - `impl` — src/configuration.rs:34
-  - `utest` — src/configuration.rs:421
-  - `utest` — src/configuration.rs:429
-  - `utest` — src/configuration.rs:450
-  - `impl` — src/main.rs:14
+  - `impl` — src/configuration.rs:36
+  - `utest` — src/configuration.rs:427
+  - `utest` — src/configuration.rs:435
+  - `utest` — src/configuration.rs:456
+  - `impl` — src/main.rs:16
   - `impl` — src/piste.rs:92
   - `utest` — src/piste.rs:281
 
-#### `req~journal-du-service~1`
+#### `req~journal-du-service~2`
 
 - Niveau normatif : DOIT
 - Needs: dsn, impl, itest
@@ -206,9 +206,26 @@ Vue de synthèse, informative : elle n'ajoute aucun contrôle à `task trace` (O
   - `impl` — src/http.rs:39
   - `impl` — src/main.rs:13
 
+#### `req~journal-en-fichier~1`
+
+- Niveau normatif : DOIT
+- Needs: dsn, impl, utest, itest
+- Couvertures réelles (11) :
+  - `impl` — src/journal.rs:11
+  - `utest` — src/journal.rs:220
+  - `utest` — src/journal.rs:229
+  - `utest` — src/journal.rs:238
+  - `utest` — src/journal.rs:248
+  - `utest` — src/journal.rs:261
+  - `utest` — src/journal.rs:270
+  - `utest` — src/journal.rs:277
+  - `utest` — src/journal.rs:293
+  - `utest` — src/journal.rs:306
+  - `impl` — src/main.rs:15
+
 ### Bilan (couvertures réelles)
 
-17/19 exigence(s) testable(s) couverte(s) par au moins une trace réelle (89.5 %) — 2 à couvrir.
+18/20 exigence(s) testable(s) couverte(s) par au moins une trace réelle (90.0 %) — 2 à couvrir.
 
 ## 2. L'inverse — outillage sans exigence
 
@@ -236,7 +253,7 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `.github/workflows/ci.yml`
 - `.github/workflows/security.yml`
 
-### `tools` (51)
+### `tools` (53)
 
 - `tools/adr-new.sh`
 - `tools/audit.sh`
@@ -270,6 +287,8 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `tools/liens-test.sh`
 - `tools/liens.sh`
 - `tools/locale-test.sh`
+- `tools/logrotate-test.sh`
+- `tools/logrotate.sh`
 - `tools/oft-doublons-test.sh`
 - `tools/oft-test.sh`
 - `tools/oft.sh`
@@ -300,5 +319,5 @@ Fichiers d'outillage (`tools/`, hooks git, gabarits de forge) qui ne portent AUC
 - `tools/hooks/commit-msg.sh`
 - `tools/hooks/pre-commit.sh`
 
-**Total : 65/75 fichier(s) d'outillage sans trace de traçabilité.**
+**Total : 67/77 fichier(s) d'outillage sans trace de traçabilité.**
 

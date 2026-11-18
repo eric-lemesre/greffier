@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: EUPL-1.2
+# Rotation du journal du service greffier (ADR-0008), posée par les paquets
+# deb et rpm en /etc/logrotate.d/greffier.
+#
+# Le service (greffier.service) écrit son journal dans
+# /var/log/greffier/greffier.log et le ROUVRE sur SIGHUP : logrotate renomme
+# le fichier, puis le postrotate envoie le signal ; les lignes suivantes vont
+# au nouveau fichier. Pas de copytruncate : il perdrait les lignes écrites
+# pendant la copie.
+#
+# Le dossier appartient au compte greffier (LogsDirectory de l'unité) : la
+# directive « su » fait travailler logrotate sous ce compte, faute de quoi
+# il refuse un dossier inscriptible par un autre que root.
+# [impl->req~journal-en-fichier~1]
+
+/var/log/greffier/greffier.log {
+    su greffier greffier
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0640 greffier greffier
+    sharedscripts
+    postrotate
+        systemctl kill --kill-whom=main --signal=HUP greffier.service >/dev/null 2>&1 || true
+    endscript
+}

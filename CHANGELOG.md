@@ -5,6 +5,19 @@ versionnement : [SemVer](https://semver.org/lang/fr/).
 
 ## [Non publié]
 
+### Modifié
+
+- Journal du service en fichier (ADR-0008, D-2026-11-12, règle commune de
+  l'ADR-0023 d'alm-forge) : `src/journal.rs` (choix de la sortie, fichier
+  partagé rouvert sur `SIGHUP`, créé en `0640`), branché par
+  `installer_journal` de `src/main.rs`, gestionnaire posé avant la lecture
+  des dépôts ; repli annoncé sur la sortie d'erreur. Unité systemd :
+  `LogsDirectory=greffier` ; configuration `packaging/linux/logrotate/greffier`
+  posée par les paquets deb et rpm, éprouvée dans `paquets.yml`. Porte
+  `tools/logrotate.sh` et son test de cas d'échec, câblés dans
+  `tools/ci.sh`. Exigence `journal-du-service` révisée en ~2,
+  `journal-en-fichier` approuvée.
+
 ## [0.3.0] - 2026-11-03
 
 ### Ajouté
