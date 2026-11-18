@@ -52,12 +52,28 @@ for f in "${DOSSIER}"/*; do
         fail=1
     fi
     if command -v logrotate >/dev/null 2>&1; then
+        # Les comptes nommés par « su » et « create » n'existent que là où
+        # le paquet est installé (constaté en CI : « unknown user ») : la
+        # lecture à blanc juge la syntaxe sous le compte courant, sur une
+        # copie en 0644 (logrotate ignore un fichier inscriptible par le
+        # groupe). L'épreuve du paquet installé juge les vrais comptes.
         etat="$(mktemp)"
-        if ! logrotate -d -s "${etat}" "${f}" >/dev/null 2>&1; then
-            echo "ÉCHEC : ${f} — refusée par « logrotate -d »" >&2
+        copie="$(mktemp)"
+        compte="$(id -un)"
+        groupe="$(id -gn)"
+        sed -e "s/^\([[:space:]]*su\)[[:space:]].*/\1 ${compte} ${groupe}/" \
+            -e "s/^\([[:space:]]*create[[:space:]][[:space:]]*[0-7][0-7]*\)[[:space:]].*/\1 ${compte} ${groupe}/" \
+            "${f}" > "${copie}"
+        chmod 644 "${copie}"
+        # Une directive inconnue n'est qu'ignorée (sortie 0, ligne
+        # « error: … ignoring line ») : le message compte autant que le code.
+        lecture="$(mktemp)"
+        if ! LC_ALL=C logrotate -d -s "${etat}" "${copie}" > "${lecture}" 2>&1 \
+            || grep -q '^error:' "${lecture}"; then
+            echo "ÉCHEC : ${f} — refusée par « logrotate -d » : $(grep '^error:' "${lecture}" | head -n 1)" >&2
             fail=1
         fi
-        rm -f "${etat}"
+        rm -f "${etat}" "${copie}" "${lecture}"
     fi
 done
 

@@ -40,6 +40,15 @@ cas sans-create 's/create 0640/create 0644/' "create 0640"
 cas sans-retention '/^    rotate /d' "rétention"
 cas sans-postrotate '/postrotate/,/endscript/d' "pas de « postrotate »"
 
+# La lecture à blanc ne se juge que là où logrotate est installé (CI).
+if command -v logrotate >/dev/null 2>&1; then
+    echo "logrotate-test — lecture à blanc : erreurs de syntaxe refusées"
+    cas directive-inconnue 's/^    daily/    quotidien/' "logrotate -d"
+    cas retention-illisible 's/^    rotate 14/    rotate quatorze/' "logrotate -d"
+else
+    echo "logrotate-test — lecture à blanc : logrotate absent, cas non joués"
+fi
+
 echo "logrotate-test — dossier vide : échoue"
 mkdir -p "${TMP}/vide"
 if porte "${TMP}/vide"; then echo "ÉCHEC [vide] : la porte passe" >&2 ; fail=1 ; fi
