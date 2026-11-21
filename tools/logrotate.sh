@@ -65,12 +65,15 @@ for f in "${DOSSIER}"/*; do
             -e "s/^\([[:space:]]*create[[:space:]][[:space:]]*[0-7][0-7]*\)[[:space:]].*/\1 ${compte} ${groupe}/" \
             "${f}" > "${copie}"
         chmod 644 "${copie}"
-        # Une directive inconnue n'est qu'ignorée (sortie 0, ligne
-        # « error: … ignoring line ») : le message compte autant que le code.
+        # Une directive inconnue n'est qu'ignorée (sortie 0) : logrotate 3.21
+        # le dit par « error: … ignoring line », 3.22 par « warning: …
+        # unknown option … ignoring line ». Le message compte autant que le
+        # code ; l'avertissement du mode -d lui-même ne compte pas.
+        refus='^error:|ignoring line'
         lecture="$(mktemp)"
         if ! LC_ALL=C logrotate -d -s "${etat}" "${copie}" > "${lecture}" 2>&1 \
-            || grep -q '^error:' "${lecture}"; then
-            echo "ÉCHEC : ${f} — refusée par « logrotate -d » : $(grep '^error:' "${lecture}" | head -n 1)" >&2
+            || grep -Eq "${refus}" "${lecture}"; then
+            echo "ÉCHEC : ${f} — refusée par « logrotate -d » : $(grep -E "${refus}" "${lecture}" | head -n 1)" >&2
             fail=1
         fi
         rm -f "${etat}" "${copie}" "${lecture}"
